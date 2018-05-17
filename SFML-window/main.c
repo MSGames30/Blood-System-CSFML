@@ -926,13 +926,13 @@ int main()
 						switch (CurrentTower->Tower->TowerType)
 						{
 							
-						case TYPE1 : 
+						case TYPE3 : 
 							break;
 						case TYPE2 :
 							CurrentEnnemy->Ennemy->fSpeedFactor = 0.5;
 							//CurrentEnnemy->Ennemy->fSpeed /= 1.2;
 							break;
-						case TYPE3:
+						case TYPE1:
 							CurrentTower->Tower->tCurrentShoot = (float)clock() / CLOCKS_PER_SEC;
 							CurrentTower->Tower->tSinceShoot = CurrentTower->Tower->tCurrentShoot - CurrentTower->Tower->tStartShoot;
 							if (CurrentTower->Tower->tSinceShoot > 2 * CurrentTower->Tower->bulletSpeed)
