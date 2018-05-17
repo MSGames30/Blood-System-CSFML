@@ -1057,7 +1057,7 @@ int main()
 						NewTower->Tower->tSinceShoot = 0;
 						NewTower->Tower->tCurrentShoot = 0;
 						NewTower->Tower->fieldSpr = createSprite("resources/textures/tower_field_of_view.png");
-						NewTower->Tower->bulletSpeed = 1;
+						NewTower->Tower->bulletSpeed = 0.5;
 						sfSprite_setOrigin(NewTower->Tower->fieldSpr, vOrigin_fieldOfView);
 						sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
 						NewTower->Tower->fieldBB = sfSprite_getGlobalBounds(NewTower->Tower->fieldSpr);
@@ -1181,7 +1181,7 @@ int main()
 						sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
 						sfSprite_setPosition(NewTower->Tower->sprite, NewTower->Tower->vPos);
 						NewTower->Tower->boundingBox = sfSprite_getGlobalBounds(NewTower->Tower->sprite);
-						NewTower->Tower->bulletSpeed = 0.5;
+						NewTower->Tower->bulletSpeed = 1;
 						isOpened = sfFalse;
 						isInBuildChoice = sfFalse;
 						/*mettre en fonction*/
