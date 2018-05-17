@@ -899,7 +899,10 @@ int main()
 			CurrentTower->Tower->animRect.left = 0;
 			CurrentTower->Tower->animRect.top = CurrentTower->Tower->TowerLevel * TOWER_HEIGHT;
 			sfSprite_setTextureRect(CurrentTower->Tower->sprite, CurrentTower->Tower->animRect);
-			sfRenderWindow_drawSprite(window, CurrentTower->Tower->fieldSpr, NULL);
+			if (CurrentTower->Tower->TowerType != TYPE3)
+			{
+				sfRenderWindow_drawSprite(window, CurrentTower->Tower->fieldSpr, NULL);
+			}
 			sfRenderWindow_drawSprite(window, CurrentTower->Tower->sprite, NULL);
 			CurrentTower = CurrentTower->NextElement;
 
@@ -1074,6 +1077,7 @@ int main()
 						sfSprite_setScale(btn3->sprite, vBtnScale);
 						/**/
 						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
+						ActualTowerSlot->TowerSlot->BuildedType = NewTower->Tower->TowerType;
 						sfSprite_setColor(btn1->sprite, sfWhite);
 						if (ListTower->FirstElement->NextElement != NULL)
 						{
@@ -1112,9 +1116,9 @@ int main()
 						NewTower->Tower->animRect.top = NewTower->Tower->TowerLevel * TOWER_HEIGHT;
 						NewTower->Tower->animRect.width = TOWER_WIDTH;
 						NewTower->Tower->animRect.height = TOWER_HEIGHT;
-						NewTower->Tower->tStartShoot = (float)clock() / CLOCKS_PER_SEC;
-						NewTower->Tower->tSinceShoot = 0;
-						NewTower->Tower->tCurrentShoot = 0;
+						//NewTower->Tower->tStartShoot = (float)clock() / CLOCKS_PER_SEC;
+						//NewTower->Tower->tSinceShoot = 0;
+						//NewTower->Tower->tCurrentShoot = 0;
 						NewTower->Tower->fieldSpr = createSprite("resources/textures/tower_field_of_view.png");
 						sfSprite_setOrigin(NewTower->Tower->fieldSpr, vOrigin_fieldOfView);
 						sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
@@ -1122,7 +1126,7 @@ int main()
 						sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
 						sfSprite_setPosition(NewTower->Tower->sprite, NewTower->Tower->vPos);
 						NewTower->Tower->boundingBox = sfSprite_getGlobalBounds(NewTower->Tower->sprite);
-						NewTower->Tower->bulletSpeed = 0.7;
+						//NewTower->Tower->bulletSpeed = 0.7;
 						isOpened = sfFalse;
 						isInBuildChoice = sfFalse;
 						/*mettre en fonction*/
@@ -1133,6 +1137,7 @@ int main()
 						sfSprite_setScale(btn3->sprite, vBtnScale);
 						/**/
 						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
+						ActualTowerSlot->TowerSlot->BuildedType = NewTower->Tower->TowerType;
 						sfSprite_setColor(btn2->sprite, sfWhite);
 						if (ListTower->FirstElement->NextElement != NULL)
 						{
@@ -1192,6 +1197,7 @@ int main()
 						sfSprite_setScale(btn3->sprite, vBtnScale);
 						/**/
 						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
+						ActualTowerSlot->TowerSlot->BuildedType = NewTower->Tower->TowerType;
 						sfSprite_setColor(btn3->sprite, sfWhite);
 						if (ListTower->FirstElement->NextElement != NULL)
 						{
@@ -1478,11 +1484,11 @@ int main()
 		////////////////////////////////////
 		CurrentTower = ListTower->FirstElement;
 		//printf_s("REEEEEEAAAAAAD!!!!!!!!!!!!!!!!\n");
-		while (CurrentTower != NULL)
-		{
-			printf_s("Current %d,bb left : %.2f,Top :%.2f,Width :%.2f,Height :%.2f\n", CurrentTower->Id, CurrentTower->Tower->boundingBox.left, CurrentTower->Tower->boundingBox.top, CurrentTower->Tower->boundingBox.width, CurrentTower->Tower->boundingBox.height);
-			CurrentTower = CurrentTower->NextElement;
-		}
+		//while (CurrentTower != NULL)
+		//{
+		//	printf_s("Current %d,bb left : %.2f,Top :%.2f,Width :%.2f,Height :%.2f\n", CurrentTower->Id, CurrentTower->Tower->boundingBox.left, CurrentTower->Tower->boundingBox.top, CurrentTower->Tower->boundingBox.width, CurrentTower->Tower->boundingBox.height);
+		//	CurrentTower = CurrentTower->NextElement;
+		//}
 
 
 		/////////////////////////////////////
@@ -1511,8 +1517,23 @@ int main()
 		}
 
 
-		sfCircleShape_setPosition(player, vPos_player);
-		sfRenderWindow_drawCircleShape(window, player, NULL);
+		//sfCircleShape_setPosition(player, vPos_player);
+		//sfRenderWindow_drawCircleShape(window, player, NULL);
+
+		CurrentTowerSlot = ListTowerSlot->FirstElement;
+		while (CurrentTowerSlot != NULL)
+		{
+			if (CurrentTowerSlot->TowerSlot->IsBuild && CurrentTowerSlot->TowerSlot->BuildedType == TYPE3)
+			{
+				printf_s("slot x : %.2f,y : %.2f\n", CurrentTowerSlot->TowerSlot->vSpawnPos.x, CurrentTowerSlot->TowerSlot->vSpawnPos.y);
+				SetLineBetweenPoints(VertexArray, Vertex, CurrentTowerSlot->TowerSlot->vSpawnPos, CurrentTowerSlot->TowerSlot->vPos, sfBlack);
+				sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
+				sfCircleShape_setPosition(player, CurrentTowerSlot->TowerSlot->vSpawnPos);
+				sfRenderWindow_drawCircleShape(window, player, NULL);
+			}
+
+			CurrentTowerSlot = CurrentTowerSlot->NextElement;
+		}
 
 #pragma endregion TRAITEMENT AFFICHAGE JOUEUR TEST
 		/////////////////////////////FIN PLAYER TEST/////////////////////////////////////

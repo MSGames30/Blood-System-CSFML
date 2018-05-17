@@ -84,6 +84,7 @@ enum e_TowerType
 	TYPE1 = 1,
 	TYPE2,
 	TYPE3,
+	NONE = 99,
 };
 
 typedef enum e_TowerLevel t_TowerLevel;
@@ -215,6 +216,7 @@ struct s_TowerSlot
 	sfVector2f vOrigin;
 	sfBool IsClicked;
 	sfBool IsBuild;
+	t_TowerType BuildedType;
 };
 
 typedef struct s_TowerSlotElement t_TowerSlotElement;

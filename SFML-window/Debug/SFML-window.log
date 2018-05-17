@@ -33,19 +33,18 @@ c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-win
 c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(881): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
 c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(889): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
 c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(890): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(923): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(924): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1012): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
-c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1013): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
-c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1030): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1125): warning C4305: '=' : troncation de 'double' à 'float'
-c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1261): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
-c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1262): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
-c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1277): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1330): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(926): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(927): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1015): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1016): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1033): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1267): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1268): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1283): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1336): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
 c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(143): warning C4244: 'initialisation' : conversion de 'unsigned int' en 'float', perte possible de données
 c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(223): warning C4101: 'Color_Green' : variable locale non référencée
 c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(80): warning C4101: 'Rect_TowerBB' : variable locale non référencée
 c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(222): warning C4101: 'Color_Blue' : variable locale non référencée
-c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1306): warning C4101: 'test' : variable locale non référencée
+c:\users\pezed\desktop\_projet groupe\projet groupe fin d'année - mere\sfml-window\main.c(1312): warning C4101: 'test' : variable locale non référencée
   SFML-window.vcxproj -> C:\Users\Pezed\Desktop\_projet groupe\Projet groupe fin d'année - MERE\Debug\Tower Defense.exe

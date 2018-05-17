@@ -228,9 +228,10 @@ void loadTowerSlots(t_ListTowerSlot* _ListTowerSlot, int _levelNumber)
 	{
 		newElement = AddElementBeginListTowerSlot(_ListTowerSlot);
 		newElement->TowerSlot = malloc(sizeof(t_TowerSlot));
-		fscanf_s(file, "vPosX=%f,vPosY=%f\n", &newElement->TowerSlot->vPos.x, &newElement->TowerSlot->vPos.y);
+		fscanf_s(file, "vPosX=%f,vPosY=%f,vSPosX=%f,vSPosY=%f\n", &newElement->TowerSlot->vPos.x, &newElement->TowerSlot->vPos.y,&newElement->TowerSlot->vSpawnPos.x, &newElement->TowerSlot->vSpawnPos.y);
 		newElement->TowerSlot->IsBuild = sfFalse;
 		newElement->TowerSlot->IsClicked = sfFalse;
+		newElement->TowerSlot->BuildedType = NONE;
 	}
 
 	fclose(file);
