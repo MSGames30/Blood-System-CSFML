@@ -48,7 +48,7 @@
 
 #pragma region ENNEMY
 
-#define CONTROL_RADIUS 100
+#define CONTROL_RADIUS 80
 #define GUARD_RADIUS 25
 
 #define ENNEMY_VARIANT_SPAWN 10
@@ -64,11 +64,13 @@
 
 #define ANGLE_VARIANT_ISO 17 // correction iso applique aux ngles de bases
 #define ANGLE_VARIATION 15 // angle de la zone situé devant l'entité
-#define ANGLE_INCREASE 0.5f
+#define ANGLE_INCREASE 10
 
 #define ENNEMY_TIME_SINCE_LAST_ANIMATION 0.5f // temps entre chaque frame d'animation d'un ennemie
 #define ENNEMY_WIDTH 60 // Largeur de l'ennemi
 #define ENNEMY_HEIGHT 50 // Hauteur de l'ennemi
+ 
+#define TIME_BETWEEN_VARIATION 1
 
 #pragma endregion ENNEMY
 
@@ -117,6 +119,7 @@ struct s_Ennemy
 	sfVector2f vSteering; // le steering
 	sfVector2f vCurrentVelocity; // vélocité de l'ennemi
 	sfVector2f vTargetPostion; // position visé par l'ennemi
+	sfVector2f vSpawnPosition; // Position de spawn de l'ennemi
 	float fAngleSprite; // angle du sprite
 	float fCurrentAngleDirection; // angle de direction actuel
 	float fDesiredAngleDirection; // angle de direction voulue
@@ -175,6 +178,13 @@ struct s_Ennemy
 	sfVector2f vSizeRectangleShape;
 	sfVector2f vPositionRectangleShape;
 	sfVector2f vOriginRectangleShape;
+
+	sfFloatRect boundingBox;
+
+	float fWanderAngle;
+	float fTimeSinceLastVariation;
+	sfVector2f vWanderCenter;
+	sfVector2f vWanderDirection;
 };
 
 typedef struct s_EnnemyElement t_EnnemyElement;
@@ -199,6 +209,7 @@ typedef struct s_TowerSlot t_TowerSlot;
 struct s_TowerSlot
 {
 	sfVector2f vPos;
+	sfVector2f vSpawnPos;
 	sfVector2f vOrigin;
 	sfBool IsClicked;
 	sfBool IsBuild;
@@ -278,6 +289,7 @@ struct s_TowerBullet
 	sfFloatRect boundingBox;
 	float angle;
 	float bulletSpeed;
+	int towerFromId;
 };
 
 typedef struct s_TowerBulletElement t_TowerBulletElement;
@@ -326,7 +338,7 @@ int SpriteIsOver(char *_window, char *_spritePerso, char *_spriteObject);
 
 //void Collider(sfImage* _collid, Player* player);
 
-void loadTowerSlots(t_List* _ListTowerSlot, int _levelNumber);
+void loadTowerSlots(t_ListTowerSlot* _ListTowerSlot, int _levelNumber);
 
 t_EnnemyElement* AddElementBeginList(t_List* _List);
 t_TowerSlotElement* AddElementBeginListTowerSlot(t_ListTowerSlot* _List);
@@ -361,5 +373,7 @@ sfVector2f normalizeVector(sfVector2f _vector);
 sfBool manageEnnemi(t_EnnemyElement* currentElement, sfImage* testMask, float fTimeSinceLastFrame);
 
 void SetLineBetweenPoints(sfVertexArray* _vertexArray, sfVertex* _vertex, sfVector2f _startPoint, sfVector2f _destPoint, sfColor _color);
+
+sfBool SortTowerByPos(t_ListTower *_list);
 
 #pragma endregion Functions Declarations

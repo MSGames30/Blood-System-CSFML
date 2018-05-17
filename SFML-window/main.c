@@ -62,7 +62,7 @@ int main()
 	int iDebug = 0;
 	#pragma endregion C VARS
 
-	#pragma region CSFML VARS
+	#pragma region CSFML VARS //SEB
 	sfSprite* Sp_map = createSprite("resources/textures/map.jpg");
 	sfSprite* Sp_TowerSlot = createSprite("resources/textures/Socle.png");
 	sfVector2f vOrigin_TowerSlot = { sfSprite_getGlobalBounds(Sp_TowerSlot).width / 2,sfSprite_getGlobalBounds(Sp_TowerSlot).height / 2 };
@@ -207,7 +207,9 @@ int main()
 #pragma endregion BOUTONS
 
 #pragma region CREATE SPRITES
-
+	sfSprite* Sp_Ennemy1 = createSprite("resources/textures/ennemi 1.png");
+	sfSprite* Sp_Ennemy2 = createSprite("resources/textures/ennemi 2.png");
+	sfSprite* Sp_Ennemy3 = createSprite("resources/textures/ennemi 3.png");
 	sfSprite* Sp_Map2 = createSprite("resources/textures/level design niveau 2.jpg");
 	sfSprite* Sp_MapMask2 = createSprite("resources/textures/Mask Collision Map 2.jpg");
 	sfImage* Image_Map2 = sfImage_createFromFile("resources/textures/level design niveau 2.psd");
@@ -280,14 +282,15 @@ int main()
 
 		if (SpaceButtonIsButtonPressed == sfTrue && iSpaceButtonIsButtonPressedCheck == 0)
 		{
-
 			iDebug++;
 			if (iDebug > 3)
 			{
 				//printf("debug");
 			}
+
 			NewEnnemy = AddElementBeginList(ListEnnemy);
 			NewEnnemy->Ennemy = malloc(sizeof(t_Ennemy));
+
 			/*GESTION EN FONCTION DU TYPE*/
 
 #pragma region GESTION EN FONCTION DU TYPE //GUILLAUME
@@ -296,7 +299,7 @@ int main()
 			printf("%d\n", NewEnnemy->Ennemy->Type);
 			if (NewEnnemy->Ennemy->Type == 1)
 			{
-				NewEnnemy->Ennemy->sp_Ennemy = createSprite("resources/textures/ennemi 1.png");
+				NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy1;
 				NewEnnemy->Ennemy->Deg = 0;
 				NewEnnemy->Ennemy->Hp = 0;
 				NewEnnemy->Ennemy->HpMax = 0;
@@ -304,7 +307,7 @@ int main()
 			}
 			else if (NewEnnemy->Ennemy->Type == 2)
 			{
-				NewEnnemy->Ennemy->sp_Ennemy = createSprite("resources/textures/ennemi 2.png");
+				NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy2;
 				NewEnnemy->Ennemy->Deg = 0;
 				NewEnnemy->Ennemy->Hp = 0;
 				NewEnnemy->Ennemy->HpMax = 0;
@@ -312,7 +315,7 @@ int main()
 			}
 			else if (NewEnnemy->Ennemy->Type == 3)
 			{
-				NewEnnemy->Ennemy->sp_Ennemy = createSprite("resources/textures/ennemi 3.png");
+				NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy3;
 				NewEnnemy->Ennemy->Deg = 0;
 				NewEnnemy->Ennemy->Hp = 0;
 				NewEnnemy->Ennemy->HpMax = 0;
@@ -324,62 +327,68 @@ int main()
 
 #pragma endregion GESTION EN FONCTION DU TYPE ENNEMIE //GUILLAUME
 
+			/*GESTION SPAWN*/
+
 #pragma region GESTION SPAWN //GUILLAUME
 
+#pragma region LECTURE DANS LE FICHIER DE SPAWN
+
+			FILE* file = NULL;
+			char* filePath = malloc(50);
+			int iEnnemySpawnNbr = 0;
+			sprintf_s(filePath, 50, "resources/datas/ennemySpawns%d.txt", iCurrentLevel);
+			fopen_s(&file, filePath, "r");
+
+			if (file == NULL)
+			{
+				printf("erreur ouverture de fichier ennemySpawn\n");
+				//return EXIT_FAILURE;
+			}
+			fscanf_s(file, "iEnnemySpawnNbr=%d,\n", &iEnnemySpawnNbr);
+			printf("ENNEMYSPAWN : %d\n", iEnnemySpawnNbr);
+			NewEnnemy->Ennemy->iStartPos = 0;
+			NewEnnemy->Ennemy->iStartPos = rand() % iEnnemySpawnNbr + 1; // choix de la ligne a lire
+			for (int i = 0; i < NewEnnemy->Ennemy->iStartPos; i++)
+			{
+				NewEnnemy->Ennemy->vSpawnPosition.x = 0;
+				NewEnnemy->Ennemy->vSpawnPosition.y = 0;
+				fscanf_s(file, "vPosX=%f,vPosY=%f\n", &NewEnnemy->Ennemy->vSpawnPosition.x, &NewEnnemy->Ennemy->vSpawnPosition.y);
+				printf("X : %.2f |Y : %.2f\n", NewEnnemy->Ennemy->vSpawnPosition.x, NewEnnemy->Ennemy->vSpawnPosition.y);
+			}
+
 			NewEnnemy->Ennemy->iRandSpawnValueVariation = rand() % ENNEMY_VARIANT_SPAWN + 0;
-			NewEnnemy->Ennemy->iStartPos = rand() % 2 + 1;
-			if (NewEnnemy->Ennemy->iStartPos == 1)
+
+			/*gestion x*/
+			NewEnnemy->Ennemy->iRandSpawnDirectionVariation = rand() % 2 + 1;
+			if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 1)
 			{
-				/*gestion x*/
-				NewEnnemy->Ennemy->iRandSpawnDirectionVariation = rand() % 2 + 1;
-				if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 1)
-				{
-					NewEnnemy->Ennemy->vCurrentPosition.x = 70 + ENNEMY_VARIANT_SPAWN;
-				}
-				else if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 2)
-				{
-					NewEnnemy->Ennemy->vCurrentPosition.x = 70 - ENNEMY_VARIANT_SPAWN;
-				}
-
-				/*gestion y*/
-				NewEnnemy->Ennemy->iRandSpawnDirectionVariation = rand() % 2 + 1;
-				if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 1)
-				{
-					NewEnnemy->Ennemy->vCurrentPosition.y = 1035 + ENNEMY_VARIANT_SPAWN;
-				}
-				else if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 2)
-				{
-					NewEnnemy->Ennemy->vCurrentPosition.y = 1035 - ENNEMY_VARIANT_SPAWN;
-				}
+				NewEnnemy->Ennemy->vSpawnPosition.x += ENNEMY_VARIANT_SPAWN;
 			}
-			else if (NewEnnemy->Ennemy->iStartPos == 2)
+			else if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 2)
 			{
-				/*gestion x*/
-				NewEnnemy->Ennemy->iRandSpawnDirectionVariation = rand() % 2 + 1;
-				if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 1)
-				{
-					NewEnnemy->Ennemy->vCurrentPosition.x = 1860 + ENNEMY_VARIANT_SPAWN;
-				}
-				else if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 2)
-				{
-					NewEnnemy->Ennemy->vCurrentPosition.x = 1860 - ENNEMY_VARIANT_SPAWN;
-				}
-
-				/*gestion y*/
-				NewEnnemy->Ennemy->iRandSpawnDirectionVariation = rand() % 2 + 1;
-				if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 1)
-				{
-					NewEnnemy->Ennemy->vCurrentPosition.y = 510 + ENNEMY_VARIANT_SPAWN;
-				}
-				else if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 2)
-				{
-					NewEnnemy->Ennemy->vCurrentPosition.y = 510 - ENNEMY_VARIANT_SPAWN;
-				}
+				NewEnnemy->Ennemy->vSpawnPosition.x -= ENNEMY_VARIANT_SPAWN;
 			}
+			/*gestion y*/
+			NewEnnemy->Ennemy->iRandSpawnDirectionVariation = rand() % 2 + 1;
+			if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 1)
+			{
+				NewEnnemy->Ennemy->vSpawnPosition.y += ENNEMY_VARIANT_SPAWN;
+			}
+			else if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 2)
+			{
+				NewEnnemy->Ennemy->vSpawnPosition.y -= ENNEMY_VARIANT_SPAWN;
+			}
+			fclose(file);
 
+#pragma endregion LECTURE DANS LE FICHIER DE SPAWN
+
+			NewEnnemy->Ennemy->vCurrentPosition = NewEnnemy->Ennemy->vSpawnPosition;
 			sfSprite_setPosition(NewEnnemy->Ennemy->sp_Ennemy, NewEnnemy->Ennemy->vCurrentPosition);
 
+
 #pragma endregion GESTION SPAWN //GUILLAUME
+
+#pragma region INITIALISATION PARAMETRES ENNEMIS
 
 			/*cible de l'ennemi*/
 			NewEnnemy->Ennemy->vTargetPostion.x = 1540;
@@ -401,6 +410,16 @@ int main()
 			/*variables d'animation*/
 			NewEnnemy->Ennemy->iDirection = 0;
 			NewEnnemy->Ennemy->iAnimationFrameX = 0;
+
+			/*varaibles de variation de direction*/
+			NewEnnemy->Ennemy->fTimeSinceLastVariation = 0;
+			NewEnnemy->Ennemy->fWanderAngle = 0;
+			NewEnnemy->Ennemy->vWanderCenter.x = 0;
+			NewEnnemy->Ennemy->vWanderCenter.y = 0;
+			NewEnnemy->Ennemy->vWanderDirection.x = 0;
+			NewEnnemy->Ennemy->vWanderDirection.y = 0;
+
+#pragma endregion INITIALISATION PARAMETRES ENNEMIS
 
 			/*STATISTIQUES DE L'ENNEMI*/ // a placer lorsqu'on choisit le type d'ennemie
 
@@ -436,11 +455,6 @@ int main()
 		{
 
 #pragma region ANCIENNE METHODE STEERING //GUILLAUME
-
-			/*STEERING*/
-			/*CurrentEnnemy->Ennemy->vSteering.x = CurrentEnnemy->Ennemy->vSeek.x - CurrentEnnemy->Ennemy->vCurrentVelocity.x;
-			CurrentEnnemy->Ennemy->vSteering.y = CurrentEnnemy->Ennemy->vSeek.y - CurrentEnnemy->Ennemy->vCurrentVelocity.y;*/
-			//CurrentEnnemy->Ennemy->vSteering = Truncate(CurrentEnnemy->Ennemy->vSteering, 5);
 
 			///*si il y a collision je gère la vélocité avec la direction de l'entité*/
 			//if (CurrentEnnemy->Ennemy->iIsColliding == 0)
@@ -485,28 +499,22 @@ int main()
 				/*COULEUR BLEU (HAUT-DROITE)*/
 				if (CurrentEnnemy->Ennemy->Color_ToCheck.b == 255)
 				{
-					CurrentEnnemy->Ennemy->fDesiredAngleDirection = ANGLE_HAUT_DROIT + ANGLE_VARIANT_ISO;
-					CurrentEnnemy->Ennemy->fAngleSprite = ANGLE_HAUT_DROIT + ANGLE_VARIANT_ISO;
+					CurrentEnnemy->Ennemy->iDirection = UP_RIGHT;
 				}
 				/*COULEUR VERTE (HAUT-GAUCHE)*/
 				if (CurrentEnnemy->Ennemy->Color_ToCheck.g == 255)
 				{
-					CurrentEnnemy->Ennemy->fDesiredAngleDirection = ANGLE_HAUT_GAUCHE - ANGLE_VARIANT_ISO;
-					CurrentEnnemy->Ennemy->fAngleSprite = ANGLE_HAUT_GAUCHE - ANGLE_VARIANT_ISO;
-
+					CurrentEnnemy->Ennemy->iDirection = UP_LEFT;
 				}
 				/*COULEUR JAUNE (BAS_DROITE)*/
 				if (CurrentEnnemy->Ennemy->Color_ToCheck.r == 150 && CurrentEnnemy->Ennemy->Color_ToCheck.g == 150)
 				{
-					CurrentEnnemy->Ennemy->fDesiredAngleDirection = ANGLE_BAS_DROIT - ANGLE_VARIANT_ISO;
-					CurrentEnnemy->Ennemy->fAngleSprite = ANGLE_BAS_DROIT - ANGLE_VARIANT_ISO;
+					CurrentEnnemy->Ennemy->iDirection = DOWN_RIGHT;
 				}
 				/*COULEUR BLEU CLAIR (BAS_GAUCHE)*/
 				if (CurrentEnnemy->Ennemy->Color_ToCheck.g == 150 && CurrentEnnemy->Ennemy->Color_ToCheck.b == 150)
 				{
-					CurrentEnnemy->Ennemy->fDesiredAngleDirection = ANGLE_BAS_GAUCHE + ANGLE_VARIANT_ISO;
-					CurrentEnnemy->Ennemy->fAngleSprite = ANGLE_BAS_GAUCHE + ANGLE_VARIANT_ISO;
-
+					CurrentEnnemy->Ennemy->iDirection = DOWN_LEFT;
 				}
 				/*COULEUR BLANCHE (DIRECTION ALEATOIRE)*/
 				if (CurrentEnnemy->Ennemy->Color_ToCheck.g == 255 && CurrentEnnemy->Ennemy->Color_ToCheck.b == 255 && CurrentEnnemy->Ennemy->Color_ToCheck.r == 255)
@@ -518,29 +526,37 @@ int main()
 					}
 					if (CurrentEnnemy->Ennemy->iRandDirection == 1)
 					{
-						CurrentEnnemy->Ennemy->fDesiredAngleDirection = ANGLE_HAUT_DROIT + ANGLE_VARIANT_ISO;
+						CurrentEnnemy->Ennemy->iDirection = UP_RIGHT;
 					}
 					else if (CurrentEnnemy->Ennemy->iRandDirection == 2)
 					{
-						CurrentEnnemy->Ennemy->fDesiredAngleDirection = ANGLE_HAUT_GAUCHE - ANGLE_VARIANT_ISO;
+						CurrentEnnemy->Ennemy->iDirection = UP_LEFT;
 					}
 				}
 
+				if (CurrentEnnemy->Ennemy->iDirection == UP_RIGHT)
+				{
+					CurrentEnnemy->Ennemy->fDesiredAngleDirection = ANGLE_HAUT_DROIT + ANGLE_VARIANT_ISO;
+					CurrentEnnemy->Ennemy->fAngleSprite = ANGLE_HAUT_DROIT + ANGLE_VARIANT_ISO;
+				}
+				if (CurrentEnnemy->Ennemy->iDirection == UP_LEFT)
+				{
+					CurrentEnnemy->Ennemy->fDesiredAngleDirection = ANGLE_HAUT_GAUCHE - ANGLE_VARIANT_ISO;
+					CurrentEnnemy->Ennemy->fAngleSprite = ANGLE_HAUT_GAUCHE - ANGLE_VARIANT_ISO;
+				}
+				if (CurrentEnnemy->Ennemy->iDirection == DOWN_RIGHT)
+				{
+					CurrentEnnemy->Ennemy->fDesiredAngleDirection = ANGLE_BAS_DROIT - ANGLE_VARIANT_ISO;
+					CurrentEnnemy->Ennemy->fAngleSprite = ANGLE_BAS_DROIT - ANGLE_VARIANT_ISO;
+				}
+				if (CurrentEnnemy->Ennemy->iDirection == DOWN_LEFT)
+				{
+					CurrentEnnemy->Ennemy->fDesiredAngleDirection = ANGLE_BAS_GAUCHE + ANGLE_VARIANT_ISO;
+					CurrentEnnemy->Ennemy->fAngleSprite = ANGLE_BAS_GAUCHE + ANGLE_VARIANT_ISO;
+				}
+
+
 #pragma endregion ANGLE EN FONCTION DE LA COULEUR //GUILLAUME
-
-#pragma region VARIATION LEGERE //GUILLAUME
-
-				CurrentEnnemy->Ennemy->iRandVariation = rand() % 2 + 1;
-				if (CurrentEnnemy->Ennemy->iRandVariation == 1)
-				{
-					CurrentEnnemy->Ennemy->fDesiredAngleDirection += ANGLE_INCREASE;
-				}
-				else if (CurrentEnnemy->Ennemy->iRandVariation == 2)
-				{
-					CurrentEnnemy->Ennemy->fDesiredAngleDirection -= ANGLE_INCREASE;
-				}
-
-#pragma endregion VARIATION LEGERE //GUILLAUME
 
 				CurrentEnnemy->Ennemy->fCurrentAngleDirection = CurrentEnnemy->Ennemy->fDesiredAngleDirection;
 				//printf("ANGLE : %.2f\n", CurrentEnnemy->Ennemy->fCurrentAngleDirection);
@@ -648,6 +664,27 @@ int main()
 
 #pragma endregion GESTION VELOCITE / VITESSE //GUILLAUME
 
+#pragma region VARIATION LEGERE //GUILLAUME
+
+			/*méthode avec random*/
+			CurrentEnnemy->Ennemy->fTimeSinceLastVariation += timeSinceLastFrame;
+
+			if (CurrentEnnemy->Ennemy->fTimeSinceLastVariation > TIME_BETWEEN_VARIATION)
+			{
+				CurrentEnnemy->Ennemy->fTimeSinceLastVariation = 0;
+				CurrentEnnemy->Ennemy->iRandVariation = rand() % 2 + 1;
+				if (CurrentEnnemy->Ennemy->iRandVariation == 1)
+				{
+					CurrentEnnemy->Ennemy->fDesiredAngleDirection += ANGLE_INCREASE;
+				}
+				else if (CurrentEnnemy->Ennemy->iRandVariation == 2)
+				{
+					CurrentEnnemy->Ennemy->fDesiredAngleDirection -= ANGLE_INCREASE;
+				}
+			}
+
+#pragma endregion VARIATION LEGERE //GUILLAUME
+
 			/*VELOCITE*/
 			CurrentEnnemy->Ennemy->vCurrentVelocity.x = CurrentEnnemy->Ennemy->vCurrentDirection.x * CurrentEnnemy->Ennemy->fSpeed;
 			CurrentEnnemy->Ennemy->vCurrentVelocity.y = CurrentEnnemy->Ennemy->vCurrentDirection.y * CurrentEnnemy->Ennemy->fSpeed;
@@ -656,14 +693,12 @@ int main()
 			/*POSIITON*/
 			CurrentEnnemy->Ennemy->vCurrentPosition.x += CurrentEnnemy->Ennemy->vCurrentVelocity.x * timeSinceLastFrame;
 			CurrentEnnemy->Ennemy->vCurrentPosition.y += CurrentEnnemy->Ennemy->vCurrentVelocity.y * timeSinceLastFrame;
-			sfSprite_setPosition(CurrentEnnemy->Ennemy->sp_Ennemy, CurrentEnnemy->Ennemy->vCurrentPosition);
 
 			/*ORIENTATION DU SPRITE*/
-			printf("ANGLE SPRITE : %.2f | CURRENT ANGLE : %.2f\n", CurrentEnnemy->Ennemy->fAngleSprite, CurrentEnnemy->Ennemy->fCurrentAngleDirection);
+			//printf("ANGLE SPRITE : %.2f | CURRENT ANGLE : %.2f\n", CurrentEnnemy->Ennemy->fAngleSprite, CurrentEnnemy->Ennemy->fCurrentAngleDirection);
 			//CurrentEnnemy->Ennemy->fAngleSprite = GetAngleDegreeFromVector(CurrentEnnemy->Ennemy->vCurrentVelocity);
-			sfSprite_setRotation(CurrentEnnemy->Ennemy->sp_Ennemy, CurrentEnnemy->Ennemy->fAngleSprite);
 
-			//printf("DIRECTION X : %.2f | DIRECTION Y : %.2f\n", CurrentEnnemy->Ennemy->vCurrentDirection.x, CurrentEnnemy->Ennemy->vCurrentDirection.y);
+			printf("DIRECTION X : %.2f | DIRECTION Y : %.2f\n", CurrentEnnemy->Ennemy->vCurrentDirection.x, CurrentEnnemy->Ennemy->vCurrentDirection.y);
 			//printf("VELOCITY X : %.2f | VELOCITY Y : %.2f\n", CurrentEnnemy->Ennemy->vCurrentVelocity.x, CurrentEnnemy->Ennemy->vCurrentVelocity.y);
 			//printf("COLLIDE : %d\n", CurrentEnnemy->Ennemy->iIsColliding);
 			//printf("POSITION X : %.2f | POSITION Y : %2f\n", CurrentEnnemy->Ennemy->vCurrentPosition.x, CurrentEnnemy->Ennemy->vCurrentPosition.y);
@@ -821,6 +856,10 @@ int main()
 						/**/
 						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
 						sfSprite_setColor(btn1->sprite, sfWhite);
+						//if (ListTower->FirstElement->NextElement != NULL)
+						//{
+						//	while(!SortTowerByPos(ListTower)){}
+						//}
 					}
 					else if (!sfMouse_isButtonPressed(sfMouseLeft))
 					{
@@ -876,6 +915,10 @@ int main()
 						/**/
 						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
 						sfSprite_setColor(btn2->sprite, sfWhite);
+						//if (ListTower->FirstElement->NextElement != NULL)
+						//{
+						//	while (!SortTowerByPos(ListTower)) {}
+						//}
 					}
 					else if (!sfMouse_isButtonPressed(sfMouseLeft))
 					{
@@ -931,6 +974,10 @@ int main()
 						/**/
 						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
 						sfSprite_setColor(btn3->sprite, sfWhite);
+						//if (ListTower->FirstElement->NextElement != NULL)
+						//{
+						//	while (!SortTowerByPos(ListTower)) {}
+						//}
 					}
 					else if (!sfMouse_isButtonPressed(sfMouseLeft))
 					{
@@ -1004,8 +1051,7 @@ int main()
 			CurrentTower = CurrentTower->NextElement;
 		}
 
-
-		//affichage du champ de vision de la tour selectionnée
+		////affichage du champ de vision de la tour selectionnée
 		//if (isBuildedChoice)
 		//{
 		//	sfSprite_setPosition(Sp_fieldOfView, ActualTower->Tower->vPos);
@@ -1018,31 +1064,51 @@ int main()
 		CurrentEnnemy = ListEnnemy->FirstElement;
 		while (CurrentEnnemy != NULL)
 		{
+			sfSprite_setPosition(CurrentEnnemy->Ennemy->sp_Ennemy, CurrentEnnemy->Ennemy->vCurrentPosition);
+			sfSprite_setRotation(CurrentEnnemy->Ennemy->sp_Ennemy, CurrentEnnemy->Ennemy->fAngleSprite);
 			sfRenderWindow_drawSprite(window, CurrentEnnemy->Ennemy->sp_Ennemy, NULL);
 
 			/*AFFICHAGE DES VERTEX*/
 
 #pragma region AFFICHAGE DES VERTEX
 
-			/*CONTROL POINT*/
-			SetLineBetweenPoints(VertexArray, Vertex, CurrentEnnemy->Ennemy->vCurrentPosition, CurrentEnnemy->Ennemy->vControlPoint, sfBlack);
-			sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
+			///*CONTROL POINT*/
+			//SetLineBetweenPoints(VertexArray, Vertex, CurrentEnnemy->Ennemy->vCurrentPosition, CurrentEnnemy->Ennemy->vControlPoint, sfBlack);
+			//sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
 
-			/*RIGHT POINT*/
-			SetLineBetweenPoints(VertexArray, Vertex, CurrentEnnemy->Ennemy->vRightStartPoint, CurrentEnnemy->Ennemy->vRightControlPoint, sfBlack);
-			sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
+			///*RIGHT POINT*/
+			//SetLineBetweenPoints(VertexArray, Vertex, CurrentEnnemy->Ennemy->vRightStartPoint, CurrentEnnemy->Ennemy->vRightControlPoint, sfBlack);
+			//sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
 
-			/*LEFT POINT*/
-			SetLineBetweenPoints(VertexArray, Vertex, CurrentEnnemy->Ennemy->vLeftStartPoint, CurrentEnnemy->Ennemy->vLeftControlPoint, sfBlack);
-			sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
+			///*LEFT POINT*/
+			//SetLineBetweenPoints(VertexArray, Vertex, CurrentEnnemy->Ennemy->vLeftStartPoint, CurrentEnnemy->Ennemy->vLeftControlPoint, sfBlack);
+			//sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
 
-			/*SIDE RIGHT POINT*/
-			SetLineBetweenPoints(VertexArray, Vertex, CurrentEnnemy->Ennemy->vRightStartPoint, CurrentEnnemy->Ennemy->vSideRightControlPoint, sfBlack);
-			sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
+			///*SIDE RIGHT POINT*/
+			//SetLineBetweenPoints(VertexArray, Vertex, CurrentEnnemy->Ennemy->vRightStartPoint, CurrentEnnemy->Ennemy->vSideRightControlPoint, sfBlack);
+			//sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
 
-			/*SIDE LEFT POINT*/
-			SetLineBetweenPoints(VertexArray, Vertex, CurrentEnnemy->Ennemy->vLeftStartPoint, CurrentEnnemy->Ennemy->vSideLeftControlPoint, sfBlack);
-			sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
+			///*SIDE LEFT POINT*/
+			//SetLineBetweenPoints(VertexArray, Vertex, CurrentEnnemy->Ennemy->vLeftStartPoint, CurrentEnnemy->Ennemy->vSideLeftControlPoint, sfBlack);
+			//sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
+
+			//////DRAW WANDER CIRCLE//////
+			//circleDirection.x = CurrentEnnemy->Ennemy->vWanderCenter.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
+			//circleDirection.y = CurrentEnnemy->Ennemy->vWanderCenter.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
+
+			//sfCircleShape_setPosition(circleWander, CurrentEnnemy->Ennemy->vWanderCenter);
+			//sfRenderWindow_drawCircleShape(window, circleWander, NULL);
+
+			///*POUR LE WANDER*/
+			//SetLineBetweenPoints(VertexArray, Vertex, CurrentEnnemy->Ennemy->vCurrentPosition, CurrentEnnemy->Ennemy->vWanderCenter, sfCyan);
+			//sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
+
+			//VertexArray = GetLine(CurrentEnnemy->Ennemy->vWanderCenter, CurrentEnnemy->Ennemy->vWanderDirection, sfYellow);
+			//sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
+
+			///*steering*/
+			//VertexArray = GetLine(CurrentEnnemy->Ennemy->vCurrentPosition, CurrentEnnemy->Ennemy->vSteering, sfGreen);
+			//sfRenderWindow_drawVertexArray(window, VertexArray, NULL);
 
 			/*velocity*/
 			/*VertexArray = GetLine(CurrentEnnemy->Ennemy->vRightStartPoint, CurrentEnnemy->Ennemy->vRightControlPoint, sfBlack);
@@ -1098,53 +1164,63 @@ int main()
 		/*Lecture de liste tour pour le controle de colision champ de vision, et tir des tours*/
 
 		CurrentTower = ListTower->FirstElement;
-
 		while (CurrentTower != NULL)
 		{
-			if (sfFloatRect_contains(&CurrentTower->Tower->fieldBB, vPos_player.x, vPos_player.y))
+			CurrentEnnemy = ListEnnemy->FirstElement;
+			while (CurrentEnnemy != NULL)
 			{
-				vPlayerPointToCheck.x = (vOrigin_fieldOfView.x) - (CurrentTower->Tower->vPos.x - vPos_player.x);
-				vPlayerPointToCheck.y = (vOrigin_fieldOfView.y) - (CurrentTower->Tower->vPos.y - vPos_player.y);
-				if (sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).r == 255 && sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).g == 0
-					&& sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).b == 0 && sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).a == 255)
+				if (sfFloatRect_contains(&CurrentTower->Tower->fieldBB, CurrentEnnemy->Ennemy->vCurrentPosition.x, CurrentEnnemy->Ennemy->vCurrentPosition.y))
 				{
-					CurrentTower->Tower->tCurrentShoot = (float)clock() / CLOCKS_PER_SEC;
-					CurrentTower->Tower->tSinceShoot = CurrentTower->Tower->tCurrentShoot - CurrentTower->Tower->tStartShoot;
-					if (CurrentTower->Tower->tSinceShoot > 2 * CurrentTower->Tower->bulletSpeed)
+					vPlayerPointToCheck.x = (vOrigin_fieldOfView.x) - (CurrentTower->Tower->vPos.x - CurrentEnnemy->Ennemy->vCurrentPosition.x);
+					vPlayerPointToCheck.y = (vOrigin_fieldOfView.y) - (CurrentTower->Tower->vPos.y - CurrentEnnemy->Ennemy->vCurrentPosition.y);
+					if (sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).r == 255 && sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).g == 0
+						&& sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).b == 0 && sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).a == 255)
 					{
-						printf_s("Bullet !!!\n");
-						CurrentTower->Tower->tStartShoot = CurrentTower->Tower->tCurrentShoot;
-						NewTowerBullet = AddElementBeginListTowerBullet(ListTowerBullet);
-						NewTowerBullet->TowerBullet = malloc(sizeof(t_TowerBullet));
-						NewTowerBullet->TowerBullet->pos.x = CurrentTower->Tower->vPos.x;
-						NewTowerBullet->TowerBullet->pos.y = CurrentTower->Tower->vPos.y - CurrentTower->Tower->boundingBox.height;
 						switch (CurrentTower->Tower->TowerType)
 						{
-						case TYPE1:
-							NewTowerBullet->TowerBullet->sprite = Sp_bullet1;
-							NewTowerBullet->TowerBullet->bulletSpeed = 1;
+						case TYPE1 : 
 							break;
-						case TYPE2:
-							NewTowerBullet->TowerBullet->sprite = Sp_bullet2;
-							NewTowerBullet->TowerBullet->bulletSpeed = 2;
+						case TYPE2 :
+							CurrentEnnemy->Ennemy->fSpeed /= 1.2;
 							break;
 						case TYPE3:
-							NewTowerBullet->TowerBullet->sprite = Sp_bullet3;
-							NewTowerBullet->TowerBullet->bulletSpeed = 3;
+							CurrentTower->Tower->tCurrentShoot = (float)clock() / CLOCKS_PER_SEC;
+							CurrentTower->Tower->tSinceShoot = CurrentTower->Tower->tCurrentShoot - CurrentTower->Tower->tStartShoot;
+							if (CurrentTower->Tower->tSinceShoot > 2 * CurrentTower->Tower->bulletSpeed)
+							{
+								printf_s("Bullet !!!\n");
+								CurrentTower->Tower->tStartShoot = CurrentTower->Tower->tCurrentShoot;
+								NewTowerBullet = AddElementBeginListTowerBullet(ListTowerBullet);
+								NewTowerBullet->TowerBullet = malloc(sizeof(t_TowerBullet));
+								NewTowerBullet->TowerBullet->towerFromId = CurrentTower->Id;
+								NewTowerBullet->TowerBullet->pos.x = CurrentTower->Tower->vPos.x;
+								NewTowerBullet->TowerBullet->pos.y = CurrentTower->Tower->vPos.y - CurrentTower->Tower->boundingBox.height;
+								NewTowerBullet->TowerBullet->dir.x = CurrentEnnemy->Ennemy->vCurrentPosition.x - NewTowerBullet->TowerBullet->pos.x;
+								NewTowerBullet->TowerBullet->dir.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - NewTowerBullet->TowerBullet->pos.y;
+								NewTowerBullet->TowerBullet->dir = Normalize(NewTowerBullet->TowerBullet->dir);
+								NewTowerBullet->TowerBullet->sprite = Sp_bullet3;
+								NewTowerBullet->TowerBullet->bulletSpeed = 30;
+							}
 							break;
 						default:
 							break;
 						}
+						sfSprite_setColor(CurrentTower->Tower->fieldSpr, sfRed);
 					}
-					sfSprite_setColor(CurrentTower->Tower->fieldSpr, sfRed);
 				}
+				else
+				{
+					sfSprite_setColor(CurrentTower->Tower->fieldSpr, sfWhite);
+				}
+				CurrentEnnemy = CurrentEnnemy->NextElement;
 			}
-			else
-			{
-				sfSprite_setColor(CurrentTower->Tower->fieldSpr, sfWhite);
-			}
+
+
 			CurrentTower = CurrentTower->NextElement;
 		}
+
+
+
 
 #pragma endregion LECTURE CONTROLE COLISION TOURS //SEB
 
@@ -1299,26 +1375,76 @@ int main()
 #pragma region LECTURE TRAITEMENT TIRS //SEB
 
 		CurrentTowerBullet = ListTowerBullet->FirstElement;
-
+		CurrentTowerBullet->TowerBullet->bulletSpeed;
+		int asBreak = 0;
 		while (CurrentTowerBullet != NULL)
 		{
-			CurrentTowerBullet->TowerBullet->dir.x = vPos_player.x - CurrentTowerBullet->TowerBullet->pos.x;
-			CurrentTowerBullet->TowerBullet->dir.y = vPos_player.y - CurrentTowerBullet->TowerBullet->pos.y;
-			CurrentTowerBullet->TowerBullet->dir = Normalize(CurrentTowerBullet->TowerBullet->dir);
-			CurrentTowerBullet->TowerBullet->pos.x += CurrentTowerBullet->TowerBullet->dir.x ;
-			CurrentTowerBullet->TowerBullet->pos.y += CurrentTowerBullet->TowerBullet->dir.y;
+			//CurrentTowerBullet->TowerBullet->dir.x = vPos_player.x - CurrentTowerBullet->TowerBullet->pos.x;
+			//CurrentTowerBullet->TowerBullet->dir.y = vPos_player.y - CurrentTowerBullet->TowerBullet->pos.y;
+			//CurrentTowerBullet->TowerBullet->dir = Normalize(CurrentTowerBullet->TowerBullet->dir);
+			CurrentTowerBullet->TowerBullet->pos.x += CurrentTowerBullet->TowerBullet->dir.x * CurrentTowerBullet->TowerBullet->bulletSpeed;
+			CurrentTowerBullet->TowerBullet->pos.y += CurrentTowerBullet->TowerBullet->dir.y * CurrentTowerBullet->TowerBullet->bulletSpeed;;
 			sfSprite_setPosition(CurrentTowerBullet->TowerBullet->sprite, CurrentTowerBullet->TowerBullet->pos);
 			Rect_playerBB = sfCircleShape_getGlobalBounds(player);
-			CurrentTowerBullet->TowerBullet->boundingBox.left = CurrentTowerBullet->TowerBullet->pos.x - 20;
-			CurrentTowerBullet->TowerBullet->boundingBox.top = CurrentTowerBullet->TowerBullet->pos.y - 20;
-			CurrentTowerBullet->TowerBullet->boundingBox.width = 40;
-			CurrentTowerBullet->TowerBullet->boundingBox.height = 40;
-			if (sfFloatRect_intersects(&Rect_playerBB, &CurrentTowerBullet->TowerBullet->boundingBox, NULL))
+			CurrentTowerBullet->TowerBullet->boundingBox.left = CurrentTowerBullet->TowerBullet->pos.x - vOrigin_bullet.x;
+			CurrentTowerBullet->TowerBullet->boundingBox.top = CurrentTowerBullet->TowerBullet->pos.y - vOrigin_bullet.y;
+			CurrentTowerBullet->TowerBullet->boundingBox.width = vOrigin_bullet.x * 2;
+			CurrentTowerBullet->TowerBullet->boundingBox.height = vOrigin_bullet.y * 2;
+			CurrentEnnemy = ListEnnemy->FirstElement;
+			while (CurrentEnnemy != NULL)
 			{
-				DeleteElementByIdBullet(ListTowerBullet,CurrentTowerBullet->Id);
+				CurrentEnnemy->Ennemy->boundingBox.left = CurrentEnnemy->Ennemy->vCurrentPosition.x - CurrentEnnemy->Ennemy->vOrigin.x;
+				CurrentEnnemy->Ennemy->boundingBox.top = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentEnnemy->Ennemy->vOrigin.y;
+				CurrentEnnemy->Ennemy->boundingBox.width = CurrentEnnemy->Ennemy->vOrigin.x * 2;
+				CurrentEnnemy->Ennemy->boundingBox.height = CurrentEnnemy->Ennemy->vOrigin.y * 2;
+
+
+				if (sfFloatRect_intersects(&CurrentEnnemy->Ennemy->boundingBox, &CurrentTowerBullet->TowerBullet->boundingBox, NULL))
+				{
+					DeleteElementByIdBullet(ListTowerBullet,CurrentTowerBullet->Id);
+					asBreak = 1;
+					break;
+				}
+				CurrentEnnemy = CurrentEnnemy->NextElement;
+			}
+
+			//CurrentTower = ListTower->FirstElement;
+			//while (CurrentTower != NULL)
+			//{
+			//	if (CurrentTowerBullet->TowerBullet->towerFromId == CurrentTower->Id)
+			//	{
+			//		//vPlayerPointToCheck.x = (vOrigin_fieldOfView.x) - (CurrentTower->Tower->vPos.x - CurrentTowerBullet->TowerBullet->pos.x);
+			//		//vPlayerPointToCheck.y = (vOrigin_fieldOfView.y) - (CurrentTower->Tower->vPos.y - CurrentTowerBullet->TowerBullet->pos.y);
+			//		//if (!sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).r == 255 && !sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).g == 0
+			//		//	&& !sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).b == 0 && !sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).a == 255)
+			//		//{
+			//		if (!sfFloatRect_contains(&CurrentTower->Tower->boundingBox,CurrentTowerBullet->TowerBullet->pos.x, CurrentTowerBullet->TowerBullet->pos.y))
+			//		{
+			//			DeleteElementByIdBullet(ListTowerBullet, CurrentTowerBullet->Id);
+			//			asBreak = 1;
+			//			break;
+			//		}
+			//	}
+				//if (asBreak == 0)
+				//{
+					//CurrentTower = CurrentTower->NextElement;
+				//}
+				//else
+				//{
+					//break;
+				//}
+				//CurrentTower = CurrentTower->NextElement;
+			//}
+			if (asBreak == 0)
+			{
+				CurrentTowerBullet = CurrentTowerBullet->NextElement;
+			}
+			else
+			{
 				break;
 			}
-			CurrentTowerBullet = CurrentTowerBullet->NextElement;
+
+			
 		}
 
 #pragma endregion LECTURE TRAITEMENT TIRS //SEB
@@ -1335,6 +1461,20 @@ int main()
 		}
 
 #pragma endregion LECTURE AFFICHAGE TIRS //SEB
+
+
+		////////////////////////////////////
+		//CurrentTower = ListTower->FirstElement;
+		//printf_s("REEEEEEAAAAAAD!!!!!!!!!!!!!!!!\n");
+		//while (CurrentTower != NULL)
+		//{
+		//	printf_s("Current %d,bb left : %.2f,Top :%.2f,Width :%.2f,Height :%.2f\n", CurrentTower->Id, CurrentTower->Tower->boundingBox.left, CurrentTower->Tower->boundingBox.top, CurrentTower->Tower->boundingBox.width, CurrentTower->Tower->boundingBox.height);
+		//	CurrentTower = CurrentTower->NextElement;
+		//}
+
+
+		/////////////////////////////////////
+
 
 		/////////////////////////////////////MATTIA SEBASTIEN FIN CODE CONSTRUCTION TOURS + SLOTS ///////////////////////////////////////////////////////
 

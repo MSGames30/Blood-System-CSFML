@@ -1,0 +1,3 @@
+iEnnemySpawnNbr=2,
+vPosX=70,vPosY=1035
+vPosX=1860,vPosY=510

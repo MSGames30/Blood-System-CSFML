@@ -207,7 +207,7 @@ int SpriteIsOver(char *_window, char *_spritePerso, char *_spriteObject)
 //	}
 //}
 
-void loadTowerSlots(t_List* _ListTowerSlot, int _levelNumber)
+void loadTowerSlots(t_ListTowerSlot* _ListTowerSlot, int _levelNumber)
 {
 	t_TowerSlotElement* newElement = malloc(sizeof(t_TowerSlotElement));
 
@@ -1035,4 +1035,40 @@ void SetLineBetweenPoints(sfVertexArray* _vertexArray, sfVertex* _vertex, sfVect
 	_vertex->position = _destPoint;
 	// Add the second vertex to the array
 	sfVertexArray_append(_vertexArray, *_vertex);
+}
+
+sfBool SortTowerByPos(t_ListTower *_list)
+{
+	t_TowerElement *currentElement = _list->FirstElement;
+	t_TowerElement *tempElement;
+	sfBool listSorted = sfTrue;
+
+	if (currentElement->NextElement->Tower->vPos.y < _list->FirstElement->Tower->vPos.y)
+	{
+		tempElement = _list->FirstElement;
+
+		_list->FirstElement = currentElement->NextElement;
+		tempElement->NextElement = _list->FirstElement->NextElement;
+		_list->FirstElement->NextElement = tempElement;
+		listSorted = sfFalse;
+
+		currentElement = _list->FirstElement;
+	}
+
+	while (currentElement->NextElement != NULL && currentElement->NextElement->NextElement != NULL)
+	{
+		if (currentElement->NextElement->NextElement->Tower->vPos.y < currentElement->NextElement->Tower->vPos.y)
+		{
+			tempElement = currentElement->NextElement;
+
+			currentElement->NextElement = tempElement->NextElement;
+			tempElement->NextElement = tempElement->NextElement->NextElement;
+			currentElement->NextElement->NextElement = tempElement;
+			listSorted = sfFalse;
+		}
+
+		currentElement = currentElement->NextElement;
+	}
+
+	return listSorted;
 }
