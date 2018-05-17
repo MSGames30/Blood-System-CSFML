@@ -185,6 +185,8 @@ struct s_Ennemy
 	float fTimeSinceLastVariation;
 	sfVector2f vWanderCenter;
 	sfVector2f vWanderDirection;
+
+	float fSpeedFactor;
 };
 
 typedef struct s_EnnemyElement t_EnnemyElement;

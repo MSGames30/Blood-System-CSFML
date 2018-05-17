@@ -62,6 +62,7 @@ int main()
 	int iCurrentLevel = 2;
 	int iDebug = 0;
 	int iTowerId = 0;
+	float fSpeedFactor = 1;
 	#pragma endregion C VARS
 
 	#pragma region CSFML VARS //SEB
@@ -325,6 +326,7 @@ int main()
 			}
 			NewEnnemy->Ennemy->vOrigin.x = sfSprite_getGlobalBounds(NewEnnemy->Ennemy->sp_Ennemy).width / 2;
 			NewEnnemy->Ennemy->vOrigin.y = sfSprite_getGlobalBounds(NewEnnemy->Ennemy->sp_Ennemy).height / 2;
+			NewEnnemy->Ennemy->fSpeedFactor = 1;
 			sfSprite_setOrigin(NewEnnemy->Ennemy->sp_Ennemy, NewEnnemy->Ennemy->vOrigin);
 
 #pragma endregion GESTION EN FONCTION DU TYPE ENNEMIE //GUILLAUME
@@ -688,8 +690,8 @@ int main()
 #pragma endregion VARIATION LEGERE //GUILLAUME
 
 			/*VELOCITE*/
-			CurrentEnnemy->Ennemy->vCurrentVelocity.x = CurrentEnnemy->Ennemy->vCurrentDirection.x * CurrentEnnemy->Ennemy->fSpeed;
-			CurrentEnnemy->Ennemy->vCurrentVelocity.y = CurrentEnnemy->Ennemy->vCurrentDirection.y * CurrentEnnemy->Ennemy->fSpeed;
+			CurrentEnnemy->Ennemy->vCurrentVelocity.x = CurrentEnnemy->Ennemy->vCurrentDirection.x * (CurrentEnnemy->Ennemy->fSpeed*CurrentEnnemy->Ennemy->fSpeedFactor);
+			CurrentEnnemy->Ennemy->vCurrentVelocity.y = CurrentEnnemy->Ennemy->vCurrentDirection.y *(CurrentEnnemy->Ennemy->fSpeed*CurrentEnnemy->Ennemy->fSpeedFactor);
 			CurrentEnnemy->Ennemy->vCurrentVelocity = Truncate(CurrentEnnemy->Ennemy->vCurrentVelocity, MAX_SPEED);
 
 			/*POSIITON*/
@@ -759,263 +761,6 @@ int main()
 			CurrentTowerSlot = CurrentTowerSlot->NextElement;
 		}
 #pragma endregion LECTURE TRAITEMENT AFFICHAGE SLOTS TOURS //SEB
-
-#pragma region GESTION MENU CONSTRUCTION //SEB
-
-		/*animation ouverture menu construction*/
-		if (isInBuildChoice && !isOpened)
-		{
-			vDistanceBetween.x = btn1->vPos.x - ActualTowerSlot->TowerSlot->vPos.x;
-			vDistanceBetween.y = btn1->vPos.y - ActualTowerSlot->TowerSlot->vPos.y;
-			if (Magnitude(vDistanceBetween) < BUILD_OPENING_RADIUS)
-			{
-				btn1->vPos.x += btn1->vDir.x * BUILD_SPEED_FACTOR * timeSinceLastFrame;
-				btn1->vPos.y += btn1->vDir.y * BUILD_SPEED_FACTOR * timeSinceLastFrame;
-				sfSprite_setPosition(btn1->sprite, btn1->vPos);
-			}
-			vDistanceBetween.x = btn2->vPos.x - ActualTowerSlot->TowerSlot->vPos.x;
-			vDistanceBetween.y = btn2->vPos.y - ActualTowerSlot->TowerSlot->vPos.y;
-			if (Magnitude(vDistanceBetween) < BUILD_OPENING_RADIUS)
-			{
-				btn2->vPos.x += btn2->vDir.x * BUILD_SPEED_FACTOR * timeSinceLastFrame;
-				btn2->vPos.y += btn2->vDir.y * BUILD_SPEED_FACTOR * timeSinceLastFrame;
-				sfSprite_setPosition(btn2->sprite, btn2->vPos);
-			}
-			vDistanceBetween.x = btn3->vPos.x - ActualTowerSlot->TowerSlot->vPos.x;
-			vDistanceBetween.y = btn3->vPos.y - ActualTowerSlot->TowerSlot->vPos.y;
-			if (Magnitude(vDistanceBetween) < BUILD_OPENING_RADIUS)
-			{
-				btn3->vPos.x += btn3->vDir.x * BUILD_SPEED_FACTOR * timeSinceLastFrame;
-				btn3->vPos.y += btn3->vDir.y * BUILD_SPEED_FACTOR * timeSinceLastFrame;
-				sfSprite_setPosition(btn3->sprite, btn3->vPos);
-			}
-
-			if (vBtnScale.x < 1 && vBtnScale.y < 1)
-			{
-				vBtnScale.x += 1.34 * timeSinceLastFrame;
-				vBtnScale.y += 1.34 * timeSinceLastFrame;
-				sfSprite_setScale(btn1->sprite, vBtnScale);
-				sfSprite_setScale(btn2->sprite, vBtnScale);
-				sfSprite_setScale(btn3->sprite, vBtnScale);
-			}
-			else
-			{
-				isOpened = sfTrue;
-			}
-			
-		}
-
-		/*Mode construction ouvert*/
-		if (isInBuildChoice)
-		{
-			if (isOpened)
-			{
-				vMousePos = sfMouse_getPosition(window);
-				vMousePosToFloat.x = (float)vMousePos.x;
-				vMousePosToFloat.y = (float)vMousePos.y;
-				
-				Rect_TowerSlotBtnBB.left = btn1->vPos.x - btn1->vOrigin.x;
-				Rect_TowerSlotBtnBB.top = btn1->vPos.y - btn1->vOrigin.y;
-				Rect_TowerSlotBtnBB.width = btn1->vOrigin.x * 2;
-				Rect_TowerSlotBtnBB.height = btn1->vOrigin.y * 2;
-				if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y))
-				{
-					sfSprite_setColor(btn1->sprite, sfYellow);
-					btn1->isOver = sfTrue;
-					if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-					{
-						isMousePressed = sfTrue;
-						NewTower = AddElementBeginListTower(ListTower);
-						NewTower->Tower = malloc(sizeof(t_Tower));
-						NewTower->Tower->vPos.x = ActualTowerSlot->TowerSlot->vPos.x;
-						NewTower->Tower->vPos.y = ActualTowerSlot->TowerSlot->vPos.y;
-						NewTower->Tower->TowerType = TYPE1;
-						NewTower->Tower->sprite = Sp_tower1;
-						NewTower->Tower->TowerLevel = NORMAL;
-						NewTower->Tower->animRect.left = 0;
-						NewTower->Tower->animRect.top = NewTower->Tower->TowerLevel * TOWER_HEIGHT;
-						NewTower->Tower->animRect.width = TOWER_WIDTH;
-						NewTower->Tower->animRect.height = TOWER_HEIGHT;
-						NewTower->Tower->tStartShoot = (float)clock() / CLOCKS_PER_SEC;
-						NewTower->Tower->tSinceShoot = 0;
-						NewTower->Tower->tCurrentShoot = 0;
-						NewTower->Tower->fieldSpr = createSprite("resources/textures/tower_field_of_view.png");
-						NewTower->Tower->bulletSpeed = 1;
-						sfSprite_setOrigin(NewTower->Tower->fieldSpr, vOrigin_fieldOfView);
-						sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
-						NewTower->Tower->fieldBB = sfSprite_getGlobalBounds(NewTower->Tower->fieldSpr);
-						sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
-						sfSprite_setPosition(NewTower->Tower->sprite, NewTower->Tower->vPos);
-						NewTower->Tower->boundingBox = sfSprite_getGlobalBounds(NewTower->Tower->sprite);
-						isOpened = sfFalse;
-						isInBuildChoice = sfFalse;
-						/*mettre en fonction*/
-						vBtnScale.x = 0;
-						vBtnScale.y = 0;
-						sfSprite_setScale(btn1->sprite, vBtnScale);
-						sfSprite_setScale(btn2->sprite, vBtnScale);
-						sfSprite_setScale(btn3->sprite, vBtnScale);
-						/**/
-						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
-						sfSprite_setColor(btn1->sprite, sfWhite);
-						if (ListTower->FirstElement->NextElement != NULL)
-						{
-							while(!SortTowerByPos(ListTower)){}
-						}
-					}
-					else if (!sfMouse_isButtonPressed(sfMouseLeft))
-					{
-						isMousePressed = sfFalse;
-					}
-				}
-				else
-				{
-					sfSprite_setColor(btn1->sprite, sfWhite);
-					btn1->isOver = sfFalse;
-				}
-				Rect_TowerSlotBtnBB.left = btn2->vPos.x - btn2->vOrigin.x;
-				Rect_TowerSlotBtnBB.top = btn2->vPos.y - btn2->vOrigin.y;
-				Rect_TowerSlotBtnBB.width = btn2->vOrigin.x * 2;
-				Rect_TowerSlotBtnBB.height = btn2->vOrigin.y * 2;
-				if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y))
-				{
-					sfSprite_setColor(btn2->sprite, sfYellow);
-					btn2->isOver = sfTrue;
-					if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-					{
-						isMousePressed = sfTrue;
-						NewTower = AddElementBeginListTower(ListTower);
-						NewTower->Tower = malloc(sizeof(t_Tower));
-						NewTower->Tower->vPos.x = ActualTowerSlot->TowerSlot->vPos.x;
-						NewTower->Tower->vPos.y = ActualTowerSlot->TowerSlot->vPos.y;
-						NewTower->Tower->TowerType = TYPE2;
-						NewTower->Tower->sprite = Sp_tower2;
-						NewTower->Tower->TowerLevel = NORMAL;
-						NewTower->Tower->animRect.left = 0;
-						NewTower->Tower->animRect.top = NewTower->Tower->TowerLevel * TOWER_HEIGHT;
-						NewTower->Tower->animRect.width = TOWER_WIDTH;
-						NewTower->Tower->animRect.height = TOWER_HEIGHT;
-						NewTower->Tower->tStartShoot = (float)clock() / CLOCKS_PER_SEC;
-						NewTower->Tower->tSinceShoot = 0;
-						NewTower->Tower->tCurrentShoot = 0;
-						NewTower->Tower->fieldSpr = createSprite("resources/textures/tower_field_of_view.png");
-						sfSprite_setOrigin(NewTower->Tower->fieldSpr, vOrigin_fieldOfView);
-						sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
-						NewTower->Tower->fieldBB = sfSprite_getGlobalBounds(NewTower->Tower->fieldSpr);
-						sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
-						sfSprite_setPosition(NewTower->Tower->sprite, NewTower->Tower->vPos);
-						NewTower->Tower->boundingBox = sfSprite_getGlobalBounds(NewTower->Tower->sprite);
-						NewTower->Tower->bulletSpeed = 0.7;
-						isOpened = sfFalse;
-						isInBuildChoice = sfFalse;
-						/*mettre en fonction*/
-						vBtnScale.x = 0;
-						vBtnScale.y = 0;
-						sfSprite_setScale(btn1->sprite, vBtnScale);
-						sfSprite_setScale(btn2->sprite, vBtnScale);
-						sfSprite_setScale(btn3->sprite, vBtnScale);
-						/**/
-						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
-						sfSprite_setColor(btn2->sprite, sfWhite);
-						if (ListTower->FirstElement->NextElement != NULL)
-						{
-							while (!SortTowerByPos(ListTower)) {}
-						}
-					}
-					else if (!sfMouse_isButtonPressed(sfMouseLeft))
-					{
-						isMousePressed = sfFalse;
-					}
-				}
-				else
-				{
-					sfSprite_setColor(btn2->sprite, sfWhite);
-					btn2->isOver = sfFalse;
-				}
-				Rect_TowerSlotBtnBB.left = btn3->vPos.x - btn3->vOrigin.x;
-				Rect_TowerSlotBtnBB.top = btn3->vPos.y - btn3->vOrigin.y;
-				Rect_TowerSlotBtnBB.width = btn3->vOrigin.x * 2;
-				Rect_TowerSlotBtnBB.height = btn3->vOrigin.y * 2;
-				if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y))
-				{
-					sfSprite_setColor(btn3->sprite, sfYellow);
-					btn3->isOver = sfTrue;
-					if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-					{
-						isMousePressed = sfTrue;
-						NewTower = AddElementBeginListTower(ListTower);
-						NewTower->Tower = malloc(sizeof(t_Tower));
-						NewTower->Tower->vPos.x = ActualTowerSlot->TowerSlot->vPos.x;
-						NewTower->Tower->vPos.y = ActualTowerSlot->TowerSlot->vPos.y;
-						NewTower->Tower->TowerType = TYPE3;
-						NewTower->Tower->sprite = Sp_tower3;
-						NewTower->Tower->TowerLevel = NORMAL;
-						NewTower->Tower->animRect.left = 0;
-						NewTower->Tower->animRect.top = NewTower->Tower->TowerLevel * TOWER_HEIGHT;
-						NewTower->Tower->animRect.width = TOWER_WIDTH;
-						NewTower->Tower->animRect.height = TOWER_HEIGHT;
-						NewTower->Tower->tStartShoot = (float)clock() / CLOCKS_PER_SEC;
-						NewTower->Tower->tSinceShoot = 0;
-						NewTower->Tower->tCurrentShoot = 0;
-						NewTower->Tower->fieldSpr = createSprite("resources/textures/tower_field_of_view.png");
-						sfSprite_setOrigin(NewTower->Tower->fieldSpr, vOrigin_fieldOfView);
-						sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
-						NewTower->Tower->fieldBB = sfSprite_getGlobalBounds(NewTower->Tower->fieldSpr);
-						sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
-						sfSprite_setPosition(NewTower->Tower->sprite, NewTower->Tower->vPos);
-						NewTower->Tower->boundingBox = sfSprite_getGlobalBounds(NewTower->Tower->sprite);
-						NewTower->Tower->bulletSpeed = 0.5;
-						isOpened = sfFalse;
-						isInBuildChoice = sfFalse;
-						/*mettre en fonction*/
-						vBtnScale.x = 0;
-						vBtnScale.y = 0;
-						sfSprite_setScale(btn1->sprite, vBtnScale);
-						sfSprite_setScale(btn2->sprite, vBtnScale);
-						sfSprite_setScale(btn3->sprite, vBtnScale);
-						/**/
-						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
-						sfSprite_setColor(btn3->sprite, sfWhite);
-						if (ListTower->FirstElement->NextElement != NULL)
-						{
-							while (!SortTowerByPos(ListTower)) {}
-						}
-					}
-					else if (!sfMouse_isButtonPressed(sfMouseLeft))
-					{
-						isMousePressed = sfFalse;
-					}
-				}
-				else
-				{
-					sfSprite_setColor(btn3->sprite, sfWhite);
-					btn3->isOver = sfFalse;
-				}
-				if (sfMouse_isButtonPressed(sfMouseLeft) && !btn1->isOver 
-					&& !btn2->isOver && !btn3->isOver && !isMousePressed)
-				{
-					isMousePressed = sfTrue;
-					isOpened = sfFalse;
-					isInBuildChoice = sfFalse;
-					/*mettre en fonction*/
-					vBtnScale.x = 0;
-					vBtnScale.y = 0;
-					sfSprite_setScale(btn1->sprite, vBtnScale);
-					sfSprite_setScale(btn2->sprite, vBtnScale);
-					sfSprite_setScale(btn3->sprite, vBtnScale);
-					/**/
-				}
-				else if (!sfMouse_isButtonPressed(sfMouseLeft))
-				{
-					isMousePressed = sfFalse;
-				}
-			}
-			sfRenderWindow_drawSprite(window, btn1->sprite, NULL);
-			sfRenderWindow_drawSprite(window, btn2->sprite, NULL);
-			sfRenderWindow_drawSprite(window, btn3->sprite, NULL);
-		}
-
-#pragma endregion GESTION MENU CONSTRUCTION //SEB
 
 #pragma region LECTURE TRAITEMENT DES TOURS //SEB
 
@@ -1180,10 +925,12 @@ int main()
 					{
 						switch (CurrentTower->Tower->TowerType)
 						{
+							
 						case TYPE1 : 
 							break;
 						case TYPE2 :
-							CurrentEnnemy->Ennemy->fSpeed /= 1.2;
+							CurrentEnnemy->Ennemy->fSpeedFactor = 0.5;
+							//CurrentEnnemy->Ennemy->fSpeed /= 1.2;
 							break;
 						case TYPE3:
 							CurrentTower->Tower->tCurrentShoot = (float)clock() / CLOCKS_PER_SEC;
@@ -1209,6 +956,10 @@ int main()
 						}
 						sfSprite_setColor(CurrentTower->Tower->fieldSpr, sfRed);
 					}
+					else
+					{
+						CurrentEnnemy->Ennemy->fSpeedFactor = 1;
+					}
 				}
 				else
 				{
@@ -1225,6 +976,263 @@ int main()
 
 
 #pragma endregion LECTURE CONTROLE COLISION TOURS //SEB
+
+#pragma region GESTION MENU CONSTRUCTION //SEB
+
+		/*animation ouverture menu construction*/
+		if (isInBuildChoice && !isOpened)
+		{
+			vDistanceBetween.x = btn1->vPos.x - ActualTowerSlot->TowerSlot->vPos.x;
+			vDistanceBetween.y = btn1->vPos.y - ActualTowerSlot->TowerSlot->vPos.y;
+			if (Magnitude(vDistanceBetween) < BUILD_OPENING_RADIUS)
+			{
+				btn1->vPos.x += btn1->vDir.x * BUILD_SPEED_FACTOR * timeSinceLastFrame;
+				btn1->vPos.y += btn1->vDir.y * BUILD_SPEED_FACTOR * timeSinceLastFrame;
+				sfSprite_setPosition(btn1->sprite, btn1->vPos);
+			}
+			vDistanceBetween.x = btn2->vPos.x - ActualTowerSlot->TowerSlot->vPos.x;
+			vDistanceBetween.y = btn2->vPos.y - ActualTowerSlot->TowerSlot->vPos.y;
+			if (Magnitude(vDistanceBetween) < BUILD_OPENING_RADIUS)
+			{
+				btn2->vPos.x += btn2->vDir.x * BUILD_SPEED_FACTOR * timeSinceLastFrame;
+				btn2->vPos.y += btn2->vDir.y * BUILD_SPEED_FACTOR * timeSinceLastFrame;
+				sfSprite_setPosition(btn2->sprite, btn2->vPos);
+			}
+			vDistanceBetween.x = btn3->vPos.x - ActualTowerSlot->TowerSlot->vPos.x;
+			vDistanceBetween.y = btn3->vPos.y - ActualTowerSlot->TowerSlot->vPos.y;
+			if (Magnitude(vDistanceBetween) < BUILD_OPENING_RADIUS)
+			{
+				btn3->vPos.x += btn3->vDir.x * BUILD_SPEED_FACTOR * timeSinceLastFrame;
+				btn3->vPos.y += btn3->vDir.y * BUILD_SPEED_FACTOR * timeSinceLastFrame;
+				sfSprite_setPosition(btn3->sprite, btn3->vPos);
+			}
+
+			if (vBtnScale.x < 1 && vBtnScale.y < 1)
+			{
+				vBtnScale.x += 1.34 * timeSinceLastFrame;
+				vBtnScale.y += 1.34 * timeSinceLastFrame;
+				sfSprite_setScale(btn1->sprite, vBtnScale);
+				sfSprite_setScale(btn2->sprite, vBtnScale);
+				sfSprite_setScale(btn3->sprite, vBtnScale);
+			}
+			else
+			{
+				isOpened = sfTrue;
+			}
+
+		}
+
+		/*Mode construction ouvert*/
+		if (isInBuildChoice)
+		{
+			if (isOpened)
+			{
+				vMousePos = sfMouse_getPosition(window);
+				vMousePosToFloat.x = (float)vMousePos.x;
+				vMousePosToFloat.y = (float)vMousePos.y;
+
+				Rect_TowerSlotBtnBB.left = btn1->vPos.x - btn1->vOrigin.x;
+				Rect_TowerSlotBtnBB.top = btn1->vPos.y - btn1->vOrigin.y;
+				Rect_TowerSlotBtnBB.width = btn1->vOrigin.x * 2;
+				Rect_TowerSlotBtnBB.height = btn1->vOrigin.y * 2;
+				if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y))
+				{
+					sfSprite_setColor(btn1->sprite, sfYellow);
+					btn1->isOver = sfTrue;
+					if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+					{
+						isMousePressed = sfTrue;
+						NewTower = AddElementBeginListTower(ListTower);
+						NewTower->Tower = malloc(sizeof(t_Tower));
+						NewTower->Tower->vPos.x = ActualTowerSlot->TowerSlot->vPos.x;
+						NewTower->Tower->vPos.y = ActualTowerSlot->TowerSlot->vPos.y;
+						NewTower->Tower->TowerType = TYPE1;
+						NewTower->Tower->sprite = Sp_tower1;
+						NewTower->Tower->TowerLevel = NORMAL;
+						NewTower->Tower->animRect.left = 0;
+						NewTower->Tower->animRect.top = NewTower->Tower->TowerLevel * TOWER_HEIGHT;
+						NewTower->Tower->animRect.width = TOWER_WIDTH;
+						NewTower->Tower->animRect.height = TOWER_HEIGHT;
+						NewTower->Tower->tStartShoot = (float)clock() / CLOCKS_PER_SEC;
+						NewTower->Tower->tSinceShoot = 0;
+						NewTower->Tower->tCurrentShoot = 0;
+						NewTower->Tower->fieldSpr = createSprite("resources/textures/tower_field_of_view.png");
+						NewTower->Tower->bulletSpeed = 1;
+						sfSprite_setOrigin(NewTower->Tower->fieldSpr, vOrigin_fieldOfView);
+						sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
+						NewTower->Tower->fieldBB = sfSprite_getGlobalBounds(NewTower->Tower->fieldSpr);
+						sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
+						sfSprite_setPosition(NewTower->Tower->sprite, NewTower->Tower->vPos);
+						NewTower->Tower->boundingBox = sfSprite_getGlobalBounds(NewTower->Tower->sprite);
+						isOpened = sfFalse;
+						isInBuildChoice = sfFalse;
+						/*mettre en fonction*/
+						vBtnScale.x = 0;
+						vBtnScale.y = 0;
+						sfSprite_setScale(btn1->sprite, vBtnScale);
+						sfSprite_setScale(btn2->sprite, vBtnScale);
+						sfSprite_setScale(btn3->sprite, vBtnScale);
+						/**/
+						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
+						sfSprite_setColor(btn1->sprite, sfWhite);
+						if (ListTower->FirstElement->NextElement != NULL)
+						{
+							while (!SortTowerByPos(ListTower)) {}
+						}
+					}
+					else if (!sfMouse_isButtonPressed(sfMouseLeft))
+					{
+						isMousePressed = sfFalse;
+					}
+				}
+				else
+				{
+					sfSprite_setColor(btn1->sprite, sfWhite);
+					btn1->isOver = sfFalse;
+				}
+				Rect_TowerSlotBtnBB.left = btn2->vPos.x - btn2->vOrigin.x;
+				Rect_TowerSlotBtnBB.top = btn2->vPos.y - btn2->vOrigin.y;
+				Rect_TowerSlotBtnBB.width = btn2->vOrigin.x * 2;
+				Rect_TowerSlotBtnBB.height = btn2->vOrigin.y * 2;
+				if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y))
+				{
+					sfSprite_setColor(btn2->sprite, sfYellow);
+					btn2->isOver = sfTrue;
+					if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+					{
+						isMousePressed = sfTrue;
+						NewTower = AddElementBeginListTower(ListTower);
+						NewTower->Tower = malloc(sizeof(t_Tower));
+						NewTower->Tower->vPos.x = ActualTowerSlot->TowerSlot->vPos.x;
+						NewTower->Tower->vPos.y = ActualTowerSlot->TowerSlot->vPos.y;
+						NewTower->Tower->TowerType = TYPE2;
+						NewTower->Tower->sprite = Sp_tower2;
+						NewTower->Tower->TowerLevel = NORMAL;
+						NewTower->Tower->animRect.left = 0;
+						NewTower->Tower->animRect.top = NewTower->Tower->TowerLevel * TOWER_HEIGHT;
+						NewTower->Tower->animRect.width = TOWER_WIDTH;
+						NewTower->Tower->animRect.height = TOWER_HEIGHT;
+						NewTower->Tower->tStartShoot = (float)clock() / CLOCKS_PER_SEC;
+						NewTower->Tower->tSinceShoot = 0;
+						NewTower->Tower->tCurrentShoot = 0;
+						NewTower->Tower->fieldSpr = createSprite("resources/textures/tower_field_of_view.png");
+						sfSprite_setOrigin(NewTower->Tower->fieldSpr, vOrigin_fieldOfView);
+						sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
+						NewTower->Tower->fieldBB = sfSprite_getGlobalBounds(NewTower->Tower->fieldSpr);
+						sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
+						sfSprite_setPosition(NewTower->Tower->sprite, NewTower->Tower->vPos);
+						NewTower->Tower->boundingBox = sfSprite_getGlobalBounds(NewTower->Tower->sprite);
+						NewTower->Tower->bulletSpeed = 0.7;
+						isOpened = sfFalse;
+						isInBuildChoice = sfFalse;
+						/*mettre en fonction*/
+						vBtnScale.x = 0;
+						vBtnScale.y = 0;
+						sfSprite_setScale(btn1->sprite, vBtnScale);
+						sfSprite_setScale(btn2->sprite, vBtnScale);
+						sfSprite_setScale(btn3->sprite, vBtnScale);
+						/**/
+						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
+						sfSprite_setColor(btn2->sprite, sfWhite);
+						if (ListTower->FirstElement->NextElement != NULL)
+						{
+							while (!SortTowerByPos(ListTower)) {}
+						}
+					}
+					else if (!sfMouse_isButtonPressed(sfMouseLeft))
+					{
+						isMousePressed = sfFalse;
+					}
+				}
+				else
+				{
+					sfSprite_setColor(btn2->sprite, sfWhite);
+					btn2->isOver = sfFalse;
+				}
+				Rect_TowerSlotBtnBB.left = btn3->vPos.x - btn3->vOrigin.x;
+				Rect_TowerSlotBtnBB.top = btn3->vPos.y - btn3->vOrigin.y;
+				Rect_TowerSlotBtnBB.width = btn3->vOrigin.x * 2;
+				Rect_TowerSlotBtnBB.height = btn3->vOrigin.y * 2;
+				if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y))
+				{
+					sfSprite_setColor(btn3->sprite, sfYellow);
+					btn3->isOver = sfTrue;
+					if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+					{
+						isMousePressed = sfTrue;
+						NewTower = AddElementBeginListTower(ListTower);
+						NewTower->Tower = malloc(sizeof(t_Tower));
+						NewTower->Tower->vPos.x = ActualTowerSlot->TowerSlot->vPos.x;
+						NewTower->Tower->vPos.y = ActualTowerSlot->TowerSlot->vPos.y;
+						NewTower->Tower->TowerType = TYPE3;
+						NewTower->Tower->sprite = Sp_tower3;
+						NewTower->Tower->TowerLevel = NORMAL;
+						NewTower->Tower->animRect.left = 0;
+						NewTower->Tower->animRect.top = NewTower->Tower->TowerLevel * TOWER_HEIGHT;
+						NewTower->Tower->animRect.width = TOWER_WIDTH;
+						NewTower->Tower->animRect.height = TOWER_HEIGHT;
+						NewTower->Tower->tStartShoot = (float)clock() / CLOCKS_PER_SEC;
+						NewTower->Tower->tSinceShoot = 0;
+						NewTower->Tower->tCurrentShoot = 0;
+						NewTower->Tower->fieldSpr = createSprite("resources/textures/tower_field_of_view.png");
+						sfSprite_setOrigin(NewTower->Tower->fieldSpr, vOrigin_fieldOfView);
+						sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
+						NewTower->Tower->fieldBB = sfSprite_getGlobalBounds(NewTower->Tower->fieldSpr);
+						sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
+						sfSprite_setPosition(NewTower->Tower->sprite, NewTower->Tower->vPos);
+						NewTower->Tower->boundingBox = sfSprite_getGlobalBounds(NewTower->Tower->sprite);
+						NewTower->Tower->bulletSpeed = 0.5;
+						isOpened = sfFalse;
+						isInBuildChoice = sfFalse;
+						/*mettre en fonction*/
+						vBtnScale.x = 0;
+						vBtnScale.y = 0;
+						sfSprite_setScale(btn1->sprite, vBtnScale);
+						sfSprite_setScale(btn2->sprite, vBtnScale);
+						sfSprite_setScale(btn3->sprite, vBtnScale);
+						/**/
+						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
+						sfSprite_setColor(btn3->sprite, sfWhite);
+						if (ListTower->FirstElement->NextElement != NULL)
+						{
+							while (!SortTowerByPos(ListTower)) {}
+						}
+					}
+					else if (!sfMouse_isButtonPressed(sfMouseLeft))
+					{
+						isMousePressed = sfFalse;
+					}
+				}
+				else
+				{
+					sfSprite_setColor(btn3->sprite, sfWhite);
+					btn3->isOver = sfFalse;
+				}
+				if (sfMouse_isButtonPressed(sfMouseLeft) && !btn1->isOver
+					&& !btn2->isOver && !btn3->isOver && !isMousePressed)
+				{
+					isMousePressed = sfTrue;
+					isOpened = sfFalse;
+					isInBuildChoice = sfFalse;
+					/*mettre en fonction*/
+					vBtnScale.x = 0;
+					vBtnScale.y = 0;
+					sfSprite_setScale(btn1->sprite, vBtnScale);
+					sfSprite_setScale(btn2->sprite, vBtnScale);
+					sfSprite_setScale(btn3->sprite, vBtnScale);
+					/**/
+				}
+				else if (!sfMouse_isButtonPressed(sfMouseLeft))
+				{
+					isMousePressed = sfFalse;
+				}
+			}
+			sfRenderWindow_drawSprite(window, btn1->sprite, NULL);
+			sfRenderWindow_drawSprite(window, btn2->sprite, NULL);
+			sfRenderWindow_drawSprite(window, btn3->sprite, NULL);
+		}
+
+#pragma endregion GESTION MENU CONSTRUCTION //SEB
 
 #pragma region GESTION MENU UP/SELL //SEB
 
