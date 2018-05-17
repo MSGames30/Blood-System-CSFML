@@ -320,7 +320,7 @@ t_TowerElement* AddElementBeginListTower(t_ListTower* _List)
 		NewElement->PreviousElement = NULL;
 		_List->FirstElement = NewElement;
 		_List->LastElement = NewElement;
-		NewElement->Id = 0;
+		//NewElement->Id = 0;
 	}
 	else
 	{
@@ -328,9 +328,10 @@ t_TowerElement* AddElementBeginListTower(t_ListTower* _List)
 		NewElement->NextElement->PreviousElement = NewElement;
 		NewElement->PreviousElement = NULL;
 		_List->FirstElement = NewElement;
-		NewElement->Id = NewElement->NextElement->Id + 1;
+		//NewElement->Id = NewElement->NextElement->Id + 1;
 	}
-
+	NewElement->Id = _List->count;
+	_List->count++;
 	//printf("NEW ELEMENT IS ADD\n");
 	return NewElement;
 }
@@ -1071,4 +1072,40 @@ sfBool SortTowerByPos(t_ListTower *_list)
 	}
 
 	return listSorted;
+}
+
+sfBool DeleteEntityWithID(t_ListTower*_list, int _id)
+{
+	t_TowerElement *currentElement = _list->FirstElement;
+	if (currentElement->Id == _id)
+	{
+		t_TowerElement *deletedElement = currentElement;
+		_list->FirstElement = currentElement->NextElement;
+
+		free(deletedElement);
+		//printf("Bullet with id %d has been deleted\n", _id);
+		return sfTrue;
+	}
+	else
+	{
+		while (currentElement->NextElement != NULL)
+		{
+			if (currentElement->NextElement->Id == _id)
+			{
+				t_TowerElement *deletedElement = currentElement->NextElement;
+				if (currentElement->NextElement != NULL)
+					currentElement->NextElement = currentElement->NextElement->NextElement;
+
+				free(deletedElement);
+				printf("Bullet with id %d has been deleted\n", _id);
+				return sfTrue;
+			}
+			else
+			{
+				currentElement = currentElement->NextElement;
+			}
+		}
+	}
+	printf("Unable to delete Bullet with id %d\n", _id);
+	return sfFalse;
 }

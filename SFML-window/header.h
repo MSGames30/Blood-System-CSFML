@@ -263,6 +263,7 @@ struct s_TowerElement
 typedef struct s_ListTower t_ListTower;
 struct s_ListTower
 {
+	int count;
 	t_TowerElement* FirstElement;
 	t_TowerElement* LastElement;
 };
@@ -376,4 +377,5 @@ void SetLineBetweenPoints(sfVertexArray* _vertexArray, sfVertex* _vertex, sfVect
 
 sfBool SortTowerByPos(t_ListTower *_list);
 
+sfBool DeleteEntityWithID(t_ListTower*_list, int _id);
 #pragma endregion Functions Declarations

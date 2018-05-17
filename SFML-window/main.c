@@ -21,6 +21,7 @@ int main()
 	t_TowerSlotElement* ActualTowerSlot = NULL;
 
 	t_ListTower* ListTower = malloc(sizeof(t_List));
+	ListTower->count = 0;
 	ListTower->FirstElement = NULL;
 	ListTower->LastElement = NULL;
 	t_TowerElement* CurrentTower = NULL;
@@ -60,6 +61,7 @@ int main()
 	#pragma region C VARS
 	int iCurrentLevel = 2;
 	int iDebug = 0;
+	int iTowerId = 0;
 	#pragma endregion C VARS
 
 	#pragma region CSFML VARS //SEB
@@ -342,7 +344,7 @@ int main()
 			if (file == NULL)
 			{
 				printf("erreur ouverture de fichier ennemySpawn\n");
-				//return EXIT_FAILURE;
+				return EXIT_FAILURE;
 			}
 			fscanf_s(file, "iEnnemySpawnNbr=%d,\n", &iEnnemySpawnNbr);
 			printf("ENNEMYSPAWN : %d\n", iEnnemySpawnNbr);
@@ -856,10 +858,10 @@ int main()
 						/**/
 						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
 						sfSprite_setColor(btn1->sprite, sfWhite);
-						//if (ListTower->FirstElement->NextElement != NULL)
-						//{
-						//	while(!SortTowerByPos(ListTower)){}
-						//}
+						if (ListTower->FirstElement->NextElement != NULL)
+						{
+							while(!SortTowerByPos(ListTower)){}
+						}
 					}
 					else if (!sfMouse_isButtonPressed(sfMouseLeft))
 					{
@@ -915,10 +917,10 @@ int main()
 						/**/
 						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
 						sfSprite_setColor(btn2->sprite, sfWhite);
-						//if (ListTower->FirstElement->NextElement != NULL)
-						//{
-						//	while (!SortTowerByPos(ListTower)) {}
-						//}
+						if (ListTower->FirstElement->NextElement != NULL)
+						{
+							while (!SortTowerByPos(ListTower)) {}
+						}
 					}
 					else if (!sfMouse_isButtonPressed(sfMouseLeft))
 					{
@@ -974,10 +976,10 @@ int main()
 						/**/
 						ActualTowerSlot->TowerSlot->IsBuild = sfTrue;
 						sfSprite_setColor(btn3->sprite, sfWhite);
-						//if (ListTower->FirstElement->NextElement != NULL)
-						//{
-						//	while (!SortTowerByPos(ListTower)) {}
-						//}
+						if (ListTower->FirstElement->NextElement != NULL)
+						{
+							while (!SortTowerByPos(ListTower)) {}
+						}
 					}
 					else if (!sfMouse_isButtonPressed(sfMouseLeft))
 					{
@@ -1302,7 +1304,9 @@ int main()
 							}
 							CurrentTowerSlot = CurrentTowerSlot->NextElement;
 						}
-						DeleteElementById(ListTower, ActualTower->Id);
+						DeleteEntityWithID(ListTower, ActualTower->Id);
+						//DeleteElementByIdTower(ListTower, ActualTower->Id);
+						printf_s("in delete !!!!!\n");
 					}
 					else if (!sfMouse_isButtonPressed(sfMouseLeft))
 					{
@@ -1464,13 +1468,13 @@ int main()
 
 
 		////////////////////////////////////
-		//CurrentTower = ListTower->FirstElement;
+		CurrentTower = ListTower->FirstElement;
 		//printf_s("REEEEEEAAAAAAD!!!!!!!!!!!!!!!!\n");
-		//while (CurrentTower != NULL)
-		//{
-		//	printf_s("Current %d,bb left : %.2f,Top :%.2f,Width :%.2f,Height :%.2f\n", CurrentTower->Id, CurrentTower->Tower->boundingBox.left, CurrentTower->Tower->boundingBox.top, CurrentTower->Tower->boundingBox.width, CurrentTower->Tower->boundingBox.height);
-		//	CurrentTower = CurrentTower->NextElement;
-		//}
+		while (CurrentTower != NULL)
+		{
+			printf_s("Current %d,bb left : %.2f,Top :%.2f,Width :%.2f,Height :%.2f\n", CurrentTower->Id, CurrentTower->Tower->boundingBox.left, CurrentTower->Tower->boundingBox.top, CurrentTower->Tower->boundingBox.width, CurrentTower->Tower->boundingBox.height);
+			CurrentTower = CurrentTower->NextElement;
+		}
 
 
 		/////////////////////////////////////
