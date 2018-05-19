@@ -80,6 +80,14 @@
 
 #pragma endregion ENNEMY
 
+#pragma region WHITE_CELLS
+
+#define WHITE_CELL_WIDTH 299
+#define WHITE_CELL_HEIGHT 240
+#define WHITE_CELL_FRAMES 15
+#define WHITE_CELL_ANIM_SPEED 0.03
+
+#pragma endregion WHITE_CELLS
 
 #pragma endregion Defines
 
@@ -339,10 +347,16 @@ struct s_whiteCell
 	sfSprite* sprite;
 	sfVector2f vPos;
 	sfFloatRect boundingBox;
+	sfIntRect animRect;
 	sfVector2f vDir;
 	float fSpeed;
 	sfBool isWalking;
 	int iTowerId;
+	float tStartAnim;
+	float tSinceAnim;
+	float tCurrentAnim;
+	int animFrame;
+	ENNEMY_DIRECTION dirState;
 };
 
 typedef struct s_whiteCellElement t_whiteCellElement;

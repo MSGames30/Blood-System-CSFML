@@ -118,6 +118,11 @@ int main()
 	sfSprite* spawnCross = createSprite("resources/textures/cross.png");
 	sfVector2f vOrigin_spawnCross = { sfSprite_getGlobalBounds(spawnCross).width / 2, sfSprite_getGlobalBounds(spawnCross).height / 2 };
 	sfSprite_setOrigin(spawnCross, vOrigin_spawnCross);
+	sfSprite* Spr_whiteCell = createSprite("resources/textures/whiteCell.png");
+	sfVector2f vOrigin_whiteCell = { 150,156 };
+	sfSprite_setOrigin(Spr_whiteCell, vOrigin_whiteCell);
+
+
 	#pragma endregion CSFML VARS //SEB
 
 	#pragma region TIME VARIABLES
@@ -946,8 +951,20 @@ int main()
 					NewWhiteCell->whiteCell = malloc(sizeof(t_whiteCell));
 					NewWhiteCell->whiteCell->isWalking = sfTrue;
 					NewWhiteCell->whiteCell->iTowerId = CurrentTower->Id;
-					CurrentTowerSlot = ListTowerSlot->FirstElement;
+					NewWhiteCell->whiteCell->tStartAnim = (float)clock() / CLOCKS_PER_SEC;
+					NewWhiteCell->whiteCell->tSinceAnim = 0;
+					NewWhiteCell->whiteCell->tCurrentAnim = 0;
+					NewWhiteCell->whiteCell->animFrame = 0;
+					NewWhiteCell->whiteCell->dirState = UP_LEFT;
+					NewWhiteCell->whiteCell->sprite = Spr_whiteCell;
+					NewWhiteCell->whiteCell->animRect.left = NewWhiteCell->whiteCell->animFrame * WHITE_CELL_WIDTH;
+					NewWhiteCell->whiteCell->animRect.top = NewWhiteCell->whiteCell->dirState * WHITE_CELL_HEIGHT;
+					NewWhiteCell->whiteCell->animRect.width = WHITE_CELL_WIDTH;
+					NewWhiteCell->whiteCell->animRect.height = WHITE_CELL_HEIGHT;
+					sfSprite_setTextureRect(NewWhiteCell->whiteCell->sprite, NewWhiteCell->whiteCell->animRect);
+
 					CurrentTower->Tower->isFirstBuild = sfFalse;
+					CurrentTowerSlot = ListTowerSlot->FirstElement;
 					while (CurrentTowerSlot != NULL)
 					{
 						if (CurrentTowerSlot->Id == CurrentTower->Tower->iSlotId)
@@ -967,6 +984,17 @@ int main()
 					NewWhiteCell->whiteCell = malloc(sizeof(t_whiteCell));
 					NewWhiteCell->whiteCell->isWalking = sfTrue;
 					NewWhiteCell->whiteCell->iTowerId = CurrentTower->Id;
+					NewWhiteCell->whiteCell->tStartAnim = (float)clock() / CLOCKS_PER_SEC;
+					NewWhiteCell->whiteCell->tSinceAnim = 0;
+					NewWhiteCell->whiteCell->tCurrentAnim = 0;
+					NewWhiteCell->whiteCell->animFrame = 0;
+					NewWhiteCell->whiteCell->dirState = UP_LEFT;
+					NewWhiteCell->whiteCell->sprite = Spr_whiteCell;
+					NewWhiteCell->whiteCell->animRect.left = NewWhiteCell->whiteCell->animFrame * WHITE_CELL_WIDTH;
+					NewWhiteCell->whiteCell->animRect.top = NewWhiteCell->whiteCell->dirState * WHITE_CELL_HEIGHT;
+					NewWhiteCell->whiteCell->animRect.width = WHITE_CELL_WIDTH;
+					NewWhiteCell->whiteCell->animRect.height = WHITE_CELL_HEIGHT;
+					sfSprite_setTextureRect(NewWhiteCell->whiteCell->sprite, NewWhiteCell->whiteCell->animRect);
 					CurrentTowerSlot = ListTowerSlot->FirstElement;
 					while (CurrentTowerSlot != NULL)
 					{
@@ -1065,6 +1093,7 @@ int main()
 				if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
 				{
 					//printf_s("Bas Gauche\n");
+					CurrentWhiteCell->whiteCell->dirState = DOWN_LEFT;
 					CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(150 + 3);
 					CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
 					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
@@ -1073,6 +1102,7 @@ int main()
 				else if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 255)
 				{
 					//printf_s("Bas Droite\n");
+					CurrentWhiteCell->whiteCell->dirState = DOWN_RIGHT;
 					CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(30 - 3);
 					CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
 					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
@@ -1082,6 +1112,7 @@ int main()
 					&& sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150)
 				{
 					//printf_s("Haut Gauche\n");
+					CurrentWhiteCell->whiteCell->dirState = UP_LEFT;
 					CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(210 - 3);
 					CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
 					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
@@ -1091,6 +1122,7 @@ int main()
 					&& sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 150)
 				{
 					//printf_s("Haut Doite\n");
+					CurrentWhiteCell->whiteCell->dirState = UP_RIGHT;
 					CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(330 + 3);
 					CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
 					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
@@ -1107,6 +1139,25 @@ int main()
 					CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
 					//printf_s("Not In\n");
 				}
+
+				CurrentWhiteCell->whiteCell->tCurrentAnim = (float)clock() / CLOCKS_PER_SEC;
+				CurrentWhiteCell->whiteCell->tSinceAnim = CurrentWhiteCell->whiteCell->tCurrentAnim - CurrentWhiteCell->whiteCell->tStartAnim;
+
+				if (CurrentWhiteCell->whiteCell->tSinceAnim > WHITE_CELL_ANIM_SPEED)
+				{
+					CurrentWhiteCell->whiteCell->tStartAnim = CurrentWhiteCell->whiteCell->tCurrentAnim;
+
+					if (CurrentWhiteCell->whiteCell->animFrame < WHITE_CELL_FRAMES - 1)
+					{
+						CurrentWhiteCell->whiteCell->animFrame++;
+					}
+					else
+					{
+						CurrentWhiteCell->whiteCell->animFrame = 0;
+					}
+
+				}
+
 
 			}
 			else
@@ -1140,8 +1191,13 @@ int main()
 		CurrentWhiteCell = ListWhiteCell->FirstElement;
 		while (CurrentWhiteCell != NULL)
 		{
-			sfCircleShape_setPosition(player, CurrentWhiteCell->whiteCell->vPos );
-			sfRenderWindow_drawCircleShape(window, player, NULL);
+			CurrentWhiteCell->whiteCell->animRect.left = CurrentWhiteCell->whiteCell->animFrame * WHITE_CELL_WIDTH;
+			CurrentWhiteCell->whiteCell->animRect.top = CurrentWhiteCell->whiteCell->dirState * WHITE_CELL_HEIGHT;
+			sfSprite_setTextureRect(CurrentWhiteCell->whiteCell->sprite, CurrentWhiteCell->whiteCell->animRect);
+			sfSprite_setPosition(CurrentWhiteCell->whiteCell->sprite, CurrentWhiteCell->whiteCell->vPos);
+			sfRenderWindow_drawShape(window, CurrentWhiteCell->whiteCell->sprite, NULL);
+			//sfCircleShape_setPosition(player, CurrentWhiteCell->whiteCell->vPos );
+			//sfRenderWindow_drawCircleShape(window, player, NULL);
 			CurrentWhiteCell = CurrentWhiteCell->NextElement;
 		}
 
