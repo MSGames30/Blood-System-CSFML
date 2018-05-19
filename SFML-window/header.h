@@ -357,6 +357,7 @@ struct s_whiteCell
 	float tCurrentAnim;
 	int animFrame;
 	ENNEMY_DIRECTION dirState;
+	sfVector2f distanceVector;
 };
 
 typedef struct s_whiteCellElement t_whiteCellElement;

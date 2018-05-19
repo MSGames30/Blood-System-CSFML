@@ -949,7 +949,7 @@ int main()
 				{
 					NewWhiteCell = AddElementBeginListWhiteCell(ListWhiteCell);
 					NewWhiteCell->whiteCell = malloc(sizeof(t_whiteCell));
-					NewWhiteCell->whiteCell->isWalking = sfTrue;
+					NewWhiteCell->whiteCell->isWalking = sfFalse;
 					NewWhiteCell->whiteCell->iTowerId = CurrentTower->Id;
 					NewWhiteCell->whiteCell->tStartAnim = (float)clock() / CLOCKS_PER_SEC;
 					NewWhiteCell->whiteCell->tSinceAnim = 0;
@@ -982,7 +982,7 @@ int main()
 					printf_s("create %d\n", CurrentTower->Tower->iSlotId);
 					NewWhiteCell = AddElementBeginListWhiteCell(ListWhiteCell);
 					NewWhiteCell->whiteCell = malloc(sizeof(t_whiteCell));
-					NewWhiteCell->whiteCell->isWalking = sfTrue;
+					NewWhiteCell->whiteCell->isWalking = sfFalse;
 					NewWhiteCell->whiteCell->iTowerId = CurrentTower->Id;
 					NewWhiteCell->whiteCell->tStartAnim = (float)clock() / CLOCKS_PER_SEC;
 					NewWhiteCell->whiteCell->tSinceAnim = 0;
@@ -1087,9 +1087,49 @@ int main()
 		CurrentWhiteCell = ListWhiteCell->FirstElement;
 		while (CurrentWhiteCell != NULL)
 		{
-			if (CurrentWhiteCell->whiteCell->isWalking && CurrentWhiteCell->whiteCell->vPos.x >= 0 && CurrentWhiteCell->whiteCell->vPos.x <= 1920
+			if (!CurrentWhiteCell->whiteCell->isWalking)
+			{
+				//printf_s("posX :%.2f,posY: %.2f\n", CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y);
+				CurrentEnnemy = ListEnnemy->FirstElement;
+				while (CurrentEnnemy != NULL)
+				{
+					CurrentWhiteCell->whiteCell->distanceVector.x = CurrentEnnemy->Ennemy->vCurrentPosition.x - CurrentWhiteCell->whiteCell->vPos.x;
+					CurrentWhiteCell->whiteCell->distanceVector.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentWhiteCell->whiteCell->vPos.y;
+					printf_s("Cell x :%.2f, Cell y :%.2f, Ennemi X :%.2f, Ennemi Y :%.2f, Magnitude %.2f\n", CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y, CurrentEnnemy->Ennemy->vCurrentPosition.x, CurrentEnnemy->Ennemy->vCurrentPosition.y, Magnitude(CurrentWhiteCell->whiteCell->distanceVector));
+					if (Magnitude(CurrentWhiteCell->whiteCell->distanceVector) < 250)
+					{
+						printf_s("sfTrue !! \n");
+						CurrentWhiteCell->whiteCell->isWalking = sfTrue;
+					}
+					CurrentEnnemy = CurrentEnnemy->NextElement;
+				}
+				if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
+				{
+					//printf_s("Bas Gauche\n");
+					CurrentWhiteCell->whiteCell->dirState = DOWN_LEFT;
+				}
+				else if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 255)
+				{
+					//printf_s("Bas Droite\n");
+					CurrentWhiteCell->whiteCell->dirState = DOWN_RIGHT;
+				}
+				else if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).r == 150
+					&& sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150)
+				{
+					//printf_s("Haut Gauche\n");
+					CurrentWhiteCell->whiteCell->dirState = UP_LEFT;
+				}
+				else if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150
+					&& sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 150)
+				{
+					//printf_s("Haut Doite\n");
+					CurrentWhiteCell->whiteCell->dirState = UP_RIGHT;
+				}
+			}
+			else if (CurrentWhiteCell->whiteCell->isWalking && CurrentWhiteCell->whiteCell->vPos.x >= 0 && CurrentWhiteCell->whiteCell->vPos.x <= 1920
 				&& CurrentWhiteCell->whiteCell->vPos.y >= 0 && CurrentWhiteCell->whiteCell->vPos.y <= 1080)
 			{
+				
 				if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
 				{
 					//printf_s("Bas Gauche\n");
