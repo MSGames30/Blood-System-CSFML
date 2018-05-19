@@ -962,10 +962,11 @@ int main()
 				else if (!CurrentTower->Tower->iIsWhiteCellAlive && CurrentTower->Tower->tSinceSpawnWhiteCell > 2
 					&& !CurrentTower->Tower->isFirstBuild)
 				{
-					printf_s("create\n");
+					printf_s("create %d\n", CurrentTower->Tower->iSlotId);
 					NewWhiteCell = AddElementBeginListWhiteCell(ListWhiteCell);
 					NewWhiteCell->whiteCell = malloc(sizeof(t_whiteCell));
 					NewWhiteCell->whiteCell->isWalking = sfTrue;
+					NewWhiteCell->whiteCell->iTowerId = CurrentTower->Id;
 					CurrentTowerSlot = ListTowerSlot->FirstElement;
 					while (CurrentTowerSlot != NULL)
 					{
@@ -1113,7 +1114,7 @@ int main()
 				CurrentTower = ListTower->FirstElement;
 				while (CurrentTower != NULL)
 				{
-					printf_s("Id :%d,iTowerId:%d\n", CurrentTower->Id = CurrentWhiteCell->whiteCell->iTowerId);
+					printf_s("Id :%d,iTowerId:%d\n", CurrentTower->Id , CurrentWhiteCell->whiteCell->iTowerId);
 					if (CurrentTower->Id == CurrentWhiteCell->whiteCell->iTowerId)
 					{
 						printf_s("Yeah Man !!!\n");
