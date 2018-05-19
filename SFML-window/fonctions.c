@@ -766,6 +766,86 @@ sfBool DeleteElementByIdBullet(t_ListBullet* _List, int _IdElementToDelete)
 	return sfFalse;
 }
 
+sfBool DeleteElementByIdWhiteCell(t_ListWhiteCell* _List, int _IdElementToDelete)
+{
+	/*Delete de l'élément restant dans la liste*/
+	if (_List->FirstElement == _List->LastElement)
+	{
+		t_whiteCellElement* ElementToDelete = _List->FirstElement;
+
+		/*je reset les 2 pointeurs de ma liste a NULL*/
+		_List->FirstElement = NULL;
+		_List->LastElement = NULL;
+
+		free(ElementToDelete);
+		printf("DELETE THE SURVIVOR ELEMENT %d\n", _IdElementToDelete);
+
+		return sfTrue;
+	}
+
+	/*Delete First Element*/
+	if (_List->FirstElement->Id == _IdElementToDelete)
+	{
+
+		t_whiteCellElement* ElementToDelete = _List->FirstElement;
+		if (_List->FirstElement->NextElement != NULL)
+		{
+			_List->FirstElement->NextElement->PreviousElement = NULL;
+		}
+		_List->FirstElement = _List->FirstElement->NextElement;
+
+		free(ElementToDelete);
+		printf("DELETE FIRST ELEMENT %d\n", _IdElementToDelete);
+
+		return sfTrue;
+	}
+	/*Delete Last Element*/
+	else if (_List->LastElement->Id == _IdElementToDelete)
+	{
+		t_whiteCellElement* ElementToDelete = _List->LastElement;
+		if (_List->LastElement->PreviousElement != NULL)
+		{
+			_List->LastElement->PreviousElement->NextElement = NULL;
+		}
+		_List->LastElement = _List->LastElement->PreviousElement;
+		free(ElementToDelete);
+		printf("DELETE LAST ELEMENT %d\n", _IdElementToDelete);
+
+		return sfTrue;
+	}
+	/*delete another element*/
+	else
+	{
+		/*parcours dans la boucle pour trouver l'élément a supprimer*/
+		t_whiteCellElement* CurrentElement = _List->FirstElement;
+		while (CurrentElement != NULL)
+		{
+			/*si le prochain élément est celuis que l'on veut supprimer on attache le previous et le next avant de supprimer l'élément en question*/
+			if (CurrentElement->Id == _IdElementToDelete)
+			{
+				t_whiteCellElement* ElementToDelete = CurrentElement;
+				/*je raccorde le next element de l'élément précédent a l'élément suivant de celui que je veut supprimer*/
+				if (CurrentElement->NextElement != NULL && CurrentElement->PreviousElement != NULL)
+				{
+					CurrentElement->PreviousElement->NextElement = CurrentElement->NextElement;
+					CurrentElement->NextElement->PreviousElement = CurrentElement->PreviousElement;
+				}
+				free(ElementToDelete);
+
+				printf("DELETE ELEMENT %d\n", _IdElementToDelete);
+				return sfTrue;
+			}
+			else
+			{
+				CurrentElement = CurrentElement->NextElement;
+			}
+		}
+	}
+
+	printf("FAIL TO DELETE ELEMENT %d\n", _IdElementToDelete);
+	return sfFalse;
+}
+
 /*détruire tous les éléments d'une liste sans détruire la liste*/
 
 sfBool DeleteAllElementInList(t_List* _List)

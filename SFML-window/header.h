@@ -48,6 +48,8 @@
 
 #define SIZE_TEXT 25
 
+#define WHITE_CELL_SPD_FACTOR 2
+
 #pragma region ENNEMY
 
 #define TIME_BETWEEN_WAVE 5
@@ -259,10 +261,14 @@ struct s_Tower
 	float tStartShoot;
 	float tSinceShoot;
 	float tCurrentShoot;
+	float tStartSpawnWhiteCell;
+	float tSinceSpawnWhiteCell;
+	float tCurrentSpawnWhiteCell;
 	sfFloatRect fieldBB;
 	float bulletSpeed;
 	sfBool isOn;
 	sfBool iIsWhiteCellAlive;
+	sfBool isFirstBuild;
 };
 
 typedef struct s_TowerElement t_TowerElement;
@@ -336,6 +342,7 @@ struct s_whiteCell
 	sfVector2f vDir;
 	float fSpeed;
 	sfBool isWalking;
+	int iTowerId;
 };
 
 typedef struct s_whiteCellElement t_whiteCellElement;
@@ -399,7 +406,7 @@ sfBool DeleteElementById(t_List* _List, int _IdElementToDelete);
 sfBool DeleteElementByIdTowerSlot(t_ListTowerSlot* _List, int _IdElementToDelete);
 sfBool DeleteElementByIdTower(t_ListTower* _List, int _IdElementToDelete);
 sfBool DeleteElementByIdBullet(t_ListBullet* _List, int _IdElementToDelete);
-
+sfBool DeleteElementByIdWhiteCell(t_ListWhiteCell* _List, int _IdElementToDelete);
 
 sfBool DeleteAllElementInList(t_List* _List);
 

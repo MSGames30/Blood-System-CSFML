@@ -824,7 +824,8 @@ int main()
 			Rect_TowerSlotBB.top = CurrentTowerSlot->TowerSlot->vPos.y - vOrigin_TowerSlot.y;
 			Rect_TowerSlotBB.width = vOrigin_TowerSlot.x * 2;
 			Rect_TowerSlotBB.height = vOrigin_TowerSlot.y * 2;
-			if (sfFloatRect_contains(&Rect_TowerSlotBB, vMousePosToFloat.x, vMousePosToFloat.y) && !isInBuildChoice && !CurrentTowerSlot->TowerSlot->IsBuild)
+			if (sfFloatRect_contains(&Rect_TowerSlotBB, vMousePosToFloat.x, vMousePosToFloat.y) && !isInBuildChoice 
+				&& !isBuildedChoice && !CurrentTowerSlot->TowerSlot->IsBuild)
 			{
 				vMousePointToCheck.x = vOrigin_TowerSlot.x - (CurrentTowerSlot->TowerSlot->vPos.x - vMousePosToFloat.x);
 				vMousePointToCheck.y = vOrigin_TowerSlot.y - (CurrentTowerSlot->TowerSlot->vPos.y - vMousePosToFloat.y);
@@ -929,15 +930,39 @@ int main()
 		}
 #pragma endregion LECTURE TRAITEMENT DES TOURS //SEB
 
-#pragma region LECTURE TRAITEMENT DES CELLULES BLANCHES //SEB
+#pragma region LECTURE TRAITEMENT SPAWN DES GLOBULES BLANCS //SEB
 
 		CurrentTower = ListTower->FirstElement;
 		while (CurrentTower != NULL)
 		{
 			if (CurrentTower->Tower->TowerType == TYPE3)
 			{
-				if (!CurrentTower->Tower->iIsWhiteCellAlive)
+				CurrentTower->Tower->tCurrentSpawnWhiteCell = (float)clock() / CLOCKS_PER_SEC;
+				CurrentTower->Tower->tSinceSpawnWhiteCell = CurrentTower->Tower->tCurrentSpawnWhiteCell - CurrentTower->Tower->tStartSpawnWhiteCell;
+				//printf_s("iIsWhiteCellAlive : %d,tSinceSpawnWhiteCell : %.2f,CurrentTower->Tower->isFirstBuild : %d\n", CurrentTower->Tower->iIsWhiteCellAlive, CurrentTower->Tower->tSinceSpawnWhiteCell, CurrentTower->Tower->isFirstBuild);
+				if (!CurrentTower->Tower->iIsWhiteCellAlive && CurrentTower->Tower->isFirstBuild)
 				{
+					NewWhiteCell = AddElementBeginListWhiteCell(ListWhiteCell);
+					NewWhiteCell->whiteCell = malloc(sizeof(t_whiteCell));
+					NewWhiteCell->whiteCell->isWalking = sfTrue;
+					NewWhiteCell->whiteCell->iTowerId = CurrentTower->Id;
+					CurrentTowerSlot = ListTowerSlot->FirstElement;
+					CurrentTower->Tower->isFirstBuild = sfFalse;
+					while (CurrentTowerSlot != NULL)
+					{
+						if (CurrentTowerSlot->Id == CurrentTower->Tower->iSlotId)
+						{
+							NewWhiteCell->whiteCell->vPos = CurrentTowerSlot->TowerSlot->vSpawnPos;
+							CurrentTower->Tower->iIsWhiteCellAlive = sfTrue;
+							break;
+						}
+						CurrentTowerSlot = CurrentTowerSlot->NextElement;
+					}
+				}
+				else if (!CurrentTower->Tower->iIsWhiteCellAlive && CurrentTower->Tower->tSinceSpawnWhiteCell > 2
+					&& !CurrentTower->Tower->isFirstBuild)
+				{
+					printf_s("create\n");
 					NewWhiteCell = AddElementBeginListWhiteCell(ListWhiteCell);
 					NewWhiteCell->whiteCell = malloc(sizeof(t_whiteCell));
 					NewWhiteCell->whiteCell->isWalking = sfTrue;
@@ -957,7 +982,7 @@ int main()
 			CurrentTower = CurrentTower->NextElement;
 		}
 
-#pragma endregion LECTURE TRAITEMENT DES GLOBULES BLANCS //SEB
+#pragma endregion LECTURE TRAITEMENT SPAWN DES GLOBULES BLANCS //SEB
 
 #pragma region READ LIST ENNEMY AFFICHAGE //GUILLAUME
 
@@ -1038,50 +1063,69 @@ int main()
 			{
 				if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
 				{
-					printf_s("Bas Gauche\n");
+					//printf_s("Bas Gauche\n");
 					CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(150 + 3);
 					CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
-					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * 2;
-					CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * 2;
+					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
+					CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
 				}
 				else if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 255)
 				{
-					printf_s("Bas Droite\n");
+					//printf_s("Bas Droite\n");
 					CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(30 - 3);
 					CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
-					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * 2;
-					CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * 2;
+					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
+					CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
 				}
 				else if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).r == 150 
 					&& sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150)
 				{
-					printf_s("Haut Gauche\n");
+					//printf_s("Haut Gauche\n");
 					CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(210 - 3);
 					CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
-					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * 2;
-					CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * 2;
+					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
+					CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
 				}
 				else if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150
 					&& sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 150)
 				{
-					printf_s("Haut Doite\n");
+					//printf_s("Haut Doite\n");
 					CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(330 + 3);
 					CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
-					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * 2;
-					CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * 2;
+					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
+					CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
 				}
 				else if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).r == 255 && sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 255
 					&& sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
 				{
-					printf_s("Random dir\n");
+					//printf_s("Random dir\n");
 				}
 				else
 				{
-					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * 2;
-					CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * 2;
-					printf_s("Not In\n");
+					CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
+					CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
+					//printf_s("Not In\n");
 				}
 
+			}
+			else
+			{
+				CurrentTower = ListTower->FirstElement;
+				while (CurrentTower != NULL)
+				{
+					printf_s("Id :%d,iTowerId:%d\n", CurrentTower->Id = CurrentWhiteCell->whiteCell->iTowerId);
+					if (CurrentTower->Id == CurrentWhiteCell->whiteCell->iTowerId)
+					{
+						printf_s("Yeah Man !!!\n");
+						CurrentTower->Tower->iIsWhiteCellAlive = sfFalse;
+						CurrentTower->Tower->tStartSpawnWhiteCell = (float)clock() / CLOCKS_PER_SEC;
+						break;
+					}
+					CurrentTower = CurrentTower->NextElement;
+				}
+				DeleteElementByIdWhiteCell(ListWhiteCell,CurrentWhiteCell->Id);
+				
+				break;
 			}
 
 
@@ -1121,10 +1165,7 @@ int main()
 						&& sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).b == 0 && sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).a == 255)
 					{
 						switch (CurrentTower->Tower->TowerType)
-						{
-							
-						case TYPE3 : 
-							break;
+						{						
 						case TYPE2 :
 							//printf_s("In tower id : %d\n", CurrentTower->Id);
 							CurrentEnnemy->Ennemy->fSpeedFactor = 0.5;
@@ -1397,6 +1438,10 @@ int main()
 						NewTower->Tower->boundingBox = sfSprite_getGlobalBounds(NewTower->Tower->sprite);
 						NewTower->Tower->bulletSpeed = 1;
 						NewTower->Tower->isOn = sfFalse;
+						NewTower->Tower->tStartSpawnWhiteCell = 0;
+						NewTower->Tower->tCurrentSpawnWhiteCell = 0;
+						NewTower->Tower->tSinceSpawnWhiteCell = 0;
+						NewTower->Tower->isFirstBuild = sfTrue;
 						isOpened = sfFalse;
 						isInBuildChoice = sfFalse;
 						/*mettre en fonction*/
