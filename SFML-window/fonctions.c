@@ -368,6 +368,38 @@ t_TowerBulletElement* AddElementBeginListTowerBullet(t_ListBullet* _List)
 	return NewElement;
 }
 
+t_whiteCellElement* AddElementBeginListWhiteCell(t_ListWhiteCell* _List)
+{
+	t_whiteCellElement* NewElement = malloc(sizeof(t_whiteCellElement));
+
+	if (_List == NULL || NewElement == NULL)
+	{
+		exit(EXIT_FAILURE);
+	}
+
+
+	if (_List->FirstElement == NULL)
+	{
+		NewElement->NextElement = _List->FirstElement;
+		NewElement->PreviousElement = NULL;
+		_List->FirstElement = NewElement;
+		_List->LastElement = NewElement;
+		//NewElement->Id = 0;
+	}
+	else
+	{
+		NewElement->NextElement = _List->FirstElement;
+		NewElement->NextElement->PreviousElement = NewElement;
+		NewElement->PreviousElement = NULL;
+		_List->FirstElement = NewElement;
+		//NewElement->Id = NewElement->NextElement->Id + 1;
+	}
+	NewElement->Id = _List->count;
+	_List->count++;
+	//printf("NEW ELEMENT IS ADD\n");
+	return NewElement;
+}
+
 /*méthode liste chainée*/
 
 //sfBool DeleteElementById(List* _List, int _IdElementToDelete)

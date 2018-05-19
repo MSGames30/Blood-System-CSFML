@@ -46,7 +46,11 @@
 #define TOWER_HEIGHT 160
 #endif // !TOWER_HEIGHT 160
 
+#define SIZE_TEXT 25
+
 #pragma region ENNEMY
+
+#define TIME_BETWEEN_WAVE 5
 
 #define CONTROL_RADIUS 80
 #define GUARD_RADIUS 25
@@ -130,7 +134,11 @@ struct s_Ennemy
 	int iRandSpawnValueVariation; // variation de la position de l'ennemi quand il spawn
 	int iStartPos; // choix de la position de départ de l'ennemi
 
-				   /*manage collision*/
+				   /*despawn*/
+	int iDespawn;
+	float fTimeSinceStartDespawn;
+
+	/*manage collision*/
 	float fTimeCurrentVertex;
 	float fTimeSinceVertex;
 	float fTimeStartVertex;
@@ -189,6 +197,7 @@ struct s_Ennemy
 
 	float fSpeedFactor;
 };
+
 
 typedef struct s_EnnemyElement t_EnnemyElement;
 struct s_EnnemyElement
@@ -252,6 +261,8 @@ struct s_Tower
 	float tCurrentShoot;
 	sfFloatRect fieldBB;
 	float bulletSpeed;
+	sfBool isOn;
+	sfBool iIsWhiteCellAlive;
 };
 
 typedef struct s_TowerElement t_TowerElement;
@@ -308,11 +319,44 @@ struct s_TowerBulletElement
 };
 
 typedef struct s_ListBullet t_ListBullet;
+
 struct s_ListBullet
 {
 	t_TowerBulletElement* FirstElement;
 	t_TowerBulletElement* LastElement;
 };
+
+typedef struct s_whiteCell t_whiteCell;
+
+struct s_whiteCell
+{
+	sfSprite* sprite;
+	sfVector2f vPos;
+	sfFloatRect boundingBox;
+	sfVector2f vDir;
+	float fSpeed;
+	sfBool isWalking;
+};
+
+typedef struct s_whiteCellElement t_whiteCellElement;
+
+struct s_whiteCellElement
+{
+	int Id;
+	t_whiteCell* whiteCell;
+	t_whiteCellElement* NextElement;
+	t_whiteCellElement* PreviousElement;
+};
+
+typedef struct s_ListWhiteCell t_ListWhiteCell;
+
+struct s_ListWhiteCell
+{
+	int count;
+	t_whiteCellElement* FirstElement;
+	t_whiteCellElement* LastElement;
+};
+
 #pragma endregion structures
 
 #pragma region Functions Declarations
@@ -349,6 +393,7 @@ t_EnnemyElement* AddElementBeginList(t_List* _List);
 t_TowerSlotElement* AddElementBeginListTowerSlot(t_ListTowerSlot* _List);
 t_TowerElement* AddElementBeginListTower(t_ListTower* _List);
 t_TowerBulletElement* AddElementBeginListTowerBullet(t_ListBullet* _List);
+t_whiteCellElement* AddElementBeginListWhiteCell(t_ListWhiteCell* _List);
 
 sfBool DeleteElementById(t_List* _List, int _IdElementToDelete);
 sfBool DeleteElementByIdTowerSlot(t_ListTowerSlot* _List, int _IdElementToDelete);
