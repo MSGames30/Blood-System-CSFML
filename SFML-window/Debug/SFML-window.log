@@ -9,61 +9,61 @@ c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\he
 c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\header.h(41): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
 c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\header.h(45): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
 c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(6): warning C4244: 'fonction' : conversion de 'time_t' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(156): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(209): warning C4305: '=' : troncation de 'double' à 'float'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(228): warning C4305: '=' : troncation de 'double' à 'float'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(229): warning C4305: '=' : troncation de 'double' à 'float'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(238): warning C4305: '=' : troncation de 'double' à 'float'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(239): warning C4305: '=' : troncation de 'double' à 'float'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(564): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(653): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(654): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(658): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(659): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(667): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(668): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(683): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(684): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(825): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(837): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(838): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(901): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(910): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(911): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1106): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1111): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1116): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1117): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1122): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1123): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1133): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1142): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1151): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1152): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1161): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1162): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1171): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1172): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1238): warning C4133: 'fonction' : types incompatibles - de 'sfSprite *' à 'const sfShape *'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1261): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1262): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1298): warning C4305: '=' : troncation de 'double' à 'float'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1350): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1351): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1368): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1605): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1613): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1614): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1665): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1666): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(158): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(211): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(230): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(231): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(240): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(241): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(567): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(656): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(657): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(661): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(662): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(670): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(671): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(686): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(687): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(828): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(840): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(841): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(904): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(913): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(914): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1149): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1154): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1159): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1160): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1165): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1166): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1211): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1220): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1229): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1230): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1239): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1240): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1249): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1250): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1314): warning C4133: 'fonction' : types incompatibles - de 'sfSprite *' à 'const sfShape *'
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1337): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1338): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1374): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1426): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1427): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1444): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
 c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1681): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1740): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(159): warning C4244: 'initialisation' : conversion de 'unsigned int' en 'float', perte possible de données
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1941): warning C4474: 'sprintf_s' : trop d'arguments passés pour la chaîne de format
-  c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1941): note: les espaces réservés et leurs paramètres attendent des arguments 0 variadiques, mais des arguments 1 ont été fournis
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1955): warning C4474: 'sprintf_s' : trop d'arguments passés pour la chaîne de format
-  c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1955): note: les espaces réservés et leurs paramètres attendent des arguments 0 variadiques, mais des arguments 1 ont été fournis
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(267): warning C4101: 'Color_Green' : variable locale non référencée
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(88): warning C4101: 'Rect_TowerBB' : variable locale non référencée
-c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(266): warning C4101: 'Color_Blue' : variable locale non référencée
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1689): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1690): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1741): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1742): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1757): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1816): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(161): warning C4244: 'initialisation' : conversion de 'unsigned int' en 'float', perte possible de données
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1984): warning C4474: 'sprintf_s' : trop d'arguments passés pour la chaîne de format
+  c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1984): note: les espaces réservés et leurs paramètres attendent des arguments 0 variadiques, mais des arguments 1 ont été fournis
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1998): warning C4474: 'sprintf_s' : trop d'arguments passés pour la chaîne de format
+  c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(1998): note: les espaces réservés et leurs paramètres attendent des arguments 0 variadiques, mais des arguments 1 ont été fournis
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(269): warning C4101: 'Color_Green' : variable locale non référencée
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(90): warning C4101: 'Rect_TowerBB' : variable locale non référencée
+c:\users\pezed\desktop\_projet groupe\blood system first playable\sfml-window\main.c(268): warning C4101: 'Color_Blue' : variable locale non référencée
   SFML-window.vcxproj -> C:\Users\Pezed\Desktop\_projet groupe\BLOOD SYSTEM FIRST PLAYABLE\Debug\Tower Defense.exe

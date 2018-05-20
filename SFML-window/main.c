@@ -57,6 +57,8 @@ int main()
 	sfBool isMoving = sfFalse;
 	sfBool isOpened = sfFalse;
 	sfBool isBuildedOpened = sfFalse;
+	sfBool asBreak = sfFalse;
+	sfBool isSearchingForDead = sfTrue;
 
 	#pragma region VARIABLES DE TOUCHES
 
@@ -71,6 +73,7 @@ int main()
 	int iDebug = 0;
 	int iTowerId = 0;
 	float fSpeedFactor = 1;
+
 	#pragma endregion C VARS
 
 	#pragma region CSFML VARS //SEB
@@ -265,6 +268,7 @@ int main()
 
 	sfColor Color_Blue = sfColor_fromRGB(0, 0, 255);
 	sfColor Color_Green = sfColor_fromRGB(0, 255, 0);
+	sfColor Color_Black_transp = { 0,0,0,150 };
 
 #pragma region DEBUG
 
@@ -382,24 +386,24 @@ int main()
 					{
 						NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy1;
 						NewEnnemy->Ennemy->Deg = 1;
-						NewEnnemy->Ennemy->Hp = 0;
-						NewEnnemy->Ennemy->HpMax = 0;
+						NewEnnemy->Ennemy->Hp = 5;
+						NewEnnemy->Ennemy->HpMax = 15;
 						NewEnnemy->Ennemy->iMoneyValue = 0;
 					}
 					else if (NewEnnemy->Ennemy->Type == 2)
 					{
 						NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy2;
 						NewEnnemy->Ennemy->Deg = 2;
-						NewEnnemy->Ennemy->Hp = 0;
-						NewEnnemy->Ennemy->HpMax = 0;
+						NewEnnemy->Ennemy->Hp = 5;
+						NewEnnemy->Ennemy->HpMax = 22;
 						NewEnnemy->Ennemy->iMoneyValue = 0;
 					}
 					else if (NewEnnemy->Ennemy->Type == 3)
 					{
 						NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy3;
 						NewEnnemy->Ennemy->Deg = 3;
-						NewEnnemy->Ennemy->Hp = 0;
-						NewEnnemy->Ennemy->HpMax = 0;
+						NewEnnemy->Ennemy->Hp = 5;
+						NewEnnemy->Ennemy->HpMax = 30;
 						NewEnnemy->Ennemy->iMoneyValue = 0;
 					}
 					NewEnnemy->Ennemy->vOrigin.x = sfSprite_getGlobalBounds(NewEnnemy->Ennemy->sp_Ennemy).width / 2;
@@ -519,25 +523,25 @@ int main()
 
 					/*rectangle de fond noir*/
 					NewEnnemy->Ennemy->RectangleShapeBack = sfRectangleShape_create();
-					NewEnnemy->Ennemy->vSizeRectangleShapeBack.x = 61;
-					NewEnnemy->Ennemy->vSizeRectangleShapeBack.y = 6;
+					NewEnnemy->Ennemy->vSizeRectangleShapeBack.x = LIFEBAR_MAX_SIZE_X;
+					NewEnnemy->Ennemy->vSizeRectangleShapeBack.y = LIFEBAR_SIZE_Y;
 					sfRectangleShape_setSize(NewEnnemy->Ennemy->RectangleShapeBack, NewEnnemy->Ennemy->vSizeRectangleShapeBack);
-					sfRectangleShape_setFillColor(NewEnnemy->Ennemy->RectangleShapeBack, sfTransparent);
+					sfRectangleShape_setFillColor(NewEnnemy->Ennemy->RectangleShapeBack, Color_Black_transp);
 					sfRectangleShape_setOutlineThickness(NewEnnemy->Ennemy->RectangleShapeBack, 2);
 					sfRectangleShape_setOutlineColor(NewEnnemy->Ennemy->RectangleShapeBack, sfBlack);
-					NewEnnemy->Ennemy->vOriginRectangleShapeBack.x = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShapeBack).width / 2;
-					NewEnnemy->Ennemy->vOriginRectangleShapeBack.y = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShapeBack).height / 2;
-					sfRectangleShape_setOrigin(NewEnnemy->Ennemy->RectangleShapeBack, NewEnnemy->Ennemy->vOriginRectangleShapeBack);
+					//NewEnnemy->Ennemy->vOriginRectangleShapeBack.x = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShapeBack).width / 2;
+					//NewEnnemy->Ennemy->vOriginRectangleShapeBack.y = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShapeBack).height / 2;
+					//sfRectangleShape_setOrigin(NewEnnemy->Ennemy->RectangleShapeBack, NewEnnemy->Ennemy->vOriginRectangleShapeBack);
 
 					/*rectangle de vie*/
 					NewEnnemy->Ennemy->RectangleShape = sfRectangleShape_create();
-					NewEnnemy->Ennemy->vSizeRectangleShape.x = 61;
-					NewEnnemy->Ennemy->vSizeRectangleShape.y = 6;
+					NewEnnemy->Ennemy->vSizeRectangleShape.x = LIFEBAR_MAX_SIZE_X;
+					NewEnnemy->Ennemy->vSizeRectangleShape.y = LIFEBAR_SIZE_Y;
 					sfRectangleShape_setSize(NewEnnemy->Ennemy->RectangleShape, NewEnnemy->Ennemy->vSizeRectangleShape);
 					sfRectangleShape_setFillColor(NewEnnemy->Ennemy->RectangleShape, sfRed);
-					NewEnnemy->Ennemy->vOriginRectangleShape.x = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShape).width / 2;
-					NewEnnemy->Ennemy->vOriginRectangleShape.y = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShape).height / 2;
-					sfRectangleShape_setOrigin(NewEnnemy->Ennemy->RectangleShape, NewEnnemy->Ennemy->vOriginRectangleShapeBack);
+					//NewEnnemy->Ennemy->vOriginRectangleShape.x = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShape).width / 2;
+					//NewEnnemy->Ennemy->vOriginRectangleShape.y = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShape).height / 2;
+					//sfRectangleShape_setOrigin(NewEnnemy->Ennemy->RectangleShape, NewEnnemy->Ennemy->vOriginRectangleShapeBack);
 					iSpaceButtonIsButtonPressedCheck = 1;
 
 #pragma endregion BARRE DE VIE //GUILLAUME
@@ -979,7 +983,6 @@ int main()
 				else if (!CurrentTower->Tower->iIsWhiteCellAlive && CurrentTower->Tower->tSinceSpawnWhiteCell > 2
 					&& !CurrentTower->Tower->isFirstBuild)
 				{
-					printf_s("create %d\n", CurrentTower->Tower->iSlotId);
 					NewWhiteCell = AddElementBeginListWhiteCell(ListWhiteCell);
 					NewWhiteCell->whiteCell = malloc(sizeof(t_whiteCell));
 					NewWhiteCell->whiteCell->isWalking = sfFalse;
@@ -1013,6 +1016,33 @@ int main()
 
 #pragma endregion LECTURE TRAITEMENT SPAWN DES GLOBULES BLANCS //SEB
 
+#pragma region LECTURE DESTRUCTION ENNEMIS MORTS //SEB
+
+		isSearchingForDead = sfTrue;
+		
+		while (isSearchingForDead)
+		{
+			CurrentEnnemy = ListEnnemy->FirstElement;
+			while (CurrentEnnemy != NULL)
+			{
+				asBreak = sfFalse;
+				if (CurrentEnnemy->Ennemy->Hp <= 0)
+				{
+					DeleteElementById(ListEnnemy, CurrentEnnemy->Id);
+					asBreak = sfTrue;
+					break;
+				}
+				CurrentEnnemy = CurrentEnnemy->NextElement;
+			}
+			if (!asBreak)
+			{
+				isSearchingForDead = sfFalse;
+			}
+
+		}
+
+#pragma endregion LECTURE DESTRUCTION ENNEMIS MORTS //SEB
+
 #pragma region READ LIST ENNEMY AFFICHAGE //GUILLAUME
 
 		CurrentEnnemy = ListEnnemy->FirstElement;
@@ -1021,14 +1051,20 @@ int main()
 			sfSprite_setPosition(CurrentEnnemy->Ennemy->sp_Ennemy, CurrentEnnemy->Ennemy->vCurrentPosition);
 			sfSprite_setRotation(CurrentEnnemy->Ennemy->sp_Ennemy, CurrentEnnemy->Ennemy->fAngleSprite);
 			sfRenderWindow_drawSprite(window, CurrentEnnemy->Ennemy->sp_Ennemy, NULL);
-			CurrentEnnemy->Ennemy->vPositionRectangleShapeBack.x = CurrentEnnemy->Ennemy->vCurrentPosition.x;
-			CurrentEnnemy->Ennemy->vPositionRectangleShapeBack.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentEnnemy->Ennemy->vOrigin.y - 5;
-			CurrentEnnemy->Ennemy->vPositionRectangleShape.x = CurrentEnnemy->Ennemy->vCurrentPosition.x;
-			CurrentEnnemy->Ennemy->vPositionRectangleShape.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentEnnemy->Ennemy->vOrigin.y - 5;
+			CurrentEnnemy->Ennemy->vPositionRectangleShapeBack.x = CurrentEnnemy->Ennemy->vCurrentPosition.x - CurrentEnnemy->Ennemy->vOrigin.x;
+			CurrentEnnemy->Ennemy->vPositionRectangleShapeBack.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentEnnemy->Ennemy->vOrigin.y - 8;
+			CurrentEnnemy->Ennemy->vPositionRectangleShape.x = CurrentEnnemy->Ennemy->vCurrentPosition.x - CurrentEnnemy->Ennemy->vOrigin.x;
+			CurrentEnnemy->Ennemy->vPositionRectangleShape.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentEnnemy->Ennemy->vOrigin.y - 8;
 			sfRectangleShape_setPosition(CurrentEnnemy->Ennemy->RectangleShapeBack, CurrentEnnemy->Ennemy->vPositionRectangleShapeBack);
 			sfRectangleShape_setPosition(CurrentEnnemy->Ennemy->RectangleShape, CurrentEnnemy->Ennemy->vPositionRectangleShape);
-			//sfRenderWindow_drawRectangleShape(window, CurrentEnnemy->Ennemy->RectangleShapeBack, NULL);
-			//sfRenderWindow_drawRectangleShape(window, CurrentEnnemy->Ennemy->RectangleShape, NULL);
+			CurrentEnnemy->Ennemy->vSizeRectangleShape.x =(CurrentEnnemy->Ennemy->Hp / CurrentEnnemy->Ennemy->HpMax) * LIFEBAR_MAX_SIZE_X;
+			if (CurrentEnnemy->Ennemy->vSizeRectangleShape.x <= 0)
+			{
+				CurrentEnnemy->Ennemy->vSizeRectangleShape.x = 0;
+			}
+			sfRectangleShape_setSize(CurrentEnnemy->Ennemy->RectangleShape, CurrentEnnemy->Ennemy->vSizeRectangleShape);
+			sfRenderWindow_drawRectangleShape(window, CurrentEnnemy->Ennemy->RectangleShapeBack, NULL);
+			sfRenderWindow_drawRectangleShape(window, CurrentEnnemy->Ennemy->RectangleShape, NULL);
 			/*AFFICHAGE DES VERTEX*/
 
 #pragma region AFFICHAGE DES VERTEX
@@ -1087,22 +1123,31 @@ int main()
 		CurrentWhiteCell = ListWhiteCell->FirstElement;
 		while (CurrentWhiteCell != NULL)
 		{
+			CurrentWhiteCell->whiteCell->boundingBox.left = CurrentWhiteCell->whiteCell->vPos.x - 30;
+			CurrentWhiteCell->whiteCell->boundingBox.top = CurrentWhiteCell->whiteCell->vPos.y - 130;
+			CurrentWhiteCell->whiteCell->boundingBox.width = 45;
+			CurrentWhiteCell->whiteCell->boundingBox.height = 146;
 			if (!CurrentWhiteCell->whiteCell->isWalking)
 			{
+
+				asBreak = sfFalse;
 				//printf_s("posX :%.2f,posY: %.2f\n", CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y);
 				CurrentEnnemy = ListEnnemy->FirstElement;
 				while (CurrentEnnemy != NULL)
 				{
 					CurrentWhiteCell->whiteCell->distanceVector.x = CurrentEnnemy->Ennemy->vCurrentPosition.x - CurrentWhiteCell->whiteCell->vPos.x;
 					CurrentWhiteCell->whiteCell->distanceVector.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentWhiteCell->whiteCell->vPos.y;
-					printf_s("Cell x :%.2f, Cell y :%.2f, Ennemi X :%.2f, Ennemi Y :%.2f, Magnitude %.2f\n", CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y, CurrentEnnemy->Ennemy->vCurrentPosition.x, CurrentEnnemy->Ennemy->vCurrentPosition.y, Magnitude(CurrentWhiteCell->whiteCell->distanceVector));
+					//printf_s("Cell x :%.2f, Cell y :%.2f, Ennemi X :%.2f, Ennemi Y :%.2f, Magnitude %.2f\n", CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y, CurrentEnnemy->Ennemy->vCurrentPosition.x, CurrentEnnemy->Ennemy->vCurrentPosition.y, Magnitude(CurrentWhiteCell->whiteCell->distanceVector));
 					if (Magnitude(CurrentWhiteCell->whiteCell->distanceVector) < 250)
 					{
-						printf_s("sfTrue !! \n");
 						CurrentWhiteCell->whiteCell->isWalking = sfTrue;
 					}
+
+
 					CurrentEnnemy = CurrentEnnemy->NextElement;
 				}
+
+
 				if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
 				{
 					//printf_s("Bas Gauche\n");
@@ -1129,7 +1174,42 @@ int main()
 			else if (CurrentWhiteCell->whiteCell->isWalking && CurrentWhiteCell->whiteCell->vPos.x >= 0 && CurrentWhiteCell->whiteCell->vPos.x <= 1920
 				&& CurrentWhiteCell->whiteCell->vPos.y >= 0 && CurrentWhiteCell->whiteCell->vPos.y <= 1080)
 			{
-				
+				CurrentEnnemy = ListEnnemy->FirstElement;
+				while (CurrentEnnemy != NULL)
+				{
+					CurrentEnnemy->Ennemy->boundingBox.left = CurrentEnnemy->Ennemy->vCurrentPosition.x - CurrentEnnemy->Ennemy->vOrigin.x;
+					CurrentEnnemy->Ennemy->boundingBox.top = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentEnnemy->Ennemy->vOrigin.y;
+					CurrentEnnemy->Ennemy->boundingBox.width = CurrentEnnemy->Ennemy->vOrigin.x * 2;
+					CurrentEnnemy->Ennemy->boundingBox.height = CurrentEnnemy->Ennemy->vOrigin.y * 2;
+					//printf_s("Wc BB ,L:%.2f,T:%.2f,W:%.2f,H:%.2f\nEn BB ,L:%.2f,T:%.2f,W:%.2f,H:%.2f\n", CurrentWhiteCell->whiteCell->boundingBox.left, CurrentWhiteCell->whiteCell->boundingBox.top, CurrentWhiteCell->whiteCell->boundingBox.width, CurrentWhiteCell->whiteCell->boundingBox.height,
+						//CurrentEnnemy->Ennemy->boundingBox.left, CurrentEnnemy->Ennemy->boundingBox.top, CurrentEnnemy->Ennemy->boundingBox.width, CurrentEnnemy->Ennemy->boundingBox.height);
+					if (sfFloatRect_intersects(&CurrentWhiteCell->whiteCell->boundingBox, &CurrentEnnemy->Ennemy->boundingBox, NULL) && CurrentWhiteCell->whiteCell->isWalking)
+					{
+						//printf_s("Delete !!!! !! \n");
+						CurrentTower = ListTower->FirstElement;
+						while (CurrentTower != NULL)
+						{
+							//printf_s("Id :%d,iTowerId:%d\n", CurrentTower->Id, CurrentWhiteCell->whiteCell->iTowerId);
+							if (CurrentTower->Id == CurrentWhiteCell->whiteCell->iTowerId)
+							{
+								CurrentTower->Tower->iIsWhiteCellAlive = sfFalse;
+								CurrentTower->Tower->tStartSpawnWhiteCell = (float)clock() / CLOCKS_PER_SEC;
+								break;
+							}
+							CurrentTower = CurrentTower->NextElement;
+						}
+						DeleteElementByIdWhiteCell(ListWhiteCell, CurrentWhiteCell->Id);
+						asBreak = sfTrue;
+						break;
+					}
+					CurrentEnnemy = CurrentEnnemy->NextElement;
+				}
+				if (asBreak)
+				{
+					asBreak = sfFalse;
+					break;
+				}
+
 				if (sfImage_getPixel(Image_Map2, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
 				{
 					//printf_s("Bas Gauche\n");
@@ -1205,10 +1285,8 @@ int main()
 				CurrentTower = ListTower->FirstElement;
 				while (CurrentTower != NULL)
 				{
-					printf_s("Id :%d,iTowerId:%d\n", CurrentTower->Id , CurrentWhiteCell->whiteCell->iTowerId);
 					if (CurrentTower->Id == CurrentWhiteCell->whiteCell->iTowerId)
 					{
-						printf_s("Yeah Man !!!\n");
 						CurrentTower->Tower->iIsWhiteCellAlive = sfFalse;
 						CurrentTower->Tower->tStartSpawnWhiteCell = (float)clock() / CLOCKS_PER_SEC;
 						break;
@@ -1797,13 +1875,9 @@ int main()
 #pragma region LECTURE TRAITEMENT TIRS //SEB
 
 		CurrentTowerBullet = ListTowerBullet->FirstElement;
-		CurrentTowerBullet->TowerBullet->bulletSpeed;
-		int asBreak = 0;
+		asBreak = sfFalse;
 		while (CurrentTowerBullet != NULL)
 		{
-			//CurrentTowerBullet->TowerBullet->dir.x = vPos_player.x - CurrentTowerBullet->TowerBullet->pos.x;
-			//CurrentTowerBullet->TowerBullet->dir.y = vPos_player.y - CurrentTowerBullet->TowerBullet->pos.y;
-			//CurrentTowerBullet->TowerBullet->dir = Normalize(CurrentTowerBullet->TowerBullet->dir);
 			CurrentTowerBullet->TowerBullet->pos.x += CurrentTowerBullet->TowerBullet->dir.x * CurrentTowerBullet->TowerBullet->bulletSpeed;
 			CurrentTowerBullet->TowerBullet->pos.y += CurrentTowerBullet->TowerBullet->dir.y * CurrentTowerBullet->TowerBullet->bulletSpeed;;
 			sfSprite_setPosition(CurrentTowerBullet->TowerBullet->sprite, CurrentTowerBullet->TowerBullet->pos);
@@ -1823,41 +1897,14 @@ int main()
 
 				if (sfFloatRect_intersects(&CurrentEnnemy->Ennemy->boundingBox, &CurrentTowerBullet->TowerBullet->boundingBox, NULL))
 				{
+					CurrentEnnemy->Ennemy->Hp -= 2;
 					DeleteElementByIdBullet(ListTowerBullet,CurrentTowerBullet->Id);
-					asBreak = 1;
+					asBreak =sfTrue;
 					break;
 				}
 				CurrentEnnemy = CurrentEnnemy->NextElement;
 			}
-
-			//CurrentTower = ListTower->FirstElement;
-			//while (CurrentTower != NULL)
-			//{
-			//	if (CurrentTowerBullet->TowerBullet->towerFromId == CurrentTower->Id)
-			//	{
-			//		//vPlayerPointToCheck.x = (vOrigin_fieldOfView.x) - (CurrentTower->Tower->vPos.x - CurrentTowerBullet->TowerBullet->pos.x);
-			//		//vPlayerPointToCheck.y = (vOrigin_fieldOfView.y) - (CurrentTower->Tower->vPos.y - CurrentTowerBullet->TowerBullet->pos.y);
-			//		//if (!sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).r == 255 && !sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).g == 0
-			//		//	&& !sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).b == 0 && !sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).a == 255)
-			//		//{
-			//		if (!sfFloatRect_contains(&CurrentTower->Tower->boundingBox,CurrentTowerBullet->TowerBullet->pos.x, CurrentTowerBullet->TowerBullet->pos.y))
-			//		{
-			//			DeleteElementByIdBullet(ListTowerBullet, CurrentTowerBullet->Id);
-			//			asBreak = 1;
-			//			break;
-			//		}
-			//	}
-				//if (asBreak == 0)
-				//{
-					//CurrentTower = CurrentTower->NextElement;
-				//}
-				//else
-				//{
-					//break;
-				//}
-				//CurrentTower = CurrentTower->NextElement;
-			//}
-			if (asBreak == 0)
+			if (!asBreak)
 			{
 				CurrentTowerBullet = CurrentTowerBullet->NextElement;
 			}
@@ -1865,8 +1912,6 @@ int main()
 			{
 				break;
 			}
-
-			
 		}
 
 #pragma endregion LECTURE TRAITEMENT TIRS //SEB

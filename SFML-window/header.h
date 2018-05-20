@@ -78,6 +78,9 @@
  
 #define TIME_BETWEEN_VARIATION 1
 
+#define LIFEBAR_MAX_SIZE_X 60
+#define LIFEBAR_SIZE_Y 6
+
 #pragma endregion ENNEMY
 
 #pragma region WHITE_CELLS
@@ -181,8 +184,8 @@ struct s_Ennemy
 	int iRandVariation; // choisit de quel coté va s'orienter l'ennemi a chaque frame
 
 	int Type; // type de l'ennemie
-	int Hp; // vie
-	int HpMax; // nombre max de pv 
+	float Hp; // vie
+	float HpMax; // nombre max de pv 
 	int Deg; // Points de dégats
 	int Def; // résistance physique
 
