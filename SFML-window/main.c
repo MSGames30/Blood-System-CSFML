@@ -11,6 +11,7 @@ int main()
 	ListEnnemy->FirstElement = NULL;
 	ListEnnemy->LastElement = NULL;
 	t_EnnemyElement* CurrentEnnemy = NULL;
+	t_EnnemyElement* CurrentEnnemy2 = NULL;
 	t_EnnemyElement* NewEnnemy = NULL;
 
 	t_ListTowerSlot* ListTowerSlot = malloc(sizeof(t_ListTowerSlot));
@@ -386,7 +387,7 @@ int main()
 					{
 						NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy1;
 						NewEnnemy->Ennemy->Deg = 1;
-						NewEnnemy->Ennemy->Hp = 5;
+						NewEnnemy->Ennemy->Hp = 15;
 						NewEnnemy->Ennemy->HpMax = 15;
 						NewEnnemy->Ennemy->iMoneyValue = 0;
 					}
@@ -394,7 +395,7 @@ int main()
 					{
 						NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy2;
 						NewEnnemy->Ennemy->Deg = 2;
-						NewEnnemy->Ennemy->Hp = 5;
+						NewEnnemy->Ennemy->Hp = 22;
 						NewEnnemy->Ennemy->HpMax = 22;
 						NewEnnemy->Ennemy->iMoneyValue = 0;
 					}
@@ -402,7 +403,7 @@ int main()
 					{
 						NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy3;
 						NewEnnemy->Ennemy->Deg = 3;
-						NewEnnemy->Ennemy->Hp = 5;
+						NewEnnemy->Ennemy->Hp = 30;
 						NewEnnemy->Ennemy->HpMax = 30;
 						NewEnnemy->Ennemy->iMoneyValue = 0;
 					}
@@ -519,7 +520,7 @@ int main()
 
 					/*BARRE DE VIE*/
 
-#pragma region BARRE DE VIE //GUILLAUME
+	#pragma region BARRE DE VIE //GUILLAUME
 
 					/*rectangle de fond noir*/
 					NewEnnemy->Ennemy->RectangleShapeBack = sfRectangleShape_create();
@@ -544,8 +545,17 @@ int main()
 					//sfRectangleShape_setOrigin(NewEnnemy->Ennemy->RectangleShape, NewEnnemy->Ennemy->vOriginRectangleShapeBack);
 					iSpaceButtonIsButtonPressedCheck = 1;
 
-#pragma endregion BARRE DE VIE //GUILLAUME
+	#pragma endregion BARRE DE VIE //GUILLAUME
 
+					/*Timer dommages tour 2*/
+
+	#pragma region TIMER DOMMAGES TOUR 2 //SEB
+
+					NewEnnemy->Ennemy->tStartDOT = (float)clock() / CLOCKS_PER_SEC;
+					NewEnnemy->Ennemy->tCurrentDOT = 0;
+					NewEnnemy->Ennemy->tSinceDOT = 0;
+
+	#pragma endregion TIMER DOMMAGES TOUR 2 //SEB
 				}
 			}
 		}
@@ -980,7 +990,7 @@ int main()
 						CurrentTowerSlot = CurrentTowerSlot->NextElement;
 					}
 				}
-				else if (!CurrentTower->Tower->iIsWhiteCellAlive && CurrentTower->Tower->tSinceSpawnWhiteCell > 2
+				else if (!CurrentTower->Tower->iIsWhiteCellAlive && CurrentTower->Tower->tSinceSpawnWhiteCell > WHITE_CELL_CREATE_COOLDOWN
 					&& !CurrentTower->Tower->isFirstBuild)
 				{
 					NewWhiteCell = AddElementBeginListWhiteCell(ListWhiteCell);
@@ -1138,7 +1148,7 @@ int main()
 					CurrentWhiteCell->whiteCell->distanceVector.x = CurrentEnnemy->Ennemy->vCurrentPosition.x - CurrentWhiteCell->whiteCell->vPos.x;
 					CurrentWhiteCell->whiteCell->distanceVector.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentWhiteCell->whiteCell->vPos.y;
 					//printf_s("Cell x :%.2f, Cell y :%.2f, Ennemi X :%.2f, Ennemi Y :%.2f, Magnitude %.2f\n", CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y, CurrentEnnemy->Ennemy->vCurrentPosition.x, CurrentEnnemy->Ennemy->vCurrentPosition.y, Magnitude(CurrentWhiteCell->whiteCell->distanceVector));
-					if (Magnitude(CurrentWhiteCell->whiteCell->distanceVector) < 250)
+					if (Magnitude(CurrentWhiteCell->whiteCell->distanceVector) < WHITE_CELL_FIELD_OF_VIEW_RADIUS)
 					{
 						CurrentWhiteCell->whiteCell->isWalking = sfTrue;
 					}
@@ -1197,6 +1207,18 @@ int main()
 								break;
 							}
 							CurrentTower = CurrentTower->NextElement;
+						}
+						CurrentEnnemy2 = ListEnnemy->FirstElement;
+						while (CurrentEnnemy2 != NULL)
+						{
+							CurrentWhiteCell->whiteCell->distanceVector.x = CurrentEnnemy2->Ennemy->vCurrentPosition.x - CurrentWhiteCell->whiteCell->vPos.x;
+							CurrentWhiteCell->whiteCell->distanceVector.y = CurrentEnnemy2->Ennemy->vCurrentPosition.y - CurrentWhiteCell->whiteCell->vPos.y;
+							if (Magnitude(CurrentWhiteCell->whiteCell->distanceVector) < WHITE_CELL_AREA_DAMAGE_RADIUS)
+							{
+								CurrentEnnemy2->Ennemy->Hp -= TOWER3_DAMAGES;
+							}
+
+							CurrentEnnemy2 = CurrentEnnemy2->NextElement;
 						}
 						DeleteElementByIdWhiteCell(ListWhiteCell, CurrentWhiteCell->Id);
 						asBreak = sfTrue;
@@ -1342,9 +1364,16 @@ int main()
 						switch (CurrentTower->Tower->TowerType)
 						{						
 						case TYPE2 :
-							//printf_s("In tower id : %d\n", CurrentTower->Id);
 							CurrentEnnemy->Ennemy->fSpeedFactor = 0.5;
-							//CurrentEnnemy->Ennemy->fSpeed /= 1.2;
+
+							CurrentEnnemy->Ennemy->tCurrentDOT = (float)clock() / CLOCKS_PER_SEC;
+							CurrentEnnemy->Ennemy->tSinceDOT = CurrentEnnemy->Ennemy->tCurrentDOT - CurrentEnnemy->Ennemy->tStartDOT;
+							if (CurrentEnnemy->Ennemy->tSinceDOT > DOT_FREQUENCY)
+							{
+								CurrentEnnemy->Ennemy->tStartDOT = CurrentEnnemy->Ennemy->tCurrentDOT;
+								CurrentEnnemy->Ennemy->Hp -= TOWER2_DAMAGES;
+							}
+
 							break;
 						case TYPE1:
 							CurrentTower->Tower->tCurrentShoot = (float)clock() / CLOCKS_PER_SEC;
@@ -1897,7 +1926,7 @@ int main()
 
 				if (sfFloatRect_intersects(&CurrentEnnemy->Ennemy->boundingBox, &CurrentTowerBullet->TowerBullet->boundingBox, NULL))
 				{
-					CurrentEnnemy->Ennemy->Hp -= 2;
+					CurrentEnnemy->Ennemy->Hp -= TOWER1_DAMAGES;
 					DeleteElementByIdBullet(ListTowerBullet,CurrentTowerBullet->Id);
 					asBreak =sfTrue;
 					break;

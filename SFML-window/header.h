@@ -81,6 +81,8 @@
 #define LIFEBAR_MAX_SIZE_X 60
 #define LIFEBAR_SIZE_Y 6
 
+#define DOT_FREQUENCY 2
+
 #pragma endregion ENNEMY
 
 #pragma region WHITE_CELLS
@@ -89,8 +91,19 @@
 #define WHITE_CELL_HEIGHT 240
 #define WHITE_CELL_FRAMES 15
 #define WHITE_CELL_ANIM_SPEED 0.03
+#define WHITE_CELL_FIELD_OF_VIEW_RADIUS 250
+#define WHITE_CELL_AREA_DAMAGE_RADIUS 500
+#define WHITE_CELL_CREATE_COOLDOWN 2
 
 #pragma endregion WHITE_CELLS
+
+#pragma region TOWERS
+
+#define TOWER1_DAMAGES 2
+#define TOWER2_DAMAGES 2
+#define TOWER3_DAMAGES 10
+
+#pragma endregion TOWERS
 
 #pragma endregion Defines
 
@@ -209,6 +222,11 @@ struct s_Ennemy
 	sfVector2f vWanderDirection;
 
 	float fSpeedFactor;
+
+	/*dommages tour 2*/
+	float tStartDOT;
+	float tSinceDOT;
+	float tCurrentDOT;
 };
 
 
