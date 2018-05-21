@@ -262,8 +262,8 @@ int main()
 	gameMenuLevel.vOrigin_level1.x = sfSprite_getGlobalBounds(gameMenuLevel.level1).width / 2;
 	gameMenuLevel.vOrigin_level1.y = sfSprite_getGlobalBounds(gameMenuLevel.level1).height / 2;
 	sfSprite_setOrigin(gameMenuLevel.level1, gameMenuLevel.vOrigin_level1);
-	gameMenuLevel.vPos_level1.x = 678;
-	gameMenuLevel.vPos_level1.y = 438;
+	gameMenuLevel.vPos_level1.x = 984;
+	gameMenuLevel.vPos_level1.y = 676;
 	sfSprite_setPosition(gameMenuLevel.level1, gameMenuLevel.vPos_level1);
 	gameMenuLevel.fRect_level1BB = sfSprite_getGlobalBounds(gameMenuLevel.level1);
 	//
@@ -271,8 +271,8 @@ int main()
 	gameMenuLevel.vOrigin_level2.x = sfSprite_getGlobalBounds(gameMenuLevel.level2).width / 2;
 	gameMenuLevel.vOrigin_level2.y = sfSprite_getGlobalBounds(gameMenuLevel.level2).height / 2;
 	sfSprite_setOrigin(gameMenuLevel.level2, gameMenuLevel.vOrigin_level2);
-	gameMenuLevel.vPos_level2.x = 462;
-	gameMenuLevel.vPos_level2.y = 698;
+	gameMenuLevel.vPos_level2.x = 1088;
+	gameMenuLevel.vPos_level2.y = 402;
 	sfSprite_setPosition(gameMenuLevel.level2, gameMenuLevel.vPos_level2);
 	gameMenuLevel.fRect_level2BB = sfSprite_getGlobalBounds(gameMenuLevel.level2);
 
@@ -521,7 +521,7 @@ int main()
 				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
 				{
 					isMousePressed = sfTrue;
-					loadTowerSlots(ListTowerSlot, iCurrentLevel);
+					//loadTowerSlots(ListTowerSlot, iCurrentLevel);
 					GameState = LEVEL_SELECTOR;
 				}
 			}
@@ -537,7 +537,7 @@ int main()
 				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
 				{
 					isMousePressed = sfTrue;
-					loadTowerSlots(ListTowerSlot, iCurrentLevel);
+					//loadTowerSlots(ListTowerSlot, iCurrentLevel);
 					GameState = LEVEL_SELECTOR;
 				}
 			}
@@ -553,7 +553,7 @@ int main()
 				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
 				{
 					isMousePressed = sfTrue;
-					loadTowerSlots(ListTowerSlot, iCurrentLevel);
+					//loadTowerSlots(ListTowerSlot, iCurrentLevel);
 					GameState = LEVEL_SELECTOR;
 				}
 			}
