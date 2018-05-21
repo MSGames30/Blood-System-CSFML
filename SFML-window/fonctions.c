@@ -237,7 +237,56 @@ void loadTowerSlots(t_ListTowerSlot* _ListTowerSlot, int _levelNumber)
 	fclose(file);
 }
 
-
+void manageInGameMenu(t_inGameMenu* _inGameMenu)
+{
+	if (_inGameMenu->menuState == IS_OPENING)
+	{
+		if ((_inGameMenu->vPos_menuButton.y - _inGameMenu->vPos_musicButton.y) < MUSIC_BUTTON_DISTANCE)
+		{
+			_inGameMenu->vPos_musicButton.y -= BUTTON_SPEED;
+			sfSprite_setPosition(_inGameMenu->musicButton, _inGameMenu->vPos_musicButton);
+		}
+		if ((_inGameMenu->vPos_menuButton.y - _inGameMenu->vPos_fxButton.y) < FX_BUTTON_DISTANCE)
+		{
+			_inGameMenu->vPos_fxButton.y -= BUTTON_SPEED;
+			sfSprite_setPosition(_inGameMenu->fxButton, _inGameMenu->vPos_fxButton);
+		}
+		if ((_inGameMenu->vPos_menuButton.y - _inGameMenu->vPos_pauseButton.y) < PAUSE_BUTTON_DISTANCE)
+		{
+			_inGameMenu->vPos_pauseButton.y -= BUTTON_SPEED;
+			sfSprite_setPosition(_inGameMenu->pauseButton, _inGameMenu->vPos_pauseButton);
+		}
+		else
+		{
+			_inGameMenu->musicButtonBB = sfSprite_getGlobalBounds(_inGameMenu->musicButton);
+			_inGameMenu->fxButtonBB = sfSprite_getGlobalBounds(_inGameMenu->fxButton);
+			_inGameMenu->pauseButtonBB = sfSprite_getGlobalBounds(_inGameMenu->pauseButton);
+			_inGameMenu->menuState = IS_OPENED;
+		}
+	}
+	else if (_inGameMenu->menuState == IS_CLOSING)
+	{
+		if ((_inGameMenu->vPos_menuButton.y - _inGameMenu->vPos_musicButton.y) > 0)
+		{
+			_inGameMenu->vPos_musicButton.y += BUTTON_SPEED;
+			sfSprite_setPosition(_inGameMenu->musicButton, _inGameMenu->vPos_musicButton);
+		}
+		if ((_inGameMenu->vPos_menuButton.y - _inGameMenu->vPos_fxButton.y) > 0)
+		{
+			_inGameMenu->vPos_fxButton.y += BUTTON_SPEED;
+			sfSprite_setPosition(_inGameMenu->fxButton, _inGameMenu->vPos_fxButton);
+		}
+		if ((_inGameMenu->vPos_menuButton.y - _inGameMenu->vPos_pauseButton.y) > 0)
+		{
+			_inGameMenu->vPos_pauseButton.y += BUTTON_SPEED;
+			sfSprite_setPosition(_inGameMenu->pauseButton, _inGameMenu->vPos_pauseButton);
+		}
+		else
+		{
+			_inGameMenu->menuState = IS_CLOSED;
+		}
+	}
+}
 
 #pragma endregion SFML Functions
 

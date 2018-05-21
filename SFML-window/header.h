@@ -105,6 +105,16 @@
 
 #pragma endregion TOWERS
 
+#pragma region BUTTONS
+
+#define BUTTON_SPRITE_SIZE 60
+#define MUSIC_BUTTON_DISTANCE 70
+#define FX_BUTTON_DISTANCE 140
+#define PAUSE_BUTTON_DISTANCE 210
+#define BUTTON_SPEED 5
+
+#pragma endregion BUTTONS
+
 #pragma endregion Defines
 
 #pragma region enum
@@ -134,6 +144,25 @@ enum e_ENNEMY_DIRECTION
 	DOWN_LEFT,
 	DOWN_RIGHT
 };
+
+typedef enum e_inGameMenuState t_inGameMenuState;
+
+enum e_inGameMenuState
+{
+	IS_CLOSED = 0,
+	IS_OPENING,
+	IS_OPENED,
+	IS_CLOSING,
+};
+
+typedef enum e_buttonState t_buttonState;
+
+enum e_buttonState
+{
+	IS_OFF = 0,
+	IS_ON,
+};
+
 #pragma endregion enum
 
 #pragma region structures
@@ -400,6 +429,30 @@ struct s_ListWhiteCell
 	t_whiteCellElement* LastElement;
 };
 
+typedef struct s_inGameMenu t_inGameMenu;
+
+struct s_inGameMenu
+{
+	sfSprite* menuButton;
+	sfSprite* musicButton;
+	sfSprite* fxButton;
+	sfSprite* pauseButton;
+	sfVector2f vOrigin;
+	sfVector2f vPos_menuButton;
+	sfVector2f vPos_musicButton;
+	sfVector2f vPos_fxButton;
+	sfVector2f vPos_pauseButton;
+	t_buttonState musicButtonFrame;
+	t_buttonState fxButtonFrame;
+	t_inGameMenuState menuState;
+	sfIntRect rect_musicButton;
+	sfIntRect rect_fxButton;
+	sfFloatRect menuButtonBB;
+	sfFloatRect musicButtonBB;
+	sfFloatRect fxButtonBB;
+	sfFloatRect pauseButtonBB;
+};
+
 #pragma endregion structures
 
 #pragma region Functions Declarations
@@ -431,6 +484,8 @@ int SpriteIsOver(char *_window, char *_spritePerso, char *_spriteObject);
 //void Collider(sfImage* _collid, Player* player);
 
 void loadTowerSlots(t_ListTowerSlot* _ListTowerSlot, int _levelNumber);
+
+void manageInGameMenu(t_inGameMenu* _inGameMenu);
 
 t_EnnemyElement* AddElementBeginList(t_List* _List);
 t_TowerSlotElement* AddElementBeginListTowerSlot(t_ListTowerSlot* _List);

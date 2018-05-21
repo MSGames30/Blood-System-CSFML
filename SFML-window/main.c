@@ -138,6 +138,51 @@ int main()
 
 	#pragma endregion TIME VARIABLES
 
+	#pragma region STRUCTURE MENU INGAME //SEB
+
+	t_inGameMenu inGameMenu;
+	inGameMenu.vOrigin.x = BUTTON_SPRITE_SIZE / 2;
+	inGameMenu.vOrigin.y = BUTTON_SPRITE_SIZE / 2;
+	inGameMenu.menuButton = createSprite("resources/textures/menu_ingame.png");
+	sfSprite_setOrigin(inGameMenu.menuButton, inGameMenu.vOrigin); 
+	inGameMenu.vPos_menuButton.x = 1850;
+	inGameMenu.vPos_menuButton.y = 1010;
+	sfSprite_setPosition(inGameMenu.menuButton, inGameMenu.vPos_menuButton);
+	//
+	inGameMenu.pauseButton = createSprite("resources/textures/pause.png");
+	sfSprite_setOrigin(inGameMenu.pauseButton, inGameMenu.vOrigin);
+	inGameMenu.vPos_pauseButton.x = inGameMenu.vPos_menuButton.x;
+	inGameMenu.vPos_pauseButton.y = inGameMenu.vPos_menuButton.y;
+	sfSprite_setPosition(inGameMenu.pauseButton, inGameMenu.vPos_pauseButton);
+	//
+	inGameMenu.musicButton = createSprite("resources/textures/music.png");
+	sfSprite_setOrigin(inGameMenu.musicButton, inGameMenu.vOrigin);
+	inGameMenu.vPos_musicButton.x = inGameMenu.vPos_menuButton.x;
+	inGameMenu.vPos_musicButton.y = inGameMenu.vPos_menuButton.y;
+	sfSprite_setPosition(inGameMenu.musicButton, inGameMenu.vPos_musicButton);
+	inGameMenu.musicButtonFrame = IS_OFF;
+	inGameMenu.rect_musicButton.left = inGameMenu.musicButtonFrame * BUTTON_SPRITE_SIZE;
+	inGameMenu.rect_musicButton.top = 0;
+	inGameMenu.rect_musicButton.width = BUTTON_SPRITE_SIZE;
+	inGameMenu.rect_musicButton.height = BUTTON_SPRITE_SIZE;
+	sfSprite_setTextureRect(inGameMenu.musicButton, inGameMenu.rect_musicButton);
+	//
+	inGameMenu.fxButton = createSprite("resources/textures/fx.png");
+	sfSprite_setOrigin(inGameMenu.fxButton, inGameMenu.vOrigin);
+	inGameMenu.vPos_fxButton.x = inGameMenu.vPos_menuButton.x;
+	inGameMenu.vPos_fxButton.y = inGameMenu.vPos_menuButton.y;
+	sfSprite_setPosition(inGameMenu.fxButton, inGameMenu.vPos_fxButton);
+	inGameMenu.fxButtonFrame = IS_OFF;
+	inGameMenu.rect_fxButton.left = inGameMenu.fxButtonFrame * BUTTON_SPRITE_SIZE;
+	inGameMenu.rect_fxButton.top = 0;
+	inGameMenu.rect_fxButton.width = BUTTON_SPRITE_SIZE;
+	inGameMenu.rect_fxButton.height = BUTTON_SPRITE_SIZE;
+	sfSprite_setTextureRect(inGameMenu.fxButton, inGameMenu.rect_fxButton);
+
+	inGameMenu.menuState = IS_CLOSED;
+
+	#pragma endregion STRUCTURE MENU INGAME //SEB
+
 #pragma endregion VARIABLES
 
 #pragma region WINDOW
@@ -2038,6 +2083,112 @@ int main()
 		}
 
 #pragma endregion AFFICHAGE HUD //GUILLAUME
+
+#pragma region AFFICHAGE MENU INGAME //SEB
+		vMousePos = sfMouse_getPosition(window);
+
+		inGameMenu.menuButtonBB = sfSprite_getGlobalBounds(inGameMenu.menuButton);
+
+
+		if (sfFloatRect_contains(&inGameMenu.menuButtonBB, vMousePos.x, vMousePos.y) && inGameMenu.menuState == IS_CLOSED)
+		{
+			if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+			{
+				isMousePressed = sfTrue;
+				inGameMenu.menuState = IS_OPENING;
+				sfSprite_setColor(inGameMenu.menuButton, sfWhite);
+			}
+			sfSprite_setColor(inGameMenu.menuButton, sfYellow);
+		}
+		else if (sfFloatRect_contains(&inGameMenu.menuButtonBB, vMousePos.x, vMousePos.y) && inGameMenu.menuState == IS_OPENED)
+		{
+			if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+			{
+				isMousePressed = sfTrue;
+				inGameMenu.menuState = IS_CLOSING;
+				sfSprite_setColor(inGameMenu.menuButton, sfWhite);
+			}
+			sfSprite_setColor(inGameMenu.menuButton, sfYellow);
+		}
+		else
+		{
+			sfSprite_setColor(inGameMenu.menuButton, sfWhite);
+		}
+
+		if (inGameMenu.menuState == IS_OPENED)
+		{
+			if (sfFloatRect_contains(&inGameMenu.musicButtonBB, vMousePos.x, vMousePos.y))
+			{
+				sfSprite_setColor(inGameMenu.musicButton, sfYellow);
+				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+				{
+					isMousePressed = sfTrue;
+					if (inGameMenu.musicButtonFrame == IS_OFF)
+					{
+						inGameMenu.musicButtonFrame = IS_ON;
+					}
+					else
+					{
+						inGameMenu.musicButtonFrame = IS_OFF;
+					}
+					inGameMenu.rect_musicButton.left = inGameMenu.musicButtonFrame * BUTTON_SPRITE_SIZE;
+					sfSprite_setTextureRect(inGameMenu.musicButton, inGameMenu.rect_musicButton);
+				}
+			}
+			else
+			{
+				sfSprite_setColor(inGameMenu.musicButton, sfWhite);
+			}
+			if (sfFloatRect_contains(&inGameMenu.fxButtonBB, vMousePos.x, vMousePos.y))
+			{
+				sfSprite_setColor(inGameMenu.fxButton, sfYellow);
+				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+				{
+					isMousePressed = sfTrue;
+					if (inGameMenu.fxButtonFrame == IS_OFF)
+					{
+						inGameMenu.fxButtonFrame = IS_ON;
+					}
+					else
+					{
+						inGameMenu.fxButtonFrame = IS_OFF;
+					}
+					inGameMenu.rect_fxButton.left = inGameMenu.fxButtonFrame * BUTTON_SPRITE_SIZE;
+					sfSprite_setTextureRect(inGameMenu.fxButton, inGameMenu.rect_fxButton);
+				}
+			}
+			else
+			{
+				sfSprite_setColor(inGameMenu.fxButton, sfWhite);
+			}
+			if (sfFloatRect_contains(&inGameMenu.pauseButtonBB, vMousePos.x, vMousePos.y))
+			{
+				sfSprite_setColor(inGameMenu.pauseButton, sfYellow);
+			}
+			else
+			{
+				sfSprite_setColor(inGameMenu.pauseButton, sfWhite);
+			}
+		}
+
+
+
+		if (inGameMenu.menuState == IS_OPENING || inGameMenu.menuState == IS_CLOSING)
+		{
+			manageInGameMenu(&inGameMenu);
+		}
+
+
+		if (!sfMouse_isButtonPressed(sfMouseLeft))
+		{
+			isMousePressed = sfFalse;
+		}
+		sfRenderWindow_drawSprite(window, inGameMenu.pauseButton, NULL);
+		sfRenderWindow_drawSprite(window, inGameMenu.fxButton, NULL);
+		sfRenderWindow_drawSprite(window, inGameMenu.musicButton, NULL);
+		sfRenderWindow_drawSprite(window, inGameMenu.menuButton, NULL);
+
+#pragma endregion AFFICHAGE MENU INGAME //SEB
 		////////////////////////////////////
 		CurrentTower = ListTower->FirstElement;
 
