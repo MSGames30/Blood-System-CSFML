@@ -895,6 +895,42 @@ sfBool DeleteElementByIdWhiteCell(t_ListWhiteCell* _List, int _IdElementToDelete
 	return sfFalse;
 }
 
+sfBool DeleteEntityWithID(t_ListTower*_list, int _id)
+{
+	t_TowerElement *currentElement = _list->FirstElement;
+	if (currentElement->Id == _id)
+	{
+		t_TowerElement *deletedElement = currentElement;
+		_list->FirstElement = currentElement->NextElement;
+
+		free(deletedElement);
+		//printf("Bullet with id %d has been deleted\n", _id);
+		return sfTrue;
+	}
+	else
+	{
+		while (currentElement->NextElement != NULL)
+		{
+			if (currentElement->NextElement->Id == _id)
+			{
+				t_TowerElement *deletedElement = currentElement->NextElement;
+				if (currentElement->NextElement != NULL)
+					currentElement->NextElement = currentElement->NextElement->NextElement;
+
+				free(deletedElement);
+				printf("Bullet with id %d has been deleted\n", _id);
+				return sfTrue;
+			}
+			else
+			{
+				currentElement = currentElement->NextElement;
+			}
+		}
+	}
+	printf("Unable to delete Bullet with id %d\n", _id);
+	return sfFalse;
+}
+
 /*détruire tous les éléments d'une liste sans détruire la liste*/
 
 sfBool DeleteAllElementInList(t_List* _List)
@@ -1236,38 +1272,4 @@ sfBool SortTowerByPos(t_ListTower *_list)
 	return listSorted;
 }
 
-sfBool DeleteEntityWithID(t_ListTower*_list, int _id)
-{
-	t_TowerElement *currentElement = _list->FirstElement;
-	if (currentElement->Id == _id)
-	{
-		t_TowerElement *deletedElement = currentElement;
-		_list->FirstElement = currentElement->NextElement;
 
-		free(deletedElement);
-		//printf("Bullet with id %d has been deleted\n", _id);
-		return sfTrue;
-	}
-	else
-	{
-		while (currentElement->NextElement != NULL)
-		{
-			if (currentElement->NextElement->Id == _id)
-			{
-				t_TowerElement *deletedElement = currentElement->NextElement;
-				if (currentElement->NextElement != NULL)
-					currentElement->NextElement = currentElement->NextElement->NextElement;
-
-				free(deletedElement);
-				printf("Bullet with id %d has been deleted\n", _id);
-				return sfTrue;
-			}
-			else
-			{
-				currentElement = currentElement->NextElement;
-			}
-		}
-	}
-	printf("Unable to delete Bullet with id %d\n", _id);
-	return sfFalse;
-}

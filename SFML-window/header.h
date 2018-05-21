@@ -163,6 +163,16 @@ enum e_buttonState
 	IS_ON,
 };
 
+typedef enum e_GameState t_GameState;
+
+enum e_GameState
+{
+	MENU = 0,
+	SAVE_SELECTOR,
+	LEVEL_SELECTOR,
+	GAME,
+};
+
 #pragma endregion enum
 
 #pragma region structures
@@ -453,6 +463,60 @@ struct s_inGameMenu
 	sfFloatRect pauseButtonBB;
 };
 
+
+typedef struct s_gameMenu t_gameMenu;
+
+struct s_gameMenu
+{
+	sfSprite* background ;
+	sfSprite* play;
+	sfSprite* credits;
+	sfSprite* quit;
+	sfVector2f vPos_play;
+	sfVector2f vPos_credits;
+	sfVector2f vPos_quit;
+	sfVector2f vOrigin_play;
+	sfVector2f vOrigin_credits;
+	sfVector2f vOrigin_quit;
+	sfFloatRect fRect_playBB;
+	sfFloatRect fRect_creditsBB;
+	sfFloatRect fRect_quitBB;
+};
+
+typedef struct s_gameMenuSave t_gameMenuSave;
+
+struct s_gameMenuSave
+{
+	sfSprite* background;
+	sfSprite* slot1;
+	sfSprite* slot2;
+	sfSprite* slot3;
+	sfVector2f vPos_slot1;
+	sfVector2f vPos_slot2;
+	sfVector2f vPos_slot3;
+	sfVector2f vOrigin_slot1;
+	sfVector2f vOrigin_slot2;
+	sfVector2f vOrigin_slot3;
+	sfFloatRect fRect_slot1BB;
+	sfFloatRect fRect_slot2BB;
+	sfFloatRect fRect_slot3BB;
+};
+
+
+typedef struct s_gameMenuLevel t_gameMenuLevel;
+
+struct s_gameMenuLevel
+{
+	sfSprite* background;
+	sfSprite* level1;
+	sfSprite* level2;
+	sfVector2f vPos_level1;
+	sfVector2f vPos_level2;
+	sfVector2f vOrigin_level1;
+	sfVector2f vOrigin_level2;
+	sfFloatRect fRect_level1BB;
+	sfFloatRect fRect_level2BB;
+};
 #pragma endregion structures
 
 #pragma region Functions Declarations
