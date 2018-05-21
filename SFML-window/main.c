@@ -455,7 +455,7 @@ int main()
 				{
 					isMousePressed = sfTrue;
 					//loadTowerSlots(ListTowerSlot, iCurrentLevel);
-					loadSaveForSlots(&gameMenuSave);
+					loadSaveForSaveSlots(&gameMenuSave);
 					GameState = SAVE_SELECTOR;
 				}
 			}

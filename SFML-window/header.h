@@ -558,7 +558,7 @@ void loadTowerSlots(t_ListTowerSlot* _ListTowerSlot, int _levelNumber);
 
 void manageInGameMenu(t_inGameMenu* _inGameMenu);
 
-void loadSaveForSlots(t_gameMenuSave* _gameMenuSave);
+void loadSaveForSaveSlots(t_gameMenuSave* _gameMenuSave);
 
 t_EnnemyElement* AddElementBeginList(t_List* _List);
 t_TowerSlotElement* AddElementBeginListTowerSlot(t_ListTowerSlot* _List);

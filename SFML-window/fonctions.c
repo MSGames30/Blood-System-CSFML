@@ -288,7 +288,7 @@ void manageInGameMenu(t_inGameMenu* _inGameMenu)
 	}
 }
 
-void loadSaveForSlots( t_gameMenuSave* _gameMenuSave)
+void loadSaveForSaveSlots( t_gameMenuSave* _gameMenuSave)
 {
 	FILE* file = NULL;
 
