@@ -276,8 +276,6 @@ int main()
 	sfSprite_setPosition(gameMenuLevel.level2, gameMenuLevel.vPos_level2);
 	gameMenuLevel.fRect_level2BB = sfSprite_getGlobalBounds(gameMenuLevel.level2);
 
-
-
 #pragma endregion MENU CHOIX LEVEL //SEB
 
 #pragma endregion VARIABLES
@@ -457,6 +455,7 @@ int main()
 				{
 					isMousePressed = sfTrue;
 					//loadTowerSlots(ListTowerSlot, iCurrentLevel);
+					loadSaveForSlots(&gameMenuSave);
 					GameState = SAVE_SELECTOR;
 				}
 			}
@@ -513,7 +512,14 @@ int main()
 
 #pragma region CASE SAVE SELECTOR
 		case SAVE_SELECTOR:
+			sfRenderWindow_drawSprite(window, gameMenuSave.background, NULL);
+			sfRenderWindow_drawSprite(window, gameMenuSave.slot1, NULL);
+			sfRenderWindow_drawSprite(window, gameMenuSave.slot2, NULL);
+			sfRenderWindow_drawSprite(window, gameMenuSave.slot3, NULL);
+
 			vMousePos = sfMouse_getPosition(window);
+			vMousePosToFloat.x = (float)vMousePos.x;
+			vMousePosToFloat.y = (float)vMousePos.y;
 			/*slot 1*/
 			if (sfFloatRect_contains(&gameMenuSave.fRect_slot1BB, vMousePos.x, vMousePos.y))
 			{
@@ -521,9 +527,11 @@ int main()
 				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
 				{
 					isMousePressed = sfTrue;
-					//loadTowerSlots(ListTowerSlot, iCurrentLevel);
+					unlockedLevels = gameMenuSave.unLockedLevelsSlot1;
 					GameState = LEVEL_SELECTOR;
 				}
+				sfSprite_setPosition(gameMenuSave.slot1MiniMap, vMousePosToFloat);
+				sfRenderWindow_drawSprite(window, gameMenuSave.slot1MiniMap, NULL);
 			}
 			else
 			{
@@ -538,8 +546,11 @@ int main()
 				{
 					isMousePressed = sfTrue;
 					//loadTowerSlots(ListTowerSlot, iCurrentLevel);
+					unlockedLevels = gameMenuSave.unLockedLevelsSlot2;
 					GameState = LEVEL_SELECTOR;
 				}
+				sfSprite_setPosition(gameMenuSave.slot2MiniMap, vMousePosToFloat);
+				sfRenderWindow_drawSprite(window, gameMenuSave.slot2MiniMap, NULL);
 			}
 			else
 			{
@@ -554,8 +565,11 @@ int main()
 				{
 					isMousePressed = sfTrue;
 					//loadTowerSlots(ListTowerSlot, iCurrentLevel);
+					unlockedLevels = gameMenuSave.unLockedLevelsSlot3;
 					GameState = LEVEL_SELECTOR;
 				}
+				sfSprite_setPosition(gameMenuSave.slot3MiniMap, vMousePosToFloat);
+				sfRenderWindow_drawSprite(window, gameMenuSave.slot3MiniMap, NULL);
 			}
 			else
 			{
@@ -567,18 +581,16 @@ int main()
 				isMousePressed = sfFalse;
 			}
 
-			sfRenderWindow_drawSprite(window, gameMenuSave.background, NULL);
-			sfRenderWindow_drawSprite(window, gameMenuSave.slot1, NULL);
-			sfRenderWindow_drawSprite(window, gameMenuSave.slot2, NULL);
-			sfRenderWindow_drawSprite(window, gameMenuSave.slot3, NULL);
+
 			break;
 #pragma endregion CASE SAVE SELECTOR
 
 #pragma region CASE LEVEL SELECTOR
 		case LEVEL_SELECTOR:
+			sfRenderWindow_drawSprite(window, gameMenuLevel.background, NULL);
 			vMousePos = sfMouse_getPosition(window);
 			/*level 1*/
-			if (sfFloatRect_contains(&gameMenuLevel.fRect_level1BB, vMousePos.x, vMousePos.y))
+			if (sfFloatRect_contains(&gameMenuLevel.fRect_level1BB, vMousePos.x, vMousePos.y) && unlockedLevels >=0)
 			{
 				sfSprite_setColor(gameMenuLevel.level1, sfBlue);
 				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
@@ -587,6 +599,7 @@ int main()
 					loadTowerSlots(ListTowerSlot, iCurrentLevel);
 					GameState = GAME;
 				}
+								
 			}
 			else
 			{
@@ -594,7 +607,7 @@ int main()
 			}
 
 			/*level 2*/
-			if (sfFloatRect_contains(&gameMenuLevel.fRect_level2BB, vMousePos.x, vMousePos.y))
+			if (sfFloatRect_contains(&gameMenuLevel.fRect_level2BB, vMousePos.x, vMousePos.y) && unlockedLevels >= 2)
 			{
 				sfSprite_setColor(gameMenuLevel.level2, sfBlue);
 				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
@@ -614,9 +627,14 @@ int main()
 				isMousePressed = sfFalse;
 			}
 
-			sfRenderWindow_drawSprite(window, gameMenuLevel.background, NULL);
-			sfRenderWindow_drawSprite(window, gameMenuLevel.level1, NULL);
-			sfRenderWindow_drawSprite(window, gameMenuLevel.level2, NULL);
+			if (unlockedLevels >= 0)
+			{
+				sfRenderWindow_drawSprite(window, gameMenuLevel.level1, NULL);
+			}
+			if (unlockedLevels >= 2)
+			{
+				sfRenderWindow_drawSprite(window, gameMenuLevel.level2, NULL);
+			}
 			break;
 #pragma endregion CASE LEVEL SELECTOR
 

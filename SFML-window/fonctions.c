@@ -288,6 +288,84 @@ void manageInGameMenu(t_inGameMenu* _inGameMenu)
 	}
 }
 
+void loadSaveForSlots( t_gameMenuSave* _gameMenuSave)
+{
+	FILE* file = NULL;
+
+	fopen_s(&file, "resources/datas/saves/save_slot1.txt","r");
+	if (file == NULL)
+	{
+		printf_s("erreur ouverture save\n");
+	}
+	fscanf_s(file, "unlockedLevels=%d", &_gameMenuSave->unLockedLevelsSlot1);
+	printf_s("unlocked levels 1: %d\n", _gameMenuSave->unLockedLevelsSlot1);
+	fclose(file);
+	switch (_gameMenuSave->unLockedLevelsSlot1)
+	{
+	case 0:
+		_gameMenuSave->slot1MiniMap = createSprite("resources/textures/level_selector/miniMap_Level0.png");
+		break;
+	case 1:
+		_gameMenuSave->slot1MiniMap = createSprite("resources/textures/level_selector/miniMap_Level1.png");
+		break;
+	case 2:
+		_gameMenuSave->slot1MiniMap = createSprite("resources/textures/level_selector/miniMap_Level2.png");
+		break;
+	default:
+		break;
+	}
+
+	fopen_s(&file, "resources/datas/saves/save_slot2.txt", "r");
+	if (file == NULL)
+	{
+		printf_s("erreur ouverture save\n");
+	}
+	fscanf_s(file, "unlockedLevels=%d", &_gameMenuSave->unLockedLevelsSlot2);
+	printf_s("unlocked levels 2: %d\n", _gameMenuSave->unLockedLevelsSlot2);
+	fclose(file);
+	switch (_gameMenuSave->unLockedLevelsSlot2)
+	{
+	case 0:
+		_gameMenuSave->slot2MiniMap = createSprite("resources/textures/level_selector/miniMap_Level0.png");
+		break;
+	case 1:
+		_gameMenuSave->slot2MiniMap = createSprite("resources/textures/level_selector/miniMap_Level1.png");
+		break;
+	case 2:
+		_gameMenuSave->slot2MiniMap = createSprite("resources/textures/level_selector/miniMap_Level2.png");
+		break;
+	default:
+		break;
+	}
+
+	fopen_s(&file, "resources/datas/saves/save_slot3.txt", "r");
+	if (file == NULL)
+	{
+		printf_s("erreur ouverture save\n");
+	}
+	fscanf_s(file, "unlockedLevels=%d", &_gameMenuSave->unLockedLevelsSlot3);
+	printf_s("unlocked levels 3: %d\n", _gameMenuSave->unLockedLevelsSlot3);
+	fclose(file);
+	switch (_gameMenuSave->unLockedLevelsSlot3)
+	{
+	case 0:
+		_gameMenuSave->slot3MiniMap = createSprite("resources/textures/level_selector/miniMap_Level0.png");
+		break;
+	case 1:
+		_gameMenuSave->slot3MiniMap = createSprite("resources/textures/level_selector/miniMap_Level1.png");
+		break;
+	case 2:
+		_gameMenuSave->slot3MiniMap = createSprite("resources/textures/level_selector/miniMap_Level2.png");
+		break;
+	default:
+		break;
+	}
+
+
+	
+}
+
+
 #pragma endregion SFML Functions
 
 #pragma region LIST FUNCTIONS

@@ -500,6 +500,12 @@ struct s_gameMenuSave
 	sfFloatRect fRect_slot1BB;
 	sfFloatRect fRect_slot2BB;
 	sfFloatRect fRect_slot3BB;
+	int unLockedLevelsSlot1;
+	int unLockedLevelsSlot2;
+	int unLockedLevelsSlot3;
+	sfSprite* slot1MiniMap;
+	sfSprite* slot2MiniMap;
+	sfSprite* slot3MiniMap;
 };
 
 
@@ -516,6 +522,7 @@ struct s_gameMenuLevel
 	sfVector2f vOrigin_level2;
 	sfFloatRect fRect_level1BB;
 	sfFloatRect fRect_level2BB;
+
 };
 #pragma endregion structures
 
@@ -550,6 +557,8 @@ int SpriteIsOver(char *_window, char *_spritePerso, char *_spriteObject);
 void loadTowerSlots(t_ListTowerSlot* _ListTowerSlot, int _levelNumber);
 
 void manageInGameMenu(t_inGameMenu* _inGameMenu);
+
+void loadSaveForSlots(t_gameMenuSave* _gameMenuSave);
 
 t_EnnemyElement* AddElementBeginList(t_List* _List);
 t_TowerSlotElement* AddElementBeginListTowerSlot(t_ListTowerSlot* _List);
