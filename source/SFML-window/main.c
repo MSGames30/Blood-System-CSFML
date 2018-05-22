@@ -66,6 +66,8 @@ int main()
 
 	t_GameState GameState = MENU;
 	t_mainMenuState mainMenuState = ON_LOGO;
+	t_mainMenuState mainMenuNextState = ON_LOGO;
+
 
 	sfBool gamePause = sfFalse;
 	sfBool isMousePressed = sfFalse;
@@ -631,7 +633,8 @@ int main()
 							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
 							{
 								isMousePressed = sfTrue;
-								mainMenuState = ON_START;
+								mainMenuNextState = ON_START;
+								mainMenuState = ON_LOGO_TRANSITION;
 								sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
 							}
 						}
@@ -655,7 +658,8 @@ int main()
 							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
 							{
 								isMousePressed = sfTrue;
-								mainMenuState = ON_CREDITS;
+								mainMenuNextState = ON_CREDITS;
+								mainMenuState = ON_LOGO_TRANSITION;
 								sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
 							}
 						}
@@ -678,7 +682,8 @@ int main()
 							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
 							{
 								isMousePressed = sfTrue;
-								mainMenuState = ON_EXIT;
+								mainMenuNextState = ON_EXIT;
+								mainMenuState = ON_LOGO_TRANSITION;
 								sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
 							}
 						}
@@ -704,6 +709,39 @@ int main()
 				break;
 
 #pragma endregion ON_LOGO
+
+#pragma region ON_LOGO_TRANSITION
+			case ON_LOGO_TRANSITION:
+				if (MainMenu.paperClip.vPos.y > -60 || MainMenu.LogoSheet.vPos.y < 1840)
+				{
+					if (MainMenu.paperClip.vPos.y > -60)
+					{
+						MainMenu.paperClip.vPos.x -= 3;
+						MainMenu.paperClip.vPos.y -= 5;
+						sfSprite_setPosition(MainMenu.paperClip.sprite, MainMenu.paperClip.vPos);
+					}
+					else if (MainMenu.LogoSheet.vPos.y < 1840)
+					{
+						MainMenu.LogoSheet.vPos.x += 20;
+						MainMenu.LogoSheet.vPos.y += 30;
+						sfSprite_setPosition(MainMenu.LogoSheet.sprite, MainMenu.LogoSheet.vPos);
+					}
+				}
+				else
+				{
+					mainMenuState = mainMenuNextState;
+				}
+				sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.LogoSheet.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.paperClip.sprite, NULL);
+				break;
+
+#pragma endregion ON_LOGO_TRANSITION
 
 #pragma region ON_START
 			case ON_START:
