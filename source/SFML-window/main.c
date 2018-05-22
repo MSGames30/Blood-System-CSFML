@@ -5,6 +5,8 @@ int main()
 	/*initialisation du srand*/
 	srand(time(NULL));
 
+	float testincreaseX = 1;
+	float testincreaseY = 1;
 #pragma region LIST
 
 	t_List* ListEnnemy = malloc(sizeof(t_List));
@@ -722,8 +724,10 @@ int main()
 					}
 					else if (MainMenu.LogoSheet.vPos.y < 1840)
 					{
-						MainMenu.LogoSheet.vPos.x += 20;
-						MainMenu.LogoSheet.vPos.y += 30;
+						MainMenu.LogoSheet.vPos.x += 2 * testincreaseX;
+						MainMenu.LogoSheet.vPos.y += 6 * testincreaseY;
+						testincreaseX += 0.05;
+						testincreaseY += 00.1;
 						sfSprite_setPosition(MainMenu.LogoSheet.sprite, MainMenu.LogoSheet.vPos);
 					}
 				}
@@ -731,12 +735,40 @@ int main()
 				{
 					mainMenuState = mainMenuNextState;
 				}
-				sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
+				switch (mainMenuNextState)
+				{
+				case ON_START :
+					sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.saveSlot1.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.saveSlot2.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.saveSlot3.sprite, NULL);
+					break;
+				case ON_CREDITS :
+					sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+					break;
+				case ON_EXIT :
+					sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.exitYes.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.exitNo.sprite, NULL);
+					break;
+				default:
+					break;
+				}
 				sfRenderWindow_drawSprite(window, MainMenu.LogoSheet.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.paperClip.sprite, NULL);
 				break;
@@ -1109,6 +1141,7 @@ int main()
 							sfSprite_setColor(MainMenu.exitNo.sprite, sfRed);
 							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
 							{
+								mainMenuState = ON_START;
 								sfSprite_setColor(MainMenu.exitNo.sprite, sfWhite);
 							}
 						}
