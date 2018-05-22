@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-# Projet-de-groupe-fin-prepa-master
-=======
+
 # BLOOD SYSTEM
 ![cerveaugener](https://user-images.githubusercontent.com/36642106/40279446-ee6e4764-5c42-11e8-963b-d9a6392e220f.jpg)
 
