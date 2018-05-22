@@ -346,11 +346,19 @@ void manageInGameMenu(t_inGameMenu* _inGameMenu)
 	}
 }
 
+<<<<<<< HEAD
 void loadSaveForSaveSlots(t_gameMenuSave* _gameMenuSave)
 {
 	FILE* file = NULL;
 
 	fopen_s(&file, "resources/datas/saves/save_slot1.txt", "r");
+=======
+void loadSaveForSaveSlots( t_gameMenuSave* _gameMenuSave)
+{
+	FILE* file = NULL;
+
+	fopen_s(&file, "resources/datas/saves/save_slot1.txt","r");
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 	if (file == NULL)
 	{
 		printf_s("erreur ouverture save\n");
@@ -420,6 +428,11 @@ void loadSaveForSaveSlots(t_gameMenuSave* _gameMenuSave)
 	}
 
 
+<<<<<<< HEAD
+=======
+	
+}
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 
 }
 
@@ -1058,7 +1071,129 @@ sfBool DeleteElementByIdTowerSlot(t_ListTowerSlot* _List, int _IdElementToDelete
 	return sfFalse;
 }
 
+<<<<<<< HEAD
 sfBool DeleteElementByIdTower(t_ListTower* _List, int _IdElementToDelete)
+=======
+sfBool DeleteElementByIdWhiteCell(t_ListWhiteCell* _List, int _IdElementToDelete)
+{
+	/*Delete de l'élément restant dans la liste*/
+	if (_List->FirstElement == _List->LastElement)
+	{
+		t_whiteCellElement* ElementToDelete = _List->FirstElement;
+
+		/*je reset les 2 pointeurs de ma liste a NULL*/
+		_List->FirstElement = NULL;
+		_List->LastElement = NULL;
+
+		free(ElementToDelete);
+		printf("DELETE THE SURVIVOR ELEMENT %d\n", _IdElementToDelete);
+
+		return sfTrue;
+	}
+
+	/*Delete First Element*/
+	if (_List->FirstElement->Id == _IdElementToDelete)
+	{
+
+		t_whiteCellElement* ElementToDelete = _List->FirstElement;
+		if (_List->FirstElement->NextElement != NULL)
+		{
+			_List->FirstElement->NextElement->PreviousElement = NULL;
+		}
+		_List->FirstElement = _List->FirstElement->NextElement;
+
+		free(ElementToDelete);
+		printf("DELETE FIRST ELEMENT %d\n", _IdElementToDelete);
+
+		return sfTrue;
+	}
+	/*Delete Last Element*/
+	else if (_List->LastElement->Id == _IdElementToDelete)
+	{
+		t_whiteCellElement* ElementToDelete = _List->LastElement;
+		if (_List->LastElement->PreviousElement != NULL)
+		{
+			_List->LastElement->PreviousElement->NextElement = NULL;
+		}
+		_List->LastElement = _List->LastElement->PreviousElement;
+		free(ElementToDelete);
+		printf("DELETE LAST ELEMENT %d\n", _IdElementToDelete);
+
+		return sfTrue;
+	}
+	/*delete another element*/
+	else
+	{
+		/*parcours dans la boucle pour trouver l'élément a supprimer*/
+		t_whiteCellElement* CurrentElement = _List->FirstElement;
+		while (CurrentElement != NULL)
+		{
+			/*si le prochain élément est celuis que l'on veut supprimer on attache le previous et le next avant de supprimer l'élément en question*/
+			if (CurrentElement->Id == _IdElementToDelete)
+			{
+				t_whiteCellElement* ElementToDelete = CurrentElement;
+				/*je raccorde le next element de l'élément précédent a l'élément suivant de celui que je veut supprimer*/
+				if (CurrentElement->NextElement != NULL && CurrentElement->PreviousElement != NULL)
+				{
+					CurrentElement->PreviousElement->NextElement = CurrentElement->NextElement;
+					CurrentElement->NextElement->PreviousElement = CurrentElement->PreviousElement;
+				}
+				free(ElementToDelete);
+
+				printf("DELETE ELEMENT %d\n", _IdElementToDelete);
+				return sfTrue;
+			}
+			else
+			{
+				CurrentElement = CurrentElement->NextElement;
+			}
+		}
+	}
+
+	printf("FAIL TO DELETE ELEMENT %d\n", _IdElementToDelete);
+	return sfFalse;
+}
+
+sfBool DeleteEntityWithID(t_ListTower*_list, int _id)
+{
+	t_TowerElement *currentElement = _list->FirstElement;
+	if (currentElement->Id == _id)
+	{
+		t_TowerElement *deletedElement = currentElement;
+		_list->FirstElement = currentElement->NextElement;
+
+		free(deletedElement);
+		//printf("Bullet with id %d has been deleted\n", _id);
+		return sfTrue;
+	}
+	else
+	{
+		while (currentElement->NextElement != NULL)
+		{
+			if (currentElement->NextElement->Id == _id)
+			{
+				t_TowerElement *deletedElement = currentElement->NextElement;
+				if (currentElement->NextElement != NULL)
+					currentElement->NextElement = currentElement->NextElement->NextElement;
+
+				free(deletedElement);
+				printf("Bullet with id %d has been deleted\n", _id);
+				return sfTrue;
+			}
+			else
+			{
+				currentElement = currentElement->NextElement;
+			}
+		}
+	}
+	printf("Unable to delete Bullet with id %d\n", _id);
+	return sfFalse;
+}
+
+/*détruire tous les éléments d'une liste sans détruire la liste*/
+
+sfBool DeleteAllElementInList(t_List* _List)
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 {
 	/*Delete de l'élément restant dans la liste*/
 	if (_List->FirstElement == _List->LastElement)
@@ -1918,4 +2053,43 @@ void SetLineBetweenPoints(sfVertexArray* _vertexArray, sfVertex* _vertex, sfVect
 	sfVertexArray_append(_vertexArray, *_vertex);
 }
 
+<<<<<<< HEAD
+=======
+sfBool SortTowerByPos(t_ListTower *_list)
+{
+	t_TowerElement *currentElement = _list->FirstElement;
+	t_TowerElement *tempElement;
+	sfBool listSorted = sfTrue;
+
+	if (currentElement->NextElement->Tower->vPos.y < _list->FirstElement->Tower->vPos.y)
+	{
+		tempElement = _list->FirstElement;
+
+		_list->FirstElement = currentElement->NextElement;
+		tempElement->NextElement = _list->FirstElement->NextElement;
+		_list->FirstElement->NextElement = tempElement;
+		listSorted = sfFalse;
+
+		currentElement = _list->FirstElement;
+	}
+
+	while (currentElement->NextElement != NULL && currentElement->NextElement->NextElement != NULL)
+	{
+		if (currentElement->NextElement->NextElement->Tower->vPos.y < currentElement->NextElement->Tower->vPos.y)
+		{
+			tempElement = currentElement->NextElement;
+
+			currentElement->NextElement = tempElement->NextElement;
+			tempElement->NextElement = tempElement->NextElement->NextElement;
+			currentElement->NextElement->NextElement = tempElement;
+			listSorted = sfFalse;
+		}
+
+		currentElement = currentElement->NextElement;
+	}
+
+	return listSorted;
+}
+
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 

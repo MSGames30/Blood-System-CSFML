@@ -1,2 +1,6 @@
 #TargetFrameworkVersion=v4.0:PlatformToolSet=v141:EnableManagedIncrementalBuild=false:VCToolArchitecture=Native32Bit:WindowsTargetPlatformVersion=10.0.16299.0
+<<<<<<< HEAD
 Debug|Win32|C:\Users\mattia.sebastien\Desktop\_Projet Groupe\BLOOD SYSTEM\|
+=======
+Debug|Win32|C:\Users\Pezed\Desktop\_projet groupe\BLOOD SYSTEM FIRST PLAYABLE\|
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459

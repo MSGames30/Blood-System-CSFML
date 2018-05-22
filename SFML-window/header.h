@@ -51,6 +51,7 @@
 
 #pragma region ENNEMY
 
+<<<<<<< HEAD
 #pragma region ENNEMY BULLET
 
 #define CHOLESTEROL_BULLET_SPEED 300
@@ -113,6 +114,8 @@
 #define CHOLESTEROL_CONTROL_RADIUS 80
 #define CHOLESTEROL_GUARD_RADIUS 20
 
+=======
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 #define TIME_BETWEEN_WAVE 5
 
 #define CONTROL_RADIUS 80
@@ -138,10 +141,17 @@
  
 #define TIME_BETWEEN_VARIATION 1
 
+<<<<<<< HEAD
+=======
+#define LIFEBAR_MAX_SIZE_X 60
+#define LIFEBAR_SIZE_Y 6
+
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 #define DOT_FREQUENCY 2
 
 #pragma endregion ENNEMY
 
+<<<<<<< HEAD
 #pragma region ENNEMY PATH POINT
 
 #define SIZE_PATH_POINT 10
@@ -149,6 +159,8 @@
 #pragma endregion ENNEMY PATH POINT
 
 
+=======
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 #pragma region WHITE_CELLS
 
 #define WHITE_CELL_WIDTH 299
@@ -167,10 +179,13 @@
 #define TOWER2_DAMAGES 2
 #define TOWER3_DAMAGES 10
 
+<<<<<<< HEAD
 #define TOWER1_HP 10
 #define TOWER2_HP 10
 #define TOWER3_HP 10
 
+=======
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 #pragma endregion TOWERS
 
 #pragma region BUTTONS
@@ -182,7 +197,10 @@
 #define BUTTON_SPEED 5
 
 #pragma endregion BUTTONS
+<<<<<<< HEAD
 
+=======
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 
 #pragma endregion Defines
 
@@ -266,6 +284,27 @@ enum e_buttonState
 	IS_ON,
 };
 
+<<<<<<< HEAD
+=======
+typedef enum e_inGameMenuState t_inGameMenuState;
+
+enum e_inGameMenuState
+{
+	IS_CLOSED = 0,
+	IS_OPENING,
+	IS_OPENED,
+	IS_CLOSING,
+};
+
+typedef enum e_buttonState t_buttonState;
+
+enum e_buttonState
+{
+	IS_OFF = 0,
+	IS_ON,
+};
+
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 typedef enum e_GameState t_GameState;
 
 enum e_GameState
@@ -274,8 +313,11 @@ enum e_GameState
 	SAVE_SELECTOR,
 	LEVEL_SELECTOR,
 	GAME,
+<<<<<<< HEAD
 	VICTORY,
 	DEFEAT,
+=======
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 };
 
 #pragma endregion enum
@@ -310,13 +352,20 @@ struct s_Ennemy
 	int iRandSpawnValueVariation; // variation de la position de l'ennemi quand il spawn
 	int iStartPos; // choix de la position de départ de l'ennemi
 
+<<<<<<< HEAD
 	/*despawn*/
+=======
+				   /*despawn*/
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 	int iDespawn;
 	float fTimeSinceStartDespawn;
 
 	/*manage collision*/
+<<<<<<< HEAD
 	float fControlRadius;
 	float fGuardRadius;
+=======
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 	float fTimeCurrentVertex;
 	float fTimeSinceVertex;
 	float fTimeStartVertex;
@@ -384,6 +433,7 @@ struct s_Ennemy
 	/*facteur de vitesse*/
 	float fSpeedFactor;
 
+<<<<<<< HEAD
 	/*gestion attaque Caillot*/
 	int iIsAttack; // actif si l'ennemi est en train d'attaquer
 	int iTowerToAttackId;
@@ -391,6 +441,8 @@ struct s_Ennemy
 	sfVector2f vPosTowerToAttack;
 	float fTimeSinceLastAttack;
 
+=======
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 	/*dommages tour 2*/
 	float tStartDOT;
 	float tSinceDOT;
@@ -547,6 +599,7 @@ struct s_Tower
 	sfBool isOn;
 	sfBool iIsWhiteCellAlive;
 	sfBool isFirstBuild;
+<<<<<<< HEAD
 
 	int iHP;
 	int iHPMax;
@@ -563,6 +616,8 @@ struct s_Tower
 	sfVector2f vPositionRectangleShape;
 	sfVector2f vOriginRectangleShape;
 
+=======
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 };
 
 typedef struct s_TowerElement t_TowerElement;
@@ -634,10 +689,13 @@ struct s_ListBullet
 	t_TowerBulletElement* LastElement;
 };
 
+<<<<<<< HEAD
 #pragma endregion TOWER BULLET
 
 #pragma region WHITE CELL
 
+=======
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 typedef struct s_whiteCell t_whiteCell;
 
 struct s_whiteCell
@@ -677,10 +735,13 @@ struct s_ListWhiteCell
 	t_whiteCellElement* LastElement;
 };
 
+<<<<<<< HEAD
 #pragma endregion WHITE CELL
 
 #pragma region MENU
 
+=======
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 typedef struct s_inGameMenu t_inGameMenu;
 
 struct s_inGameMenu
@@ -710,7 +771,11 @@ typedef struct s_gameMenu t_gameMenu;
 
 struct s_gameMenu
 {
+<<<<<<< HEAD
 	sfSprite* background;
+=======
+	sfSprite* background ;
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 	sfSprite* play;
 	sfSprite* credits;
 	sfSprite* quit;
@@ -766,6 +831,7 @@ struct s_gameMenuLevel
 	sfFloatRect fRect_level2BB;
 
 };
+<<<<<<< HEAD
 
 #pragma endregion MENU
 
@@ -780,6 +846,8 @@ struct s_CurrentLevelAssets
 };
 #pragma endregion CURRENT LEVEL
 
+=======
+>>>>>>> 0c59fcd56b3a57a259c75a8c863d71839d1c4459
 #pragma endregion structures
 
 #pragma region Functions Declarations
@@ -816,6 +884,10 @@ void loadEnnemyPathPoint(t_ListEnnemyPathPoint* _ListEnnemyPathPoint, int _level
 void manageInGameMenu(t_inGameMenu* _inGameMenu);
 void loadSaveForSaveSlots(t_gameMenuSave* _gameMenuSave);
 void loadGameFromLevelNumber(t_NameLevel _iCurrentLevel, t_CurrentLevelAssets* _CurrentLevelAssets, t_List* _ListEnnemy, t_ListBullet* _ListBullet, t_ListEnnemyBullet* _ListEnnemyBullet, t_ListEnnemyPathPoint* _ListEnnemyPathPoint, t_ListTower* _ListTower, t_ListTowerSlot* _ListTowerSlot, t_ListWhiteCell* _ListWhiteCell);
+
+void manageInGameMenu(t_inGameMenu* _inGameMenu);
+
+void loadSaveForSaveSlots(t_gameMenuSave* _gameMenuSave);
 
 t_EnnemyElement* AddElementBeginList(t_List* _List);
 t_EnnemyBulletElement* AddElementBeginListEnnemyBullet(t_ListEnnemyBullet* _List);
