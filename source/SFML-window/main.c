@@ -7,6 +7,11 @@ int main()
 
 	float testincreaseX = 1;
 	float testincreaseY = 1;
+
+	int unLockedLevelsSolt1 = 0;
+	int unLockedLevelsSolt2 = 0;
+	int unLockedLevelsSolt3 = 0;
+
 #pragma region LIST
 
 	t_List* ListEnnemy = malloc(sizeof(t_List));
@@ -462,8 +467,8 @@ int main()
 
 	//
 	MainMenu.exitNo.sprite = createSprite("resources/textures/menuBS/menu_quitter_non.png");
-	MainMenu.exitNo.vPos.x = 1140;
-	MainMenu.exitNo.vPos.y = 755.5;
+	MainMenu.exitNo.vPos.x = 1131.5;
+	MainMenu.exitNo.vPos.y = 759.5;
 	sfSprite_setPosition(MainMenu.exitNo.sprite, MainMenu.exitNo.vPos);
 	MainMenu.exitNo.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.exitNo.sprite).width / 2;
 	MainMenu.exitNo.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.exitNo.sprite).height / 2;
@@ -472,8 +477,8 @@ int main()
 
 	//
 	MainMenu.exitYes.sprite = createSprite("resources/textures/menuBS/menu_quitter_oui.png");
-	MainMenu.exitYes.vPos.x = 1111;
-	MainMenu.exitYes.vPos.y = 452.5;
+	MainMenu.exitYes.vPos.x = 1105.5;
+	MainMenu.exitYes.vPos.y = 447;
 	sfSprite_setPosition(MainMenu.exitYes.sprite, MainMenu.exitYes.vPos);
 	MainMenu.exitYes.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.exitYes.sprite).width / 2;
 	MainMenu.exitYes.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.exitYes.sprite).height / 2;
@@ -522,8 +527,8 @@ int main()
 
 	//
 	MainMenu.saveSlot1.sprite = createSprite("resources/textures/menuBS/menu_slot_save1.png");
-	MainMenu.saveSlot1.vPos.x = 1134;
-	MainMenu.saveSlot1.vPos.y = 289;
+	MainMenu.saveSlot1.vPos.x = 1022;
+	MainMenu.saveSlot1.vPos.y = 307.5;
 	sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
 	MainMenu.saveSlot1.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.saveSlot1.sprite).width / 2;
 	MainMenu.saveSlot1.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.saveSlot1.sprite).height / 2;
@@ -532,8 +537,8 @@ int main()
 
 	//
 	MainMenu.saveSlot2.sprite = createSprite("resources/textures/menuBS/menu_slot_save2.png");
-	MainMenu.saveSlot2.vPos.x = 1128.5;
-	MainMenu.saveSlot2.vPos.y = 603;
+	MainMenu.saveSlot2.vPos.x = 1024;
+	MainMenu.saveSlot2.vPos.y = 570.5;
 	sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
 	MainMenu.saveSlot2.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.saveSlot2.sprite).width / 2;
 	MainMenu.saveSlot2.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.saveSlot2.sprite).height / 2;
@@ -542,8 +547,8 @@ int main()
 
 	//
 	MainMenu.saveSlot3.sprite = createSprite("resources/textures/menuBS/menu_slot_save3.png");
-	MainMenu.saveSlot3.vPos.x = 1124.5;
-	MainMenu.saveSlot3.vPos.y = 921;
+	MainMenu.saveSlot3.vPos.x = 1012;
+	MainMenu.saveSlot3.vPos.y = 834.5;
 	sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
 	MainMenu.saveSlot3.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.saveSlot3.sprite).width / 2;
 	MainMenu.saveSlot3.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.saveSlot3.sprite).height / 2;
@@ -570,9 +575,180 @@ int main()
 	sfSprite_setOrigin(MainMenu.paperClip.sprite, MainMenu.paperClip.vOrigin);
 	MainMenu.paperClip.boundingBox = sfSprite_getGlobalBounds(MainMenu.paperClip.sprite);
 
+	//
+	MainMenu.startSheetLS.sprite = createSprite("resources/textures/menuBS/menu_commencerF2.png");
+	MainMenu.startSheetLS.vPos.x = 1150;
+	MainMenu.startSheetLS.vPos.y = 561.5;
+	sfSprite_setPosition(MainMenu.startSheetLS.sprite, MainMenu.startSheetLS.vPos);
+	MainMenu.startSheetLS.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.startSheetLS.sprite).width / 2;
+	MainMenu.startSheetLS.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.startSheetLS.sprite).height / 2;
+	sfSprite_setOrigin(MainMenu.startSheetLS.sprite, MainMenu.startSheetLS.vOrigin);
+	MainMenu.startSheetLS.boundingBox = sfSprite_getGlobalBounds(MainMenu.startSheetLS.sprite);
+
 	MainMenu.labelMask = sfImage_createFromFile("resources/textures/menuBS/menu_mask.psd");
+	MainMenu.levelMask = sfImage_createFromFile("resources/textures/menuBS/menu_mask_level.psd");
 	MainMenu.exitMask = sfImage_createFromFile("resources/textures/menuBS/menu_mask_quitter.psd");
 	MainMenu.saveMask = sfImage_createFromFile("resources/textures/menuBS/menu_mask_save.psd");
+
+	FILE* savFile;
+	fopen_s(&savFile, "resources/datas/saves/save_slot1.txt", "r");
+	if (savFile == NULL)
+	{
+		printf_s("erreur ouverture save\n");
+	}
+	fscanf_s(savFile, "unlockedLevels=%d", &unLockedLevelsSolt1);
+	fclose(savFile);
+	fopen_s(&savFile, "resources/datas/saves/save_slot2.txt", "r");
+	if (savFile == NULL)
+	{
+		printf_s("erreur ouverture save\n");
+	}
+	fscanf_s(savFile, "unlockedLevels=%d", &unLockedLevelsSolt2);
+	fclose(savFile);
+	fopen_s(&savFile, "resources/datas/saves/save_slot3.txt", "r");
+	if (savFile == NULL)
+	{
+		printf_s("erreur ouverture save\n");
+	}
+	fscanf_s(savFile, "unlockedLevels=%d", &unLockedLevelsSolt3);
+	fclose(savFile);
+
+	/*slot 1*/
+	if (unLockedLevelsSolt1 == 0)
+	{
+		MainMenu.miniMapSlot1.sprite = createSprite("resources/textures/level_selector/miniMap_Level0.png");
+		MainMenu.miniMapSlot1.vPos.x = 1668;
+		MainMenu.miniMapSlot1.vPos.y = 317.5;
+		sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+		MainMenu.miniMapSlot1.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.miniMapSlot1.sprite).width / 2;
+		MainMenu.miniMapSlot1.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.miniMapSlot1.sprite).height / 2;
+		sfSprite_setOrigin(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vOrigin);
+		MainMenu.miniMapSlot1.boundingBox = sfSprite_getGlobalBounds(MainMenu.miniMapSlot1.sprite);
+	}
+	else if (unLockedLevelsSolt1 == 1)
+	{
+		MainMenu.miniMapSlot1.sprite = createSprite("resources/textures/level_selector/miniMap_Level1.png");
+		MainMenu.miniMapSlot1.vPos.x = 1668;
+		MainMenu.miniMapSlot1.vPos.y = 317.5;
+		sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+		MainMenu.miniMapSlot1.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.miniMapSlot1.sprite).width / 2;
+		MainMenu.miniMapSlot1.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.miniMapSlot1.sprite).height / 2;
+		sfSprite_setOrigin(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vOrigin);
+		MainMenu.miniMapSlot1.boundingBox = sfSprite_getGlobalBounds(MainMenu.miniMapSlot1.sprite);
+	}
+	else if (unLockedLevelsSolt1 == 2)
+	{
+		MainMenu.miniMapSlot1.sprite = createSprite("resources/textures/level_selector/miniMap_Level2.png");
+		MainMenu.miniMapSlot1.vPos.x = 1668;
+		MainMenu.miniMapSlot1.vPos.y = 317.5;
+		sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+		MainMenu.miniMapSlot1.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.miniMapSlot1.sprite).width / 2;
+		MainMenu.miniMapSlot1.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.miniMapSlot1.sprite).height / 2;
+		sfSprite_setOrigin(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vOrigin);
+		MainMenu.miniMapSlot1.boundingBox = sfSprite_getGlobalBounds(MainMenu.miniMapSlot1.sprite);
+	}
+
+	/*slot 2*/
+	if (unLockedLevelsSolt2 == 0)
+	{
+		MainMenu.miniMapSlot2.sprite = createSprite("resources/textures/level_selector/miniMap_Level0.png");
+		MainMenu.miniMapSlot2.vPos.x = 1661;
+		MainMenu.miniMapSlot2.vPos.y = 576.5;
+		sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+		MainMenu.miniMapSlot2.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.miniMapSlot2.sprite).width / 2;
+		MainMenu.miniMapSlot2.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.miniMapSlot2.sprite).height / 2;
+		sfSprite_setOrigin(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vOrigin);
+		MainMenu.miniMapSlot2.boundingBox = sfSprite_getGlobalBounds(MainMenu.miniMapSlot2.sprite);
+	}
+	else if (unLockedLevelsSolt2 == 1)
+	{
+		MainMenu.miniMapSlot2.sprite = createSprite("resources/textures/level_selector/miniMap_Level1.png");
+		MainMenu.miniMapSlot2.vPos.x = 1661;
+		MainMenu.miniMapSlot2.vPos.y = 576.5;
+		sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+		MainMenu.miniMapSlot2.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.miniMapSlot2.sprite).width / 2;
+		MainMenu.miniMapSlot2.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.miniMapSlot2.sprite).height / 2;
+		sfSprite_setOrigin(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vOrigin);
+		MainMenu.miniMapSlot2.boundingBox = sfSprite_getGlobalBounds(MainMenu.miniMapSlot2.sprite);
+	}
+	else if (unLockedLevelsSolt2 == 2)
+	{
+		MainMenu.miniMapSlot2.sprite = createSprite("resources/textures/level_selector/miniMap_Level2.png");
+		MainMenu.miniMapSlot2.vPos.x = 1661;
+		MainMenu.miniMapSlot2.vPos.y = 576.5;
+		sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+		MainMenu.miniMapSlot2.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.miniMapSlot2.sprite).width / 2;
+		MainMenu.miniMapSlot2.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.miniMapSlot2.sprite).height / 2;
+		sfSprite_setOrigin(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vOrigin);
+		MainMenu.miniMapSlot2.boundingBox = sfSprite_getGlobalBounds(MainMenu.miniMapSlot2.sprite);
+	}
+
+	/*slot3*/
+	if (unLockedLevelsSolt3 == 0)
+	{
+		MainMenu.miniMapSlot3.sprite = createSprite("resources/textures/level_selector/miniMap_Level0.png");
+		MainMenu.miniMapSlot3.vPos.x = 1658;
+		MainMenu.miniMapSlot3.vPos.y = 850;
+		sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+		MainMenu.miniMapSlot3.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.miniMapSlot3.sprite).width / 2;
+		MainMenu.miniMapSlot3.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.miniMapSlot3.sprite).height / 2;
+		sfSprite_setOrigin(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vOrigin);
+		MainMenu.miniMapSlot3.boundingBox = sfSprite_getGlobalBounds(MainMenu.miniMapSlot3.sprite);
+	}
+	else if (unLockedLevelsSolt3 == 1)
+	{
+		MainMenu.miniMapSlot3.sprite = createSprite("resources/textures/level_selector/miniMap_Level1.png");
+		MainMenu.miniMapSlot3.vPos.x = 1658;
+		MainMenu.miniMapSlot3.vPos.y = 850;
+		sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+		MainMenu.miniMapSlot3.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.miniMapSlot3.sprite).width / 2;
+		MainMenu.miniMapSlot3.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.miniMapSlot3.sprite).height / 2;
+		sfSprite_setOrigin(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vOrigin);
+		MainMenu.miniMapSlot3.boundingBox = sfSprite_getGlobalBounds(MainMenu.miniMapSlot3.sprite);
+	}
+	else if (unLockedLevelsSolt3 == 2)
+	{
+		MainMenu.miniMapSlot3.sprite = createSprite("resources/textures/level_selector/miniMap_Level2.png");
+		MainMenu.miniMapSlot3.vPos.x = 1658;
+		MainMenu.miniMapSlot3.vPos.y = 850;
+		sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+		MainMenu.miniMapSlot3.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.miniMapSlot3.sprite).width / 2;
+		MainMenu.miniMapSlot3.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.miniMapSlot3.sprite).height / 2;
+		sfSprite_setOrigin(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vOrigin);
+		MainMenu.miniMapSlot3.boundingBox = sfSprite_getGlobalBounds(MainMenu.miniMapSlot3.sprite);
+	}
+
+	//
+	MainMenu.level1Icon.sprite = createSprite("resources/textures/menuBS/menu_level1.png");
+	MainMenu.level1Icon.vPos.x = 1187.74;
+	MainMenu.level1Icon.vPos.y = 721.5;
+	sfSprite_setPosition(MainMenu.level1Icon.sprite, MainMenu.level1Icon.vPos);
+	MainMenu.level1Icon.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.level1Icon.sprite).width / 2;
+	MainMenu.level1Icon.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.level1Icon.sprite).height / 2;
+	sfSprite_setOrigin(MainMenu.level1Icon.sprite, MainMenu.level1Icon.vOrigin);
+	MainMenu.level1Icon.boundingBox = sfSprite_getGlobalBounds(MainMenu.level1Icon.sprite);
+
+	//
+	MainMenu.level2Icon.sprite = createSprite("resources/textures/menuBS/menu_level2.png");
+	MainMenu.level2Icon.vPos.x = 1213.5;
+	MainMenu.level2Icon.vPos.y = 517;
+	sfSprite_setPosition(MainMenu.level2Icon.sprite, MainMenu.level2Icon.vPos);
+	MainMenu.level2Icon.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.level2Icon.sprite).width / 2;
+	MainMenu.level2Icon.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.level2Icon.sprite).height / 2;
+	sfSprite_setOrigin(MainMenu.level2Icon.sprite, MainMenu.level2Icon.vOrigin);
+	MainMenu.level2Icon.boundingBox = sfSprite_getGlobalBounds(MainMenu.level2Icon.sprite);
+
+	//
+	MainMenu.brain.sprite = createSprite("resources/textures/menuBS/menu_pierrot.png");
+	MainMenu.brain.vPos.x = 236;
+	MainMenu.brain.vPos.y = 929;
+	sfSprite_setPosition(MainMenu.brain.sprite, MainMenu.brain.vPos);
+	MainMenu.brain.vOrigin.x = sfSprite_getGlobalBounds(MainMenu.brain.sprite).width / 2;
+	MainMenu.brain.vOrigin.y = sfSprite_getGlobalBounds(MainMenu.brain.sprite).height / 2;
+	sfSprite_setOrigin(MainMenu.brain.sprite, MainMenu.brain.vOrigin);
+	MainMenu.brain.boundingBox = sfSprite_getGlobalBounds(MainMenu.brain.sprite);
+
+	MainMenu.background.sprite = createSprite("resources/textures/menuBS/menu_background.png");
 
 #pragma endregion INIT MENU NEW //SEB
 
@@ -617,6 +793,7 @@ int main()
 			vMousePos = sfMouse_getPosition(window);
 			vMousePosToFloat.x = (float)vMousePos.x;
 			vMousePosToFloat.y = (float)vMousePos.y;
+			sfRenderWindow_drawSprite(window, MainMenu.background.sprite, NULL);
 			switch (mainMenuState)
 			{
 
@@ -704,6 +881,7 @@ int main()
 				sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.LogoSheet.sprite, NULL);
@@ -737,18 +915,44 @@ int main()
 				}
 				switch (mainMenuNextState)
 				{
-				case ON_START :
+				case ON_START:
+					MainMenu.startSheet.vPos.x = 1127.5;
+					MainMenu.startSheet.vPos.y = 567;
+					MainMenu.saveSlot1.vPos.x = 1022;
+					MainMenu.saveSlot1.vPos.y = 307.5;
+					MainMenu.saveSlot2.vPos.x = 1024;
+					MainMenu.saveSlot2.vPos.y = 570.5;
+					MainMenu.saveSlot3.vPos.x = 1012;
+					MainMenu.saveSlot3.vPos.y = 834.5;
+					MainMenu.miniMapSlot1.vPos.x = 1668;
+					MainMenu.miniMapSlot1.vPos.y = 317.5;
+					MainMenu.miniMapSlot2.vPos.x = 1661;
+					MainMenu.miniMapSlot2.vPos.y = 576.5;
+					MainMenu.miniMapSlot3.vPos.x = 1658;
+					MainMenu.miniMapSlot3.vPos.y = 850;
+					sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+					sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+					sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+					sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
+					sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
+					sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
+					sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
 					sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot1.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot2.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot3.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.saveSlot1.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.saveSlot2.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.saveSlot3.sprite, NULL);
 					break;
-				case ON_CREDITS :
+				case ON_CREDITS:
+					sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
@@ -756,7 +960,8 @@ int main()
 					sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
 					break;
-				case ON_EXIT :
+				case ON_EXIT:
+					sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
@@ -780,30 +985,6 @@ int main()
 
 				if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
 				{
-					/*Commencer*/
-					if (sfFloatRect_contains(&MainMenu.startLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.startLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								mainMenuState = ON_START;
-								sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-					}
-
 					/*Credits*/
 					if (sfFloatRect_contains(&MainMenu.creditsLabel.boundingBox, vMousePos.x, vMousePos.y))
 					{
@@ -862,10 +1043,13 @@ int main()
 							&& sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
 						{
 							sfSprite_setColor(MainMenu.saveSlot1.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
 							{
-								//isMousePressed = sfTrue;
-								//mainMenuState = ON_START;
+								isMousePressed = sfTrue;
+								testincreaseX = 1;
+								testincreaseY = 1;
+								mainMenuState = ON_START_TRANSITION;
+								unlockedLevels = unLockedLevelsSolt1;
 								sfSprite_setColor(MainMenu.saveSlot1.sprite, sfWhite);
 							}
 						}
@@ -886,10 +1070,14 @@ int main()
 							&& sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
 						{
 							sfSprite_setColor(MainMenu.saveSlot2.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
 							{
 								//isMousePressed = sfTrue;
 								//mainMenuState = ON_START;
+								testincreaseX = 1;
+								testincreaseY = 1;
+								mainMenuState = ON_START_TRANSITION;
+								unlockedLevels = unLockedLevelsSolt2;
 								sfSprite_setColor(MainMenu.saveSlot2.sprite, sfWhite);
 							}
 						}
@@ -910,10 +1098,14 @@ int main()
 							&& sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
 						{
 							sfSprite_setColor(MainMenu.saveSlot3.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
 							{
 								//isMousePressed = sfTrue;
 								//mainMenuState = ON_START;
+								testincreaseX = 1;
+								testincreaseY = 1;
+								mainMenuState = ON_START_TRANSITION;
+								unlockedLevels = unLockedLevelsSolt3;
 								sfSprite_setColor(MainMenu.saveSlot3.sprite, sfWhite);
 							}
 						}
@@ -929,13 +1121,15 @@ int main()
 				}
 
 
-
-
 				sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot1.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot2.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot3.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.saveSlot1.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.saveSlot2.sprite, NULL);
@@ -944,34 +1138,76 @@ int main()
 
 #pragma endregion ON_START
 
-#pragma region ON_CREDITS
-			case ON_CREDITS:
+#pragma region ON_START_TRANSITION
+			case ON_START_TRANSITION:
+				//printf_s("START TRANSITION !!!!!\n");
+				
+				if (MainMenu.startSheet.vPos.y < 1840)
+				{
+					
+					MainMenu.startSheet.vPos.x += 2 * testincreaseX;
+					MainMenu.startSheet.vPos.y += 6 * testincreaseY;
+					MainMenu.saveSlot1.vPos.x += 2 * testincreaseX;
+					MainMenu.saveSlot2.vPos.x += 2 * testincreaseX;
+					MainMenu.saveSlot3.vPos.x += 2 * testincreaseX;
+					MainMenu.saveSlot1.vPos.y += 6 * testincreaseY;
+					MainMenu.saveSlot2.vPos.y += 6 * testincreaseY;
+					MainMenu.saveSlot3.vPos.y += 6 * testincreaseY;
+					MainMenu.miniMapSlot1.vPos.x += 2 * testincreaseX;
+					MainMenu.miniMapSlot1.vPos.y += 6 * testincreaseY;
+					MainMenu.miniMapSlot2.vPos.x += 2 * testincreaseX;
+					MainMenu.miniMapSlot2.vPos.y += 6 * testincreaseY;
+					MainMenu.miniMapSlot3.vPos.x += 2 * testincreaseX;
+					MainMenu.miniMapSlot3.vPos.y += 6 * testincreaseY;
+					testincreaseX += 0.05;
+					testincreaseY += 00.1;
+					sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+					sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+					sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+					sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
+					sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
+					sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
+					sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
+				}
+				else
+				{
+					testincreaseX = 1;
+					testincreaseY = 1;
+					mainMenuState = ON_START_LEVEL_SELECTOR;
+				}
 
+				sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
+				if (unlockedLevels >= 0)
+				{
+					sfRenderWindow_drawSprite(window, MainMenu.level1Icon.sprite, NULL);
+				}
+				if (unlockedLevels >= 2)
+				{
+					sfRenderWindow_drawSprite(window, MainMenu.level2Icon.sprite, NULL);
+				}
+				sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot1.sprite,NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot2.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot3.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.saveSlot1.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.saveSlot2.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.saveSlot3.sprite, NULL);
+
+
+				break;
+
+#pragma endregion ON_START_TRANSITION
+
+#pragma region ON_START_LEVEL_SELECTOR
+			case ON_START_LEVEL_SELECTOR:
+				printf_s("Unlocked levels :%d\n", unlockedLevels);
 				if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
 				{
-					/*Commencer*/
-					if (sfFloatRect_contains(&MainMenu.startLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.startLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								mainMenuState = ON_START;
-								sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-					}
 
 					/*Credits*/
 					if (sfFloatRect_contains(&MainMenu.creditsLabel.boundingBox, vMousePos.x, vMousePos.y))
@@ -1020,7 +1256,160 @@ int main()
 						sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
 					}
 				}
+				sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
+				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
 
+
+			
+				/*level 1*/
+				if (sfFloatRect_contains(&MainMenu.level1Icon.boundingBox, vMousePos.x, vMousePos.y) && unlockedLevels >= 0)
+				{
+					if (sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+						&& sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+					{
+						sfSprite_setColor(MainMenu.level1Icon.sprite, sfRed);
+						if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+						{
+							isMousePressed = sfTrue;
+							iCurrentLevel = TEST;
+							loadGameFromLevelNumber(iCurrentLevel, &CurrentLevelAssets, ListEnnemy, ListTowerBullet, ListEnnemyBullet, ListEnnemyPathPoint, ListTower, ListTowerSlot, ListWhiteCell);
+							loadTowerSlots(ListTowerSlot, iCurrentLevel);
+							iGoalHp = 100;
+							GameState = GAME;
+							sfSprite_setColor(MainMenu.level1Icon.sprite, sfWhite);
+						}
+
+					}
+					else
+					{
+						sfSprite_setColor(MainMenu.level1Icon.sprite, sfWhite);
+					}
+				}
+				else
+				{
+					sfSprite_setColor(MainMenu.level1Icon.sprite, sfWhite);
+				}
+
+				/*level 2*/
+				if (sfFloatRect_contains(&MainMenu.level2Icon.boundingBox, vMousePos.x, vMousePos.y) && unlockedLevels >= 2)
+				{
+					if (sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+						&& sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+					{
+						sfSprite_setColor(MainMenu.level2Icon.sprite, sfRed);
+						if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+						{
+							isMousePressed = sfTrue;
+							iCurrentLevel = ESTOMAC;
+							loadGameFromLevelNumber(iCurrentLevel, &CurrentLevelAssets, ListEnnemy, ListTowerBullet, ListEnnemyBullet, ListEnnemyPathPoint, ListTower, ListTowerSlot, ListWhiteCell);
+							loadTowerSlots(ListTowerSlot, iCurrentLevel);
+							iGoalHp = 100;
+							GameState = GAME;
+							sfSprite_setColor(MainMenu.level2Icon.sprite, sfWhite);
+						}
+					}
+					else
+					{
+						sfSprite_setColor(MainMenu.level2Icon.sprite, sfWhite);
+					}
+				}
+				else
+				{
+					sfSprite_setColor(MainMenu.level2Icon.sprite, sfWhite);
+				}
+
+				if (unlockedLevels >= 0)
+				{
+					sfRenderWindow_drawSprite(window, MainMenu.level1Icon.sprite, NULL);
+				}
+				if (unlockedLevels >= 2)
+				{
+					sfRenderWindow_drawSprite(window, MainMenu.level2Icon.sprite, NULL);
+				}
+
+				break;
+
+#pragma endregion ON_START_LEVEL_SELECTOR
+
+#pragma region ON_CREDITS
+			case ON_CREDITS:
+
+				if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
+				{
+					/*Commencer*/
+					if (sfFloatRect_contains(&MainMenu.startLabel.boundingBox, vMousePos.x, vMousePos.y))
+					{
+						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+						{
+							sfSprite_setColor(MainMenu.startLabel.sprite, sfRed);
+							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+							{
+								isMousePressed = sfTrue;
+								mainMenuState = ON_START;
+								MainMenu.startSheet.vPos.x = 1127.5;
+								MainMenu.startSheet.vPos.y = 567;
+								MainMenu.saveSlot1.vPos.x = 1022;
+								MainMenu.saveSlot1.vPos.y = 307.5;
+								MainMenu.saveSlot2.vPos.x = 1024;
+								MainMenu.saveSlot2.vPos.y = 570.5;
+								MainMenu.saveSlot3.vPos.x = 1012;
+								MainMenu.saveSlot3.vPos.y = 834.5;
+								MainMenu.miniMapSlot1.vPos.x = 1668;
+								MainMenu.miniMapSlot1.vPos.y = 317.5;
+								MainMenu.miniMapSlot2.vPos.x = 1661;
+								MainMenu.miniMapSlot2.vPos.y = 576.5;
+								MainMenu.miniMapSlot3.vPos.x = 1658;
+								MainMenu.miniMapSlot3.vPos.y = 850;
+								sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+								sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+								sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+								sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
+								sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
+								sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
+								sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
+								sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
+						}
+					}
+					else
+					{
+						sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
+					}
+					/*Quitter*/
+					if (sfFloatRect_contains(&MainMenu.exitLabel.boundingBox, vMousePos.x, vMousePos.y))
+					{
+						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+						{
+							sfSprite_setColor(MainMenu.exitLabel.sprite, sfRed);
+							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+							{
+								isMousePressed = sfTrue;
+								mainMenuState = ON_EXIT;
+								sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+						}
+					}
+					else
+					{
+						sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+					}
+				}
+
+				sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
@@ -1047,6 +1436,27 @@ int main()
 							{
 								isMousePressed = sfTrue;
 								mainMenuState = ON_START;
+								MainMenu.startSheet.vPos.x = 1127.5;
+								MainMenu.startSheet.vPos.y = 567;
+								MainMenu.saveSlot1.vPos.x = 1022;
+								MainMenu.saveSlot1.vPos.y = 307.5;
+								MainMenu.saveSlot2.vPos.x = 1024;
+								MainMenu.saveSlot2.vPos.y = 570.5;
+								MainMenu.saveSlot3.vPos.x = 1012;
+								MainMenu.saveSlot3.vPos.y = 834.5;
+								MainMenu.miniMapSlot1.vPos.x = 1668;
+								MainMenu.miniMapSlot1.vPos.y = 317.5;
+								MainMenu.miniMapSlot2.vPos.x = 1661;
+								MainMenu.miniMapSlot2.vPos.y = 576.5;
+								MainMenu.miniMapSlot3.vPos.x = 1658;
+								MainMenu.miniMapSlot3.vPos.y = 850;
+								sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+								sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+								sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+								sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
+								sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
+								sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
+								sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
 								sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
 							}
 						}
@@ -1083,29 +1493,6 @@ int main()
 					{
 						sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
 					}
-					/*Quitter*/
-					if (sfFloatRect_contains(&MainMenu.exitLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.exitLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								mainMenuState = ON_EXIT;
-								sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
-					}
 				}
 				if (vMousePos.x >= 0 && vMousePos.x <= 1920 && vMousePos.y >= 0 && vMousePos.y <= 1080)
 				{
@@ -1118,6 +1505,7 @@ int main()
 							sfSprite_setColor(MainMenu.exitYes.sprite, sfRed);
 							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
 							{
+								isMousePressed = sfTrue;
 								sfRenderWindow_close(window);
 								sfSprite_setColor(MainMenu.exitYes.sprite, sfWhite);
 							}
@@ -1141,7 +1529,29 @@ int main()
 							sfSprite_setColor(MainMenu.exitNo.sprite, sfRed);
 							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
 							{
+								isMousePressed = sfTrue;
 								mainMenuState = ON_START;
+								MainMenu.startSheet.vPos.x = 1127.5;
+								MainMenu.startSheet.vPos.y = 567;
+								MainMenu.saveSlot1.vPos.x = 1022;
+								MainMenu.saveSlot1.vPos.y = 307.5;
+								MainMenu.saveSlot2.vPos.x = 1024;
+								MainMenu.saveSlot2.vPos.y = 570.5;
+								MainMenu.saveSlot3.vPos.x = 1012;
+								MainMenu.saveSlot3.vPos.y = 834.5;
+								MainMenu.miniMapSlot1.vPos.x = 1668;
+								MainMenu.miniMapSlot1.vPos.y = 317.5;
+								MainMenu.miniMapSlot2.vPos.x = 1661;
+								MainMenu.miniMapSlot2.vPos.y = 576.5;
+								MainMenu.miniMapSlot3.vPos.x = 1658;
+								MainMenu.miniMapSlot3.vPos.y = 850;
+								sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+								sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+								sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+								sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
+								sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
+								sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
+								sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
 								sfSprite_setColor(MainMenu.exitNo.sprite, sfWhite);
 							}
 						}
@@ -1157,6 +1567,7 @@ int main()
 				}
 
 
+				sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
 				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
@@ -1169,215 +1580,16 @@ int main()
 				break;
 
 #pragma endregion ON_EXIT
-			default:
-				break;
+				default:
+					break;
 			}
-
+			sfRenderWindow_drawSprite(window, MainMenu.brain.sprite, NULL);
 			if (!sfMouse_isButtonPressed(sfMouseLeft))
 			{
 				isMousePressed = sfFalse;
 			}
-
-
-#pragma region MENU DE BASE OLD
-
-			///*Jouer*/
-			//if (sfFloatRect_contains(&gameMenu.fRect_playBB, vMousePos.x, vMousePos.y))
-			//{
-			//	sfSprite_setColor(gameMenu.play, sfBlue);
-			//	if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-			//	{
-			//		isMousePressed = sfTrue;
-			//		//loadTowerSlots(ListTowerSlot, iCurrentLevel);
-			//		loadSaveForSaveSlots(&gameMenuSave);
-			//		GameState = SAVE_SELECTOR;
-			//	}
-			//}
-			//else
-			//{
-			//	sfSprite_setColor(gameMenu.play, sfWhite);
-			//}
-			//if (!sfMouse_isButtonPressed(sfMouseLeft))
-			//{
-			//	isMousePressed = sfFalse;
-			//}
-
-			///*Credits*/
-			//if (sfFloatRect_contains(&gameMenu.fRect_creditsBB, vMousePos.x, vMousePos.y))
-			//{
-			//	sfSprite_setColor(gameMenu.credits, sfBlue);
-			//	if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-			//	{
-			//		isMousePressed = sfTrue;
-			//	}
-			//}
-			//else
-			//{
-			//	sfSprite_setColor(gameMenu.credits, sfWhite);
-			//}
-
-			///*quit*/
-			//if (sfFloatRect_contains(&gameMenu.fRect_quitBB, vMousePos.x, vMousePos.y))
-			//{
-			//	sfSprite_setColor(gameMenu.quit, sfBlue);
-			//	if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-			//	{
-			//		isMousePressed = sfTrue;
-			//		sfRenderWindow_close(window);
-			//	}
-			//}
-			//else
-			//{
-			//	sfSprite_setColor(gameMenu.quit, sfWhite);
-			//}
-
-
-			//if (!sfMouse_isButtonPressed(sfMouseLeft))
-			//{
-			//	isMousePressed = sfFalse;
-			//}
-
-			//sfRenderWindow_drawSprite(window, gameMenu.background, NULL);
-			//sfRenderWindow_drawSprite(window, gameMenu.play, NULL);
-			//sfRenderWindow_drawSprite(window, gameMenu.credits, NULL);
-			//sfRenderWindow_drawSprite(window, gameMenu.quit, NULL);
-#pragma endregion MENU DE BASE OLD
 			break;
 #pragma endregion CASE MENU
-
-#pragma region CASE SAVE SELECTOR
-		case SAVE_SELECTOR:
-			sfRenderWindow_drawSprite(window, gameMenuSave.background, NULL);
-			sfRenderWindow_drawSprite(window, gameMenuSave.slot1, NULL);
-			sfRenderWindow_drawSprite(window, gameMenuSave.slot2, NULL);
-			sfRenderWindow_drawSprite(window, gameMenuSave.slot3, NULL);
-
-			vMousePos = sfMouse_getPosition(window);
-			vMousePosToFloat.x = (float)vMousePos.x;
-			vMousePosToFloat.y = (float)vMousePos.y;
-			/*slot 1*/
-			if (sfFloatRect_contains(&gameMenuSave.fRect_slot1BB, vMousePos.x, vMousePos.y))
-			{
-				sfSprite_setColor(gameMenuSave.slot1, sfBlue);
-				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-				{
-					isMousePressed = sfTrue;
-					unlockedLevels = gameMenuSave.unLockedLevelsSlot1;
-					GameState = LEVEL_SELECTOR;
-				}
-				sfSprite_setPosition(gameMenuSave.slot1MiniMap, vMousePosToFloat);
-				sfRenderWindow_drawSprite(window, gameMenuSave.slot1MiniMap, NULL);
-			}
-			else
-			{
-				sfSprite_setColor(gameMenuSave.slot1, sfWhite);
-			}
-
-			/*slot 2*/
-			if (sfFloatRect_contains(&gameMenuSave.fRect_slot2BB, vMousePos.x, vMousePos.y))
-			{
-				sfSprite_setColor(gameMenuSave.slot2, sfBlue);
-				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-				{
-					isMousePressed = sfTrue;
-					//loadTowerSlots(ListTowerSlot, iCurrentLevel);
-					unlockedLevels = gameMenuSave.unLockedLevelsSlot2;
-					GameState = LEVEL_SELECTOR;
-				}
-				sfSprite_setPosition(gameMenuSave.slot2MiniMap, vMousePosToFloat);
-				sfRenderWindow_drawSprite(window, gameMenuSave.slot2MiniMap, NULL);
-			}
-			else
-			{
-				sfSprite_setColor(gameMenuSave.slot2, sfWhite);
-			}
-
-			/*slot 3*/
-			if (sfFloatRect_contains(&gameMenuSave.fRect_slot3BB, vMousePos.x, vMousePos.y))
-			{
-				sfSprite_setColor(gameMenuSave.slot3, sfBlue);
-				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-				{
-					isMousePressed = sfTrue;
-					//loadTowerSlots(ListTowerSlot, iCurrentLevel);
-					unlockedLevels = gameMenuSave.unLockedLevelsSlot3;
-					GameState = LEVEL_SELECTOR;
-				}
-				sfSprite_setPosition(gameMenuSave.slot3MiniMap, vMousePosToFloat);
-				sfRenderWindow_drawSprite(window, gameMenuSave.slot3MiniMap, NULL);
-			}
-			else
-			{
-				sfSprite_setColor(gameMenuSave.slot3, sfWhite);
-			}
-
-			if (!sfMouse_isButtonPressed(sfMouseLeft))
-			{
-				isMousePressed = sfFalse;
-			}
-
-
-			break;
-#pragma endregion CASE SAVE SELECTOR
-
-#pragma region CASE LEVEL SELECTOR
-		case LEVEL_SELECTOR:
-			sfRenderWindow_drawSprite(window, gameMenuLevel.background, NULL);
-			vMousePos = sfMouse_getPosition(window);
-			/*level 1*/
-			if (sfFloatRect_contains(&gameMenuLevel.fRect_level1BB, vMousePos.x, vMousePos.y) && unlockedLevels >= 0)
-			{
-				sfSprite_setColor(gameMenuLevel.level1, sfBlue);
-				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-				{
-					isMousePressed = sfTrue;
-					iCurrentLevel = TEST;
-					loadGameFromLevelNumber(iCurrentLevel, &CurrentLevelAssets, ListEnnemy, ListTowerBullet, ListEnnemyBullet, ListEnnemyPathPoint, ListTower, ListTowerSlot, ListWhiteCell);
-					loadTowerSlots(ListTowerSlot, iCurrentLevel);
-					iGoalHp = 100;
-					GameState = GAME;
-				}
-
-			}
-			else
-			{
-				sfSprite_setColor(gameMenuLevel.level1, sfWhite);
-			}
-
-			/*level 2*/
-			if (sfFloatRect_contains(&gameMenuLevel.fRect_level2BB, vMousePos.x, vMousePos.y) && unlockedLevels >= 2)
-			{
-				sfSprite_setColor(gameMenuLevel.level2, sfBlue);
-				if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-				{
-					isMousePressed = sfTrue;
-					iCurrentLevel = ESTOMAC;
-					loadGameFromLevelNumber(iCurrentLevel, &CurrentLevelAssets, ListEnnemy, ListTowerBullet, ListEnnemyBullet, ListEnnemyPathPoint, ListTower, ListTowerSlot, ListWhiteCell);
-					loadTowerSlots(ListTowerSlot, iCurrentLevel);
-					iGoalHp = 100;
-					GameState = GAME;
-				}
-			}
-			else
-			{
-				sfSprite_setColor(gameMenuLevel.level2, sfWhite);
-			}
-
-			if (!sfMouse_isButtonPressed(sfMouseLeft))
-			{
-				isMousePressed = sfFalse;
-			}
-
-			if (unlockedLevels >= 0)
-			{
-				sfRenderWindow_drawSprite(window, gameMenuLevel.level1, NULL);
-			}
-			if (unlockedLevels >= 2)
-			{
-				sfRenderWindow_drawSprite(window, gameMenuLevel.level2, NULL);
-			}
-			break;
-#pragma endregion CASE LEVEL SELECTOR
 
 #pragma region CASE GAME
 		case GAME:

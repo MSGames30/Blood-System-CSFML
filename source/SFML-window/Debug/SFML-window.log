@@ -1,138 +1,137 @@
-﻿d:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: Le répertoire intermédiaire (Debug\) contient des fichiers partagés provenant d'un autre projet (SFML-TERRE-CREUSE.vcxproj). Cela peut entraîner un comportement de nettoyage et de régénération incorrect.
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(387,5): warning MSB8028: Le répertoire intermédiaire (Debug\) contient des fichiers partagés provenant d'un autre projet (SFML-TERRE-CREUSE.vcxproj). Cela peut entraîner un comportement de nettoyage et de régénération incorrect.
   main.c
-d:\projet groupe\blood system\sfml-window\header.h(16): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
-d:\projet groupe\blood system\sfml-window\header.h(20): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
-d:\projet groupe\blood system\sfml-window\header.h(24): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
-d:\projet groupe\blood system\sfml-window\header.h(28): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
-d:\projet groupe\blood system\sfml-window\header.h(32): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
-d:\projet groupe\blood system\sfml-window\header.h(36): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
-d:\projet groupe\blood system\sfml-window\header.h(40): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
-d:\projet groupe\blood system\sfml-window\header.h(44): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
-d:\projet groupe\blood system\sfml-window\main.c(6): warning C4244: 'fonction' : conversion de 'time_t' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(327): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-d:\projet groupe\blood system\sfml-window\main.c(380): warning C4305: '=' : troncation de 'double' à 'float'
-d:\projet groupe\blood system\sfml-window\main.c(399): warning C4305: '=' : troncation de 'double' à 'float'
-d:\projet groupe\blood system\sfml-window\main.c(400): warning C4305: '=' : troncation de 'double' à 'float'
-d:\projet groupe\blood system\sfml-window\main.c(409): warning C4305: '=' : troncation de 'double' à 'float'
-d:\projet groupe\blood system\sfml-window\main.c(410): warning C4305: '=' : troncation de 'double' à 'float'
-d:\projet groupe\blood system\sfml-window\main.c(617): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-d:\projet groupe\blood system\sfml-window\main.c(629): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(631): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(632): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(654): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(656): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(657): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(678): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(680): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(681): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(729): warning C4305: '+=' : troncation de 'double' à 'float'
-d:\projet groupe\blood system\sfml-window\main.c(730): warning C4305: '+=' : troncation de 'double' à 'float'
-d:\projet groupe\blood system\sfml-window\main.c(784): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(786): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(787): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(808): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(810): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(811): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(831): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(833): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(834): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(859): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(861): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(862): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(883): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(885): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(886): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(907): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(909): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(910): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(953): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(955): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(956): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(977): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(979): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(980): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1000): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1002): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1003): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1040): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1042): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1043): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1064): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1066): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1067): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1087): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1089): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1090): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1113): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1115): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1116): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1136): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1138): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1139): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1255): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-d:\projet groupe\blood system\sfml-window\main.c(1259): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1277): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1296): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1326): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-d:\projet groupe\blood system\sfml-window\main.c(1328): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1348): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1618): warning C4244: '=' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1619): warning C4244: '=' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1786): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1934): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1935): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1939): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1940): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1948): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1949): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1964): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(1965): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2141): warning C4305: '=' : troncation de 'double' à 'float'
-d:\projet groupe\blood system\sfml-window\main.c(2142): warning C4305: '=' : troncation de 'double' à 'float'
-d:\projet groupe\blood system\sfml-window\main.c(2150): warning C4305: '=' : troncation de 'double' à 'float'
-d:\projet groupe\blood system\sfml-window\main.c(2151): warning C4305: '=' : troncation de 'double' à 'float'
-d:\projet groupe\blood system\sfml-window\main.c(2312): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-d:\projet groupe\blood system\sfml-window\main.c(2324): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2325): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2387): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-d:\projet groupe\blood system\sfml-window\main.c(2396): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2397): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2589): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2594): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2599): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2600): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2605): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2606): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2663): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2672): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2681): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2682): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2691): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2692): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2701): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2702): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2766): warning C4133: 'fonction' : types incompatibles - de 'sfSprite *' à 'const sfShape *'
-d:\projet groupe\blood system\sfml-window\main.c(2789): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2790): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2833): warning C4305: '=' : troncation de 'double' à 'float'
-d:\projet groupe\blood system\sfml-window\main.c(2885): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2886): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(2903): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-d:\projet groupe\blood system\sfml-window\main.c(3281): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-d:\projet groupe\blood system\sfml-window\main.c(3289): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(3290): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(3341): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(3342): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(3357): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-d:\projet groupe\blood system\sfml-window\main.c(3416): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-d:\projet groupe\blood system\sfml-window\main.c(3585): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
-d:\projet groupe\blood system\sfml-window\main.c(3590): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(3600): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(3617): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(3641): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(3665): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(330): warning C4244: 'initialisation' : conversion de 'unsigned int' en 'float', perte possible de données
-d:\projet groupe\blood system\sfml-window\main.c(437): warning C4101: 'Color_Green' : variable locale non référencée
-d:\projet groupe\blood system\sfml-window\main.c(121): warning C4101: 'Rect_TowerBB' : variable locale non référencée
-d:\projet groupe\blood system\sfml-window\main.c(436): warning C4101: 'Color_Blue' : variable locale non référencée
-  SFML-window.vcxproj -> D:\projet groupe\BLOOD SYSTEM\Debug\Tower Defense.exe
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\header.h(16): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\header.h(20): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\header.h(24): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\header.h(28): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\header.h(32): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\header.h(36): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\header.h(40): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\header.h(44): warning C4067: jetons inattendus après la directive du préprocesseur - saut de ligne attendu
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(6): warning C4244: 'fonction' : conversion de 'time_t' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(332): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(385): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(404): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(405): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(414): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(415): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(723): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(793): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(806): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(808): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(809): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(831): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(833): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(834): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(855): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(857): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(858): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(907): warning C4305: '+=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(908): warning C4305: '+=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(989): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(991): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(992): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1012): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1014): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1015): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1040): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1042): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1043): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1067): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1069): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1070): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1095): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1097): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1098): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1162): warning C4305: '+=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1163): warning C4305: '+=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1213): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1215): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1216): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1236): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1238): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1239): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1269): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1271): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1272): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1298): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1300): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1301): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1344): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1346): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1347): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1388): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1390): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1391): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1429): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1431): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1432): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1474): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1476): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1477): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1500): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1502): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1503): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1524): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1526): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1527): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1830): warning C4244: '=' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1831): warning C4244: '=' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(1998): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2146): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2147): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2151): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2152): warning C4244: '=' : conversion de 'double' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2160): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2161): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2176): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2177): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2353): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2354): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2362): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2363): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2524): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2536): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2537): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2599): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2608): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2609): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2801): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2806): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2811): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2812): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2817): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2818): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2875): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2884): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2893): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2894): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2903): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2904): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2913): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2914): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(2978): warning C4133: 'fonction' : types incompatibles - de 'sfSprite *' à 'const sfShape *'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3001): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3002): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3045): warning C4305: '=' : troncation de 'double' à 'float'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3097): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3098): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3115): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3493): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3501): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3502): warning C4244: 'fonction' : conversion de 'float' en 'unsigned int', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3553): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3554): warning C4244: '+=' : conversion de 'double' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3569): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3628): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3797): warning C4133: 'fonction' : types incompatibles - de 'sfRenderWindow *' à 'const sfWindow *'
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3802): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3812): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3829): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3853): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(3877): warning C4244: 'fonction' : conversion de 'int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(335): warning C4244: 'initialisation' : conversion de 'unsigned int' en 'float', perte possible de données
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(442): warning C4101: 'Color_Green' : variable locale non référencée
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(126): warning C4101: 'Rect_TowerBB' : variable locale non référencée
+c:\users\mattia.sebastien\desktop\_projet groupe\blood system\sfml-window\main.c(441): warning C4101: 'Color_Blue' : variable locale non référencée
+  SFML-window.vcxproj -> C:\Users\mattia.sebastien\Desktop\_Projet Groupe\BLOOD SYSTEM\Debug\Tower Defense.exe

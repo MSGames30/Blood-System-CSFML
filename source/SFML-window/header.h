@@ -811,6 +811,7 @@ struct s_MainMenu
 	t_MainMenuElement LogoSheet;
 	t_MainMenuElement startLabel;
 	t_MainMenuElement startSheet;
+	t_MainMenuElement startSheetLS;
 	t_MainMenuElement saveSlot1;
 	t_MainMenuElement saveSlot2;
 	t_MainMenuElement saveSlot3;
@@ -820,7 +821,15 @@ struct s_MainMenu
 	t_MainMenuElement exitSheet;
 	t_MainMenuElement exitYes;
 	t_MainMenuElement exitNo;
+	t_MainMenuElement miniMapSlot1;
+	t_MainMenuElement miniMapSlot2;
+	t_MainMenuElement miniMapSlot3;
+	t_MainMenuElement level1Icon;
+	t_MainMenuElement level2Icon;
+	t_MainMenuElement background;
+	t_MainMenuElement brain;
 	sfImage* labelMask;
+	sfImage* levelMask;
 	sfImage* saveMask;
 	sfImage* exitMask;
 };
