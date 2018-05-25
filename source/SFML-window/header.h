@@ -49,6 +49,8 @@
 
 #define WHITE_CELL_SPD_FACTOR 2
 
+#define MAX_LIST_ENNEMY_PATH_POINT 2
+
 #pragma region ENNEMY
 
 #pragma region ENNEMY BULLET
@@ -89,32 +91,40 @@
 
 #pragma region STATS
 
-#define CHOLESTEROL_SPEED 75
+#define CHOLESTEROL_SPEED 125
 #define CHOLESTEROL_DEG 5 // dégats quand il est gros
 #define CHOLESTEROL_HP 10
-#define CHOLESTEROL_MONEY_VALUE 25
+#define CHOLESTEROL_MONEY_VALUE 125
 
-#define CANCER_SPEED 125
+#define CANCER_SPEED 200
 #define CANCER_DEG 1
 #define CANCER_HP 2
-#define CANCER_MONEY_VALUE 5
+#define CANCER_MONEY_VALUE 25
 
-#define CAILLOT_SPEED 50
+#define CAILLOT_SPEED 75
 #define CAILLOT_DEG 10
-#define CAILLOT_HP 20
-#define CAILLOT_MONEY_VALUE 50
+#define CAILLOT_HP 25
+#define CAILLOT_MONEY_VALUE 250
 
 #pragma endregion STATS
 
+#define CAILLOT_TIME_BETWEEN_ATTACK 5 //temps minimun entre chaque attaque
+#define CHOLESTEROL_TIME_BETWEEN_ATTACK 5 //temps minimun entre chaque attaque
+
+#define CAILLOT_NBR_TOWER_BETWEEN_ATTACK 2 // Nombre de tour a passer avant de pouvoir attaquer
+#define CHOLESTEROL_NBR_TOWER_BETWEEN_ATTACK 2 // Nombre de tour a passer avant de pouvoir attaquer
+
 #define CAILLOT_CONTROL_RADIUS 80
-#define CAILLOT_GUARD_RADIUS 25
+#define CAILLOT_GUARD_RADIUS 15
 #define CANCER_CONTROL_RADIUS 80
 #define CANCER_GUARD_RADIUS 15
 #define CHOLESTEROL_CONTROL_RADIUS 80
-#define CHOLESTEROL_GUARD_RADIUS 20
+#define CHOLESTEROL_GUARD_RADIUS 15
 
 #define TIME_BETWEEN_WAVE 5
 
+#define DETECTION_SLOT_RADIUS 40
+#define DETECTION_POSITION_RADIUS 150
 #define CONTROL_RADIUS 80
 #define GUARD_RADIUS 25
 
@@ -138,7 +148,9 @@
 
 #define TIME_BETWEEN_VARIATION 1
 
-#define DOT_FREQUENCY 2
+#define TIME_BETWEEN_ENNEMY_SPAWN 0.2
+
+#define ENNEMY_DIST_FROM_TARGET_TO_DELETE 100
 
 #pragma endregion ENNEMY
 
@@ -148,28 +160,50 @@
 
 #pragma endregion ENNEMY PATH POINT
 
-
 #pragma region WHITE_CELLS
 
-#define WHITE_CELL_WIDTH 299
-#define WHITE_CELL_HEIGHT 240
+#define WHITE_CELL_WIDTH 52
+#define WHITE_CELL_HEIGHT 50
 #define WHITE_CELL_FRAMES 15
 #define WHITE_CELL_ANIM_SPEED 0.03
-#define WHITE_CELL_FIELD_OF_VIEW_RADIUS 250
-#define WHITE_CELL_AREA_DAMAGE_RADIUS 500
+#define WHITE_CELL_FIELD_OF_VIEW_RADIUS 350
+#define WHITE_CELL_AREA_DAMAGE_RADIUS 150
 #define WHITE_CELL_CREATE_COOLDOWN 2
 
 #pragma endregion WHITE_CELLS
 
 #pragma region TOWERS
 
-#define TOWER1_DAMAGES 2
-#define TOWER2_DAMAGES 2
-#define TOWER3_DAMAGES 10
+#define TOWER1_DAMAGES 0.5
+#define TOWER2_DAMAGES 0.2
+#define TOWER3_DAMAGES 5
 
-#define TOWER1_HP 10
-#define TOWER2_HP 10
-#define TOWER3_HP 10
+#define TOWER1_HP 100
+#define TOWER2_HP 100
+#define TOWER3_HP 100
+
+#define TOWER1_WIDTH 100
+#define TOWER1_HEIGHT 102
+
+#define TOWER2_WIDTH 83
+#define TOWER2_HEIGHT 74
+#define DOT_FREQUENCY 1
+
+#define TOWER3_WIDTH 88
+#define TOWER3_HEIGHT 86
+
+#define TOWER1_COST 100
+#define TOWER1_UPGRADE_COST 180
+
+#define TOWER2_COST 150
+#define TOWER2_UPGRADE_COST 270
+
+#define TOWER3_COST 250
+#define TOWER3_UPGRADE_COST 450
+
+#define RESELL_FACTOR 0.6f
+
+#define SLOWING_FACTOR 0.5f
 
 #pragma endregion TOWERS
 
@@ -190,7 +224,6 @@
 
 #pragma endregion MENU
 
-
 #pragma endregion Defines
 
 #pragma region enum
@@ -206,8 +239,10 @@ typedef enum e_EnnemyPathPointType t_EnnemyPathPointType;
 enum e_EnnemyPathPointType
 {
 	SIMPLE = 0,
-	RANDOM = 1,
-	UNI = 2,
+	PATH1 = 1,
+	PATH2 = 2,
+	RANDOM = 3,
+	UNI = 4
 };
 
 typedef enum e_TowerType t_TowerType;
@@ -245,9 +280,9 @@ enum e_EnemySize
 	SMALL
 };
 
-typedef enum e_ENNEMY_DIRECTION ENNEMY_DIRECTION;
+typedef enum e_DIRECTION DIRECTION;
 
-enum e_ENNEMY_DIRECTION
+enum e_DIRECTION
 {
 	DOWN_RIGHT,
 	DOWN_LEFT,
@@ -283,6 +318,7 @@ enum e_GameState
 	GAME,
 	VICTORY,
 	DEFEAT,
+	INTRO,
 };
 
 typedef enum e_mainMenuState t_mainMenuState;
@@ -296,6 +332,16 @@ enum e_mainMenuState
 	ON_START_LEVEL_SELECTOR,
 	ON_CREDITS,
 	ON_EXIT,
+};
+
+typedef enum e_introState t_introState;
+
+enum e_introState
+{
+	IS_GAME_MOVING = 0,
+	IS_ACADEMY_MOVING,
+	IS_LOGO_GROWING,
+	IS_LOGO_BEATING,
 };
 
 #pragma endregion enum
@@ -359,7 +405,7 @@ struct s_Ennemy
 
 	/*gestion animation*/
 	sfIntRect animRect; // Rectnagle d'animation de l'ennemi
-	int iDirection; // direction de l'ennemie, gère l'axe y dans la découpe de la texture (voir enum ENNEMY_DIRECTION)
+	DIRECTION dirState; // direction de l'ennemie, gère l'axe y dans la découpe de la texture (voir enum ENNEMY_DIRECTION)
 	float fTimeSinceLastAnimation; // temps depuis la dernière frame d'animation
 	float fTimeBetweenAnimation; //Temps entre chaque frame d'animation définit pour l'ennemi en question
 	int iNbrFrameX; // nombre d'images dans la texture en x
@@ -404,17 +450,33 @@ struct s_Ennemy
 	/*facteur de vitesse*/
 	float fSpeedFactor;
 
-	/*gestion attaque Caillot*/
-	int iIsAttack; // actif si l'ennemi est en train d'attaquer
-	int iTowerToAttackId;
-	int iTowerIsChosen;
-	sfVector2f vPosTowerToAttack;
-	float fTimeSinceLastAttack;
-
 	/*dommages tour 2*/
 	float tStartDOT;
 	float tSinceDOT;
 	float tCurrentDOT;
+	/*ATTAQUE*/ //GUILLAUME
+
+	int iIsAttack; // actif si l'ennemi est en train d'attaquer
+	int iTowerToAttackId;
+	int iTowerIsChosen;
+	sfVector2f vPosTowerToAttack;
+	sfVector2f vDistToTowerDetectionPos; // distance entre l'ennemi et la position de détection du slot
+	sfBool EnnemyIsInTheDetectionZone; // actif si l'ennemi est présent dans la zone de détection
+	int iNbrTowerBetweenAttack; // Nombre de tour que l'ennemi passe entre chaque attaque
+	int iNbrTowerSinceLastAttack; // Nombre de tour passe depuis la dernière attaque
+	float fTimeBetweenAttack; // Temps entre chaque attaque
+	float fTimeSinceLastAttack; // Temps depuis la dernière attaque
+	int iCurrentTowerDetectionZoneId; //Id de la tour possédant la zone dans laquelle se situe l'ennemi
+
+	/*choix du chemin a suivre*/
+	t_EnnemyPathPointType PathToFollow;
+	sfVector2f vPosPathToTarget; // point suivant que l'ennemi doit viser (maps actuelles)
+	int iPosPathToTarget;
+
+	sfBool isHit;
+	float tStartLifeBarDisplay;
+	float tCurrentLifeBarDisplay;
+	float tSinceLifeBarDisplay;
 };
 
 
@@ -479,6 +541,40 @@ struct s_ListEnnemyBullet
 
 #pragma endregion ENNEMY BULLET
 
+#pragma region ENNEMY WAVE
+
+typedef struct s_EnnemyWave t_EnnemyWave;
+
+struct s_EnnemyWave
+{
+	int iNumWave;
+	int iMaxWave; // nombre total de vague
+	int iNbrTotal; // nombre total d'ennemi pendant la vague
+	int iNbrCholesterol;
+	int iNbrCancer;
+	int iNbrCaillot;
+};
+
+typedef struct s_EnnemyWaveElement t_EnnemyWaveElement;
+
+struct s_EnnemyWaveElement
+{
+	int Id;
+	t_EnnemyWave* EnnemyWave;
+	t_EnnemyWaveElement* NextElement;
+	t_EnnemyWaveElement* PreviousElement;
+};
+
+typedef struct s_ListEnnemyWave t_ListEnnemyWave;
+
+struct s_ListEnnemyWave
+{
+	t_EnnemyWaveElement* FirstElement;
+	t_EnnemyWaveElement* LastElement;
+};
+
+#pragma endregion ENNEMY WAVE
+
 #pragma region TOWER SLOT
 
 typedef struct s_TowerSlot t_TowerSlot;
@@ -490,6 +586,7 @@ struct s_TowerSlot
 	sfBool IsClicked;
 	sfBool IsBuild;
 	t_TowerType BuildedType;
+	int TowerBuildId; // id de la tour qui est posée dessus
 };
 
 typedef struct s_TowerSlotElement t_TowerSlotElement;
@@ -567,6 +664,7 @@ struct s_Tower
 	sfBool isOn;
 	sfBool iIsWhiteCellAlive;
 	sfBool isFirstBuild;
+	DIRECTION dirState;
 
 	int iHP;
 	int iHPMax;
@@ -583,6 +681,8 @@ struct s_Tower
 	sfVector2f vPositionRectangleShape;
 	sfVector2f vOriginRectangleShape;
 
+	int cost;
+	int upgradeCost;
 };
 
 typedef struct s_TowerElement t_TowerElement;
@@ -674,8 +774,17 @@ struct s_whiteCell
 	float tSinceAnim;
 	float tCurrentAnim;
 	int animFrame;
-	ENNEMY_DIRECTION dirState;
+	DIRECTION dirState;// direction du globule blanc, gère l'axe y dans la découpe de la texture (voir enum ENNEMY_DIRECTION)
 	sfVector2f distanceVector;
+
+	/*choix du chemin a suivre*/
+	sfBool isSearchingForPathToFollow; // false si le globule blanc n'a pas trouver de chemin a suivre
+	t_EnnemyPathPointType PathToFollow;
+	sfVector2f vPosPathToTarget; // point suivant que la cellule doit viser doit viser (maps actuelles)
+	sfVector2f vDirectionPosPathToTarget;
+	int iPosPathToTarget;
+
+	int Hp; // sert pour le delete
 };
 
 typedef struct s_whiteCellElement t_whiteCellElement;
@@ -835,6 +944,28 @@ struct s_MainMenu
 };
 #pragma endregion MENU
 
+#pragma region HUD
+
+typedef struct s_HudElement t_HudElement;
+
+struct s_HudElement
+{
+	sfSprite* sprite;
+	sfVector2f vPos;
+	sfVector2f vOrigin;
+};
+
+typedef struct s_Hud t_Hud;
+
+struct s_Hud
+{
+	t_HudElement lifePoints;
+	t_HudElement money;
+	t_HudElement waves;
+};
+
+#pragma endregion HUD
+
 #pragma region CURRENT LEVEL
 
 typedef struct s_CurrentLevelAssets t_CurrentLevelAssets;
@@ -843,8 +974,37 @@ struct s_CurrentLevelAssets
 {
 	sfSprite* map;
 	sfImage* mapMask;
+	int iNbrEnnemyPath; // nombre de chemins ennemis présent dans le niveau
+	t_ListEnnemyWave* ListEnnemyWave;
+	t_ListEnnemyPathPoint* TabListEnnemyPathPoint[MAX_LIST_ENNEMY_PATH_POINT]; // tableau de 
+
 };
 #pragma endregion CURRENT LEVEL
+
+#pragma region INTRO
+typedef struct s_introElement t_introElement;
+
+struct s_introElement
+{
+	sfSprite* sprite;
+	sfVector2f vPos;
+	sfVector2f vOrigin;
+	sfVector2f vSize;
+};
+
+typedef struct s_intro t_intro;
+
+struct s_intro
+{
+	t_introElement game;
+	t_introElement academy;
+	t_introElement logo;
+	t_introState state;
+	sfVector2f vSizeMax;
+};
+
+
+#pragma endregion INTRO
 
 #pragma endregion structures
 
@@ -878,13 +1038,17 @@ int SpriteIsOverPosition(sfVector2f _vPositionPerso, sfVector2f _vOriginPerso, s
 //void Collider(sfImage* _collid, Player* player);
 
 void loadTowerSlots(t_ListTowerSlot* _ListTowerSlot, int _levelNumber);
-void loadEnnemyPathPoint(t_ListEnnemyPathPoint* _ListEnnemyPathPoint, int _levelNumber);
+int loadEnnemyNbrPath(int _levelNumber);
+t_ListEnnemyPathPoint* loadEnnemyPathPoint(t_ListEnnemyPathPoint* _ListEnnemyPathPoint, int _levelNumber, int _NumPath);
+t_ListEnnemyWave* loadEnnemyWave(t_ListEnnemyWave* _ListEnnemyWave, int _levelNumber);
 void manageInGameMenu(t_inGameMenu* _inGameMenu);
 void loadSaveForSaveSlots(t_gameMenuSave* _gameMenuSave);
-void loadGameFromLevelNumber(t_NameLevel _iCurrentLevel, t_CurrentLevelAssets* _CurrentLevelAssets, t_List* _ListEnnemy, t_ListBullet* _ListBullet, t_ListEnnemyBullet* _ListEnnemyBullet, t_ListEnnemyPathPoint* _ListEnnemyPathPoint, t_ListTower* _ListTower, t_ListTowerSlot* _ListTowerSlot, t_ListWhiteCell* _ListWhiteCell);
+void loadGameFromLevelNumber(t_NameLevel _iCurrentLevel, t_CurrentLevelAssets* _CurrentLevelAssets, t_List* _ListEnnemy, t_ListBullet* _ListBullet, t_ListEnnemyBullet* _ListEnnemyBullet,
+	t_ListTower* _ListTower, t_ListTowerSlot* _ListTowerSlot, t_ListWhiteCell* _ListWhiteCell);
 
 t_EnnemyElement* AddElementBeginList(t_List* _List);
 t_EnnemyBulletElement* AddElementBeginListEnnemyBullet(t_ListEnnemyBullet* _List);
+t_EnnemyWaveElement* AddElementBeginListEnnemyWave(t_ListEnnemyWave* _List);
 t_EnnemyPathPointElement* AddElementBeginListEnnemyPathPoint(t_ListEnnemyPathPoint* _List);
 t_TowerSlotElement* AddElementBeginListTowerSlot(t_ListTowerSlot* _List);
 t_TowerElement* AddElementBeginListTower(t_ListTower* _List);
@@ -893,6 +1057,7 @@ t_whiteCellElement* AddElementBeginListWhiteCell(t_ListWhiteCell* _List);
 
 sfBool DeleteElementById(t_List* _List, int _IdElementToDelete);
 sfBool DeleteElementByIdEnnemyBullet(t_ListEnnemyBullet* _List, int _IdElementToDelete);
+sfBool DeleteElementByIdEnnemyWave(t_ListEnnemyWave* _List, int _IdElementToDelete);
 sfBool DeleteElementByIdEnnemyPathPoint(t_ListEnnemyPathPoint* _List, int _IdElementToDelete);
 sfBool DeleteElementByIdTowerSlot(t_ListTowerSlot* _List, int _IdElementToDelete);
 sfBool DeleteElementByIdTower(t_ListTower* _List, int _IdElementToDelete);
@@ -901,6 +1066,7 @@ sfBool DeleteElementByIdWhiteCell(t_ListWhiteCell* _List, int _IdElementToDelete
 
 sfBool DeleteAllElementInList(t_List* _List);
 sfBool DeleteAllElementInListEnnemyBullet(t_ListEnnemyBullet* _List);
+sfBool DeleteAllElementInListEnnemyWave(t_ListEnnemyWave* _List);
 sfBool DeleteAllElementInListEnnemyPathPoint(t_ListEnnemyPathPoint* _List);
 sfBool DeleteAllElementInListTowerSlot(t_ListTowerSlot* _List);
 sfBool DeleteAllElementInListTower(t_ListTower* _List);

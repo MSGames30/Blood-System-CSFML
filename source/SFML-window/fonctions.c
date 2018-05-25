@@ -234,14 +234,52 @@ int SpriteIsOverGlobalBounds(sfFloatRect _GlobalBoundsPerso, sfFloatRect _Global
 //	}
 //}
 
-void loadEnnemyPathPoint(t_ListEnnemyPathPoint* _ListEnnemyPathPoint, int _levelNumber)
+t_ListEnnemyWave* loadEnnemyWave(t_ListEnnemyWave* _ListEnnemyWave, int _levelNumber)
+{
+	t_EnnemyWaveElement* newElement = malloc(sizeof(t_EnnemyWaveElement));
+
+	FILE* file = NULL;
+	char* filePath = malloc(50);
+	int iNbrWave = 0; // nombre de vaggue du niveau
+	
+
+	sprintf_s(filePath, 50, "resources/datas/ennemyWave1.txt", _levelNumber);
+	fopen_s(&file, filePath, "r");
+
+	if (file == NULL)
+	{
+		printf_s("Erreur d'ouverture du fichier EnnemyWave\n");
+		return EXIT_FAILURE;
+	}
+	fscanf_s(file, "iNbrWave=%d\n", &iNbrWave);
+
+	for (int i = 0; i < iNbrWave; i++)
+	{
+		newElement = AddElementBeginListEnnemyPathPoint(_ListEnnemyWave);
+		newElement->EnnemyWave = malloc(sizeof(t_EnnemyWave));
+		newElement->EnnemyWave->iMaxWave = iNbrWave;
+		newElement->EnnemyWave->iNumWave = 0; // numéro de la vague
+		newElement->EnnemyWave->iNbrCholesterol = 0; // nombre d'ennemis Cholesterol pendant la vague
+		newElement->EnnemyWave->iNbrCancer = 0; // nombre d'ennemis Cancer pendant la vague
+		newElement->EnnemyWave->iNbrCaillot = 0; // nombre d'ennemis Caillot pendant la vague
+		newElement->EnnemyWave->iNbrTotal = 0; // nombre total d'ennemis
+		fscanf_s(file, "Wave=%d,NbrCholesterol=%d,NbrCancer=%d,NbrCaillot=%d,NbrTotal=%d\n", &newElement->EnnemyWave->iNumWave, &newElement->EnnemyWave->iNbrCholesterol, &newElement->EnnemyWave->iNbrCancer, &newElement->EnnemyWave->iNbrCaillot, &newElement->EnnemyWave->iNbrTotal);
+		printf("WAVENUM : %d\t NBR CHO : %d\t NBR CAN : %d\t NBR CAI : %d\t NBR TOT : %d\t\n", newElement->EnnemyWave->iNumWave, newElement->EnnemyWave->iNbrCholesterol, newElement->EnnemyWave->iNbrCancer, newElement->EnnemyWave->iNbrCaillot, newElement->EnnemyWave->iNbrTotal);
+	}
+
+	fclose(file);
+
+	return _ListEnnemyWave;
+}
+
+t_ListEnnemyPathPoint* loadEnnemyPathPoint(t_ListEnnemyPathPoint* _ListEnnemyPathPoint, int _levelNumber, int _NumPath)
 {
 	t_EnnemyPathPointElement* newElement = malloc(sizeof(t_EnnemyPathPointElement));
 
 	FILE* file = NULL;
 	char* filePath = malloc(50);
 	int iEnnemyPathPointNbr = 0;
-	sprintf_s(filePath, 50, "resources/datas/ennemyPath%d.txt", _levelNumber);
+	sprintf_s(filePath, 50, "resources/datas/ennemyPath%d-%d.txt", _levelNumber, _NumPath);
 	fopen_s(&file, filePath, "r");
 
 	if (file == NULL)
@@ -255,14 +293,36 @@ void loadEnnemyPathPoint(t_ListEnnemyPathPoint* _ListEnnemyPathPoint, int _level
 	{
 		newElement = AddElementBeginListEnnemyPathPoint(_ListEnnemyPathPoint);
 		newElement->EnnemyPathPoint = malloc(sizeof(t_EnnemyPathPoint));
-		fscanf_s(file, "Num=%d,Type=%d,vPosX=%f,vPosY=%f\n", &newElement->EnnemyPathPoint->Num, &newElement->EnnemyPathPoint->Type, &newElement->EnnemyPathPoint->vPos.x, &newElement->EnnemyPathPoint->vPos.y);
-		printf("NUM : %d\n", newElement->EnnemyPathPoint->Num);
+		fscanf_s(file, "Num=%d,vPosX=%f,vPosY=%f\n", &newElement->EnnemyPathPoint->Num, &newElement->EnnemyPathPoint->vPos.x, &newElement->EnnemyPathPoint->vPos.y);
+		printf("NUM : %d\t\n", newElement->EnnemyPathPoint->Num);
 		newElement->EnnemyPathPoint->vOrigin.x = SIZE_PATH_POINT / 2;
 		newElement->EnnemyPathPoint->vOrigin.y = SIZE_PATH_POINT / 2;
 
 	}
 
 	fclose(file);
+
+	return _ListEnnemyPathPoint;
+}
+
+/*charge le nombre de chemin présent dans le niveau*/
+int loadEnnemyNbrPath(int _levelNumber)
+{
+	FILE* file = NULL;
+	char* filePath = malloc(50);
+	int iEnnemyPathNbr = 0;
+	sprintf_s(filePath, 50, "resources/datas/ennemyNbrPath%d.txt", _levelNumber);
+	fopen_s(&file, filePath, "r");
+
+	if (file == NULL)
+	{
+		printf_s("Erreur d'ouverture du fichier EnnemyNbrPath\n");
+		return EXIT_FAILURE;
+	}
+	fscanf_s(file, "iNbrPath=%d", &iEnnemyPathNbr);
+
+	fclose(file);
+	return iEnnemyPathNbr;
 }
 
 void loadTowerSlots(t_ListTowerSlot* _ListTowerSlot, int _levelNumber)
@@ -423,15 +483,11 @@ void loadSaveForSaveSlots(t_gameMenuSave* _gameMenuSave)
 
 }
 
+/*charge les fichiers correspondantr au niveau et vide les listes utilisés*/
 void loadGameFromLevelNumber(t_NameLevel _iCurrentLevel, t_CurrentLevelAssets* _CurrentLevelAssets, t_List* _ListEnnemy, t_ListBullet* _ListBullet, t_ListEnnemyBullet* _ListEnnemyBullet,
-	t_ListEnnemyPathPoint* _ListEnnemyPathPoint, t_ListTower* _ListTower, t_ListTowerSlot* _ListTowerSlot, t_ListWhiteCell* _ListWhiteCell)
+	t_ListTower* _ListTower, t_ListTowerSlot* _ListTowerSlot, t_ListWhiteCell* _ListWhiteCell)
 {
-	char* path = malloc(100);
-	sprintf_s(path, 100, "resources/textures/maps/map%d.jpg", _iCurrentLevel);
-	_CurrentLevelAssets->map = createSprite(path);
-	sprintf_s(path, 100, "resources/textures/maps/mapMask%d.psd", _iCurrentLevel);
-	_CurrentLevelAssets->mapMask = sfImage_createFromFile(path);
-
+	/*SUPPRESION DES ELEMENTS DES LISTES*/
 	if (_ListEnnemy->FirstElement != NULL)
 	{
 		printf_s("Vidage liste ennemis\n");
@@ -446,11 +502,6 @@ void loadGameFromLevelNumber(t_NameLevel _iCurrentLevel, t_CurrentLevelAssets* _
 	{
 		printf_s("Vidage liste bulletEnnemy\n");
 		DeleteAllElementInList(_ListEnnemyBullet);
-	}
-	if (_ListEnnemyPathPoint->FirstElement != NULL)
-	{
-		printf_s("Vidage liste path point\n");
-		DeleteAllElementInList(_ListEnnemyPathPoint);
 	}
 	if (_ListTower->FirstElement != NULL)
 	{
@@ -467,6 +518,45 @@ void loadGameFromLevelNumber(t_NameLevel _iCurrentLevel, t_CurrentLevelAssets* _
 		printf_s("Vidage liste white cell\n");
 		DeleteAllElementInList(_ListWhiteCell);
 	}
+	/*if (_CurrentLevelAssets->ListEnnemyWave->FirstElement != NULL)
+	{
+		printf_s("Vidage liste vagues ennemis\n");
+		DeleteAllElementInList(_CurrentLevelAssets->ListEnnemyWave);
+	}
+	printf("Vidage du tableau de liste des chemins ennemis");
+	for (int i = 0; i < MAX_LIST_ENNEMY_PATH_POINT; i++)
+	{
+		printf_s("Vidage liste chemin ennemi %d\n", i);
+		DeleteAllElementInList(_CurrentLevelAssets->TabListEnnemyPathPoint[i]);
+	}*/
+
+	/*CHARGEMENT DES FICHIERS DU NIVEAU*/
+	char* path = malloc(100);
+	/*map et masque de collision*/
+	sprintf_s(path, 100, "resources/textures/maps/map%d.jpg", _iCurrentLevel);
+	_CurrentLevelAssets->map = createSprite(path);
+	sprintf_s(path, 100, "resources/textures/maps/mapMask%d.psd", _iCurrentLevel);
+	_CurrentLevelAssets->mapMask = sfImage_createFromFile(path);
+
+	/*FICHIER VAGUE ENNEMI*/
+	_CurrentLevelAssets->ListEnnemyWave = malloc(sizeof(t_ListEnnemyWave));
+	_CurrentLevelAssets->ListEnnemyWave->FirstElement = NULL;
+	_CurrentLevelAssets->ListEnnemyWave->LastElement = NULL;
+	_CurrentLevelAssets->ListEnnemyWave = loadEnnemyWave(_CurrentLevelAssets->ListEnnemyWave, _iCurrentLevel);
+
+	/*CREATTION D'UN TABLEAU DE LISTE*/
+	_CurrentLevelAssets->iNbrEnnemyPath = loadEnnemyNbrPath(_iCurrentLevel);
+
+	/*FICHIER CHEMIN A PRACOURIR*/
+	for (int i = 0; i < _CurrentLevelAssets->iNbrEnnemyPath; i++)
+	{
+		/*chaque case du tableau pointe sur une liste*/
+		_CurrentLevelAssets->TabListEnnemyPathPoint[i] = malloc(sizeof(t_ListEnnemyPathPoint));
+		_CurrentLevelAssets->TabListEnnemyPathPoint[i]->FirstElement = NULL;
+		_CurrentLevelAssets->TabListEnnemyPathPoint[i]->LastElement = NULL;
+		_CurrentLevelAssets->TabListEnnemyPathPoint[i] = loadEnnemyPathPoint(_CurrentLevelAssets->TabListEnnemyPathPoint[i], _iCurrentLevel, i + 1);
+	}
+
 }
 #pragma endregion SFML Functions
 
@@ -507,6 +597,37 @@ t_EnnemyElement* AddElementBeginList(t_List* _List)
 t_EnnemyBulletElement* AddElementBeginListEnnemyBullet(t_ListEnnemyBullet* _List)
 {
 	t_EnnemyBulletElement* NewElement = malloc(sizeof(t_EnnemyBulletElement));
+
+	if (_List == NULL || NewElement == NULL)
+	{
+		exit(EXIT_FAILURE);
+	}
+
+
+	if (_List->FirstElement == NULL)
+	{
+		NewElement->NextElement = _List->FirstElement;
+		NewElement->PreviousElement = NULL;
+		_List->FirstElement = NewElement;
+		_List->LastElement = NewElement;
+		NewElement->Id = 0;
+	}
+	else
+	{
+		NewElement->NextElement = _List->FirstElement;
+		NewElement->NextElement->PreviousElement = NewElement;
+		NewElement->PreviousElement = NULL;
+		_List->FirstElement = NewElement;
+		NewElement->Id = NewElement->NextElement->Id + 1;
+	}
+
+	//printf("NEW ELEMENT IS ADD\n");
+	return NewElement;
+}
+
+t_EnnemyWaveElement* AddElementBeginListEnnemyWave(t_ListEnnemyWave* _List)
+{
+	t_EnnemyWaveElement* NewElement = malloc(sizeof(t_EnnemyWaveElement));
 
 	if (_List == NULL || NewElement == NULL)
 	{
@@ -876,6 +997,86 @@ sfBool DeleteElementByIdEnnemyBullet(t_ListEnnemyBullet* _List, int _IdElementTo
 			if (CurrentElement->Id == _IdElementToDelete)
 			{
 				t_EnnemyBulletElement* ElementToDelete = CurrentElement;
+				/*je raccorde le next element de l'élément précédent a l'élément suivant de celui que je veut supprimer*/
+				if (CurrentElement->NextElement != NULL && CurrentElement->PreviousElement != NULL)
+				{
+					CurrentElement->PreviousElement->NextElement = CurrentElement->NextElement;
+					CurrentElement->NextElement->PreviousElement = CurrentElement->PreviousElement;
+				}
+				free(ElementToDelete);
+
+				printf("DELETE ELEMENT %d\n", _IdElementToDelete);
+				return sfTrue;
+			}
+			else
+			{
+				CurrentElement = CurrentElement->NextElement;
+			}
+		}
+	}
+
+	printf("FAIL TO DELETE ELEMENT %d\n", _IdElementToDelete);
+	return sfFalse;
+}
+
+sfBool DeleteElementByIdEnnemyWave(t_ListEnnemyWave* _List, int _IdElementToDelete)
+{
+	/*Delete de l'élément restant dans la liste*/
+	if (_List->FirstElement == _List->LastElement)
+	{
+		t_EnnemyWaveElement* ElementToDelete = _List->FirstElement;
+
+		/*je reset les 2 pointeurs de ma liste a NULL*/
+		_List->FirstElement = NULL;
+		_List->LastElement = NULL;
+
+		free(ElementToDelete);
+		printf("DELETE THE SURVIVOR ELEMENT %d\n", _IdElementToDelete);
+
+		return sfTrue;
+	}
+
+	/*Delete First Element*/
+	if (_List->FirstElement->Id == _IdElementToDelete)
+	{
+
+		t_EnnemyWaveElement* ElementToDelete = _List->FirstElement;
+		if (_List->FirstElement->NextElement != NULL)
+		{
+			_List->FirstElement->NextElement->PreviousElement = NULL;
+		}
+		_List->FirstElement = _List->FirstElement->NextElement;
+
+		free(ElementToDelete);
+		printf("DELETE FIRST ELEMENT %d\n", _IdElementToDelete);
+
+		return sfTrue;
+	}
+	/*Delete Last Element*/
+	else if (_List->LastElement->Id == _IdElementToDelete)
+	{
+		t_EnnemyWaveElement* ElementToDelete = _List->LastElement;
+		if (_List->LastElement->PreviousElement != NULL)
+		{
+			_List->LastElement->PreviousElement->NextElement = NULL;
+		}
+		_List->LastElement = _List->LastElement->PreviousElement;
+		free(ElementToDelete);
+		printf("DELETE LAST ELEMENT %d\n", _IdElementToDelete);
+
+		return sfTrue;
+	}
+	/*delete another element*/
+	else
+	{
+		/*parcours dans la boucle pour trouver l'élément a supprimer*/
+		t_EnnemyWaveElement* CurrentElement = _List->FirstElement;
+		while (CurrentElement != NULL)
+		{
+			/*si le prochain élément est celuis que l'on veut supprimer on attache le previous et le next avant de supprimer l'élément en question*/
+			if (CurrentElement->Id == _IdElementToDelete)
+			{
+				t_EnnemyWaveElement* ElementToDelete = CurrentElement;
 				/*je raccorde le next element de l'élément précédent a l'élément suivant de celui que je veut supprimer*/
 				if (CurrentElement->NextElement != NULL && CurrentElement->PreviousElement != NULL)
 				{
@@ -1298,6 +1499,7 @@ sfBool DeleteElementByIdWhiteCell(t_ListWhiteCell* _List, int _IdElementToDelete
 	return sfFalse;
 }
 
+
 /*détruire tous les éléments d'une liste sans détruire la liste*/
 
 sfBool DeleteAllElementInList(t_List* _List)
@@ -1331,6 +1533,34 @@ sfBool DeleteAllElementInListEnnemyBullet(t_ListEnnemyBullet* _List)
 {
 
 	t_EnnemyBulletElement* CurrentElement = _List->FirstElement;
+	while (CurrentElement != NULL)
+	{
+		if (CurrentElement != NULL)
+		{
+			if (CurrentElement->NextElement != NULL)
+			{
+				CurrentElement = CurrentElement->NextElement;
+				DeleteElementById(_List, CurrentElement->PreviousElement->Id);
+			}
+			else
+			{
+				DeleteElementById(_List, CurrentElement->Id);
+				printf("THE LAST ELEMENT OF THE LIST HAVE BEEN DELETED\n");
+				return sfTrue;
+			}
+		}
+		else
+			CurrentElement = CurrentElement->NextElement;
+	}
+
+	printf("FAIL TO DELETE ALL THE LIST\n");
+	return sfFalse;
+}
+
+sfBool DeleteAllElementInListEnnemyWave(t_ListEnnemyWave* _List)
+{
+
+	t_EnnemyWaveElement* CurrentElement = _List->FirstElement;
 	while (CurrentElement != NULL)
 	{
 		if (CurrentElement != NULL)
@@ -1495,8 +1725,6 @@ sfBool DeleteAllElementInListWhiteCell(t_ListWhiteCell* _List)
 	return sfFalse;
 }
 
-
-
 sfBool SortTowerByPos(t_ListTower *_list)
 {
 	t_TowerElement *currentElement = _list->FirstElement;
@@ -1628,7 +1856,7 @@ sfBool DeleteEnemyWithID(t_List*_list, int _id)
 					currentElement->NextElement = currentElement->NextElement->NextElement;
 
 				free(deletedElement);
-				printf("Bullet with id %d has been deleted\n", _id);
+				printf("enemy %d has been deleted\n", _id);
 				return sfTrue;
 			}
 			else
@@ -1637,7 +1865,7 @@ sfBool DeleteEnemyWithID(t_List*_list, int _id)
 			}
 		}
 	}
-	printf("Unable to delete Bullet with id %d\n", _id);
+	printf("Unable to delete enemy %d\n", _id);
 	return sfFalse;
 }
 #pragma endregion LIST FUNCTIONS
@@ -1776,6 +2004,8 @@ sfBool manageEnnemi(t_EnnemyElement* currentElement, sfImage* testMask, float fT
 	//currentElement->Ennemy->vSideRightControlPoint.x += currentElement->Ennemy->vRightStartPoint.x;
 	//currentElement->Ennemy->vSideRightControlPoint.y += currentElement->Ennemy->vRightStartPoint.y;
 
+	
+
 	/*POINT SITUE DEVANT L'ENTITE*/
 	if (currentElement->Ennemy->vControlPoint.x > 0 && currentElement->Ennemy->vControlPoint.x < WINDOW_WIDTH
 		&& currentElement->Ennemy->vControlPoint.y > 0 && currentElement->Ennemy->vControlPoint.y < WINDOW_HEIGHT)
@@ -1791,6 +2021,7 @@ sfBool manageEnnemi(t_EnnemyElement* currentElement, sfImage* testMask, float fT
 			currentElement->Ennemy->iCollideControl = 0;
 		}
 	}
+	
 
 	/*POINT SITUE SUR LA GAUCHE DE L'ENTITE*/
 	if (currentElement->Ennemy->vLeftControlPoint.x > 0 && currentElement->Ennemy->vLeftControlPoint.x < WINDOW_WIDTH
@@ -1866,6 +2097,12 @@ sfBool manageEnnemi(t_EnnemyElement* currentElement, sfImage* testMask, float fT
 		return sfTrue;
 	}
 	else
+	{
+		currentElement->Ennemy->iIsColliding = 0;
+		return sfFalse;
+	}
+	if (!(currentElement->Ennemy->vControlPoint.x > 0 && currentElement->Ennemy->vControlPoint.x < WINDOW_WIDTH
+		&& currentElement->Ennemy->vControlPoint.y > 0 && currentElement->Ennemy->vControlPoint.y < WINDOW_HEIGHT))
 	{
 		currentElement->Ennemy->iIsColliding = 0;
 		return sfFalse;
