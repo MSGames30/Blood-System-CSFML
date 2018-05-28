@@ -1,0 +1,37 @@
+Salut, moi c'est Pierrot le cerveau
+|Je viens de me reveiller et je constate
+que notre corps s'apprete a etre attaque
+par des hordes de bacteries
+|Nous devons nous unir pour les repousser
+avec des anticorps.
+|&Voici les metastases , ces ennemis sont
+tres rapides , mais aussi tres faibles
+|&Voici le cholesterol, ces ennemis ont
+une vitesse moyenne , une resistance moyenne,
+et attaquent nos defenses
+|&Voici le caillot, ces ennemis ont
+une vitesse faible , une grande resistance,
+et attaquent aussi nos defenses
+|&Je vais maintenant t'expliquer comment
+te defendre
+|&Tu vois ces sorties de veines, tu peut
+y affecter une des 3 defenses disponibles
+|Pour affecter une defense sur une sortie
+de veine tu dois disposer de suffisament
+de globules rouges.
+|&Tu peut voir dans le cadre rouge le nombre
+de globules qu'il te reste. A chaque fois que
+tu detruira un ennemi tu recoltera de nouveaux
+globules rouges.
+|&Je vais maintenant te montrer les 3 types de 
+defense dont tu dispose.
+|&Les tours 1, attaquent a distance, leur puissance
+et assez faible, mais leur cadence de tir est rapide.
+|&Les tours 2, ralentissent les ennemis dans leur champ
+d'action, elle cause aussi des dommages aux ennemis
+ralentis.
+|&Les tours 3, font apparaitre un globule blanc a un
+point donne, lorsque l'ennemi rentre dans le champ de 
+vision du globule alors celui ci va a son contact et
+provoque des degats de zone.
+|&

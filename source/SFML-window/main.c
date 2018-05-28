@@ -103,6 +103,7 @@ int main()
 	int iDebug = 0;
 	int iTowerId = 0;
 	int unlockedLevels = 0;
+	int selectedSaveSlot = 0;
 #pragma endregion C VARS
 
 #pragma region CSFML VARS //SEB
@@ -128,29 +129,39 @@ int main()
 	sfFloatRect Rect_TowerSlotBtnBB;
 	sfVector2f vBtnScale = { 0,0 };
 	sfVector2f vBtnScale2 = { 0,0 };
-	sfVector2f vOrigin_tower;
+	sfVector2f vOrigin_tower1;
+	sfVector2f vOrigin_tower2;
+	sfVector2f vOrigin_tower3;
 	sfSprite* Sp_tower1 = createSprite("resources/textures/tours/Tour 1.png");
 	sfSprite* Sp_tower2 = createSprite("resources/textures/tours/tour2.png");
 	sfSprite* Sp_tower3 = createSprite("resources/textures/tours/tour3.png");
 	sfSprite* Sp_towerActual = NULL;
-	vOrigin_tower.x = TOWER1_WIDTH / 2;
-	vOrigin_tower.y = TOWER1_HEIGHT - 15;
-	sfSprite_setOrigin(Sp_tower1, vOrigin_tower);
-	vOrigin_tower.x = TOWER2_WIDTH / 2 + 20;
-	vOrigin_tower.y = TOWER2_HEIGHT + 30;
-	sfSprite_setOrigin(Sp_tower2, vOrigin_tower);
-	vOrigin_tower.x = TOWER3_WIDTH / 2;
-	vOrigin_tower.y = TOWER3_HEIGHT - 15;
-	sfSprite_setOrigin(Sp_tower3, vOrigin_tower);
-	sfSprite* Sp_fieldOfViewDisplay = createSprite("resources/textures/fieldMask.png");
+	vOrigin_tower1.x = TOWER1_WIDTH / 2;
+	vOrigin_tower1.y = TOWER1_HEIGHT - 15;
+	sfSprite_setOrigin(Sp_tower1, vOrigin_tower1);
+	vOrigin_tower2.x = TOWER2_WIDTH / 2 + 20;
+	vOrigin_tower2.y = TOWER2_HEIGHT + 30;
+	sfSprite_setOrigin(Sp_tower2, vOrigin_tower2);
+	vOrigin_tower3.x = TOWER3_WIDTH / 2;
+	vOrigin_tower3.y = TOWER3_HEIGHT - 15;
+	sfSprite_setOrigin(Sp_tower3, vOrigin_tower3);
 	sfSprite* Sp_fieldOfView = createSprite("resources/textures/tower_field_of_view.png");
 	sfVector2f vOrigin_fieldOfView;
 	vOrigin_fieldOfView.x = sfSprite_getGlobalBounds(Sp_fieldOfView).width / 2;
 	vOrigin_fieldOfView.y = sfSprite_getGlobalBounds(Sp_fieldOfView).height / 2;
 	sfSprite_setOrigin(Sp_fieldOfView, vOrigin_fieldOfView);
-	sfSprite_setOrigin(Sp_fieldOfViewDisplay, vOrigin_fieldOfView);
 	sfVector2f vPlayerPointToCheck = { 0,0 };
 	sfImage* Img_fieldMask = sfImage_createFromFile("resources/textures/fieldMask.psd");
+
+	sfSprite* Sp_fieldOfView_up = createSprite("resources/textures/tower_field_of_view_up.png");
+	sfVector2f vOrigin_fieldOfView_up;
+	vOrigin_fieldOfView_up.x = sfSprite_getGlobalBounds(Sp_fieldOfView_up).width / 2;
+	vOrigin_fieldOfView_up.y = sfSprite_getGlobalBounds(Sp_fieldOfView_up).height / 2;
+	sfSprite_setOrigin(Sp_fieldOfView_up, vOrigin_fieldOfView_up);
+	sfImage* Img_fieldMask_up = sfImage_createFromFile("resources/textures/fieldMask_up.psd");
+
+	
+
 	sfSprite* Sp_bullet1 = createSprite("resources/textures/bullet1.png");
 	sfSprite* Sp_bullet2 = createSprite("resources/textures/bullet2.png");
 	sfSprite* Sp_bullet3 = createSprite("resources/textures/tours/Tir 1.png");
@@ -174,9 +185,11 @@ int main()
 	sfSprite* Sp_MenuDefaite = createSprite("resources/textures/Vic-Def/defaite/defaite.png");
 	sfSprite* Sp_BoutonRetour = createSprite("resources/textures/Vic-Def/bouton retour.png");
 
-	sfSprite* Sp_Tower1_Panel = createSprite("resources/textures/HUD_tower/tower1_panel.png");
-	sfSprite* Sp_Tower2_Panel = createSprite("resources/textures/HUD_tower/tower2_panel.png");
-	sfSprite* Sp_Tower3_Panel = createSprite("resources/textures/HUD_tower/tower3_panel.png");
+	sfSprite* Sp_Tower_Panel = createSprite("resources/textures/HUD_tower/cadre.png");
+	sfSprite* Sp_Tower_PanelEmpty = createSprite("resources/textures/HUD_tower/cadre_vide.png");
+
+
+
 
 
 #pragma endregion CSFML VARS //SEB
@@ -189,6 +202,40 @@ int main()
 	float lastFrameTime = 0; // Temps de la dernière frame
 
 #pragma endregion TIME VARIABLES
+
+#pragma region DIALOGUE TUTO //SEB
+
+	/*Dialogues tuto*/
+	FILE* dialFile = NULL;
+	char* dialTextStr = malloc(200);
+	int dialTextStrIndex = 0;
+	t_tutorialPhase tutorialPhase = TUT_INTRO;
+	sfBool isReading = sfFalse;
+	float tStartDial = (float)clock() / CLOCKS_PER_SEC;
+	float tCurrentDial = 0;
+	float tSinceDial = 0;
+	float dialSpeed = DIAL_SPEED;
+
+	/*text Dial*/
+	sfText* dial = createText("resources/fonts/Children Stories.otf");
+	sfText_setCharacterSize(dial, SIZE_TEXT);
+	sfText_setFillColor(dial, sfBlack);
+	sfVector2f vPositionDial = { 386, 700 };
+	sfText_setPosition(dial, vPositionDial);
+	sfSprite* pierrotDial = createSprite("resources/textures/Tuto/pierrot.png");
+
+	/*rectangle*/
+	sfRectangleShape* tutorialRect = sfRectangleShape_create();
+	sfVector2f vSize_tutorialRect = { 0,0 };
+	sfVector2f vPos_tutorialRect = { 0,0 };
+	sfRectangleShape_setSize(tutorialRect, vSize_tutorialRect);
+	sfRectangleShape_setFillColor(tutorialRect, sfTransparent);
+	sfRectangleShape_setOutlineColor(tutorialRect, sfRed);
+	sfRectangleShape_setOutlineThickness(tutorialRect, 3);
+
+	/*Sprites*/
+
+#pragma endregion DIALOGUE TUTO //SEB
 
 #pragma region STRUCTURE MENU INGAME //SEB
 
@@ -339,7 +386,7 @@ int main()
 	sfEvent event;
 
 	/* Create the main window */
-	window = sfRenderWindow_create(Mode, "Tower Defense",sfResize | sfClose /*sfFullscreen*/, NULL);
+	window = sfRenderWindow_create(Mode, "Tower Defense",/*sfResize | sfClose*/ sfFullscreen, NULL);
 	if (!window)
 	{
 		return -1;
@@ -355,6 +402,13 @@ int main()
 	sfVector2f vWindowCenter = { vWindowSize.x / 2, vWindowSize.y / 2 };
 
 #pragma endregion WINDOW
+
+	/*Pause*/
+	sfBool isPaused = sfFalse;
+	float tStartPause = 0;
+	float tSincePause = 0;
+	float tCurrentPause = 0;
+	float tPauseOffset = 0;
 
 	/*Argent*/
 	int iPlayerMoney = 1000;
@@ -385,6 +439,15 @@ int main()
 	sfText_setFillColor(Text, sfCyan);
 	sfVector2f vPositionText = { 0, 0 };
 	sfVector2f vOriginText = { 0, 0 };
+
+
+	/*text hud TOWER*/
+	char* cTextHudT = malloc(50);
+	sfText* TextHudT = createText("resources/fonts/Children Stories.otf");
+	sfText_setCharacterSize(Text, SIZE_TEXT);
+	sfText_setFillColor(Text, sfCyan);
+	sfVector2f vPositionTextHudT = { 0, 0 };
+	sfVector2f vOriginTextHudT = { 0, 0 };
 
 #pragma region BOUTONS
 
@@ -791,7 +854,7 @@ int main()
 	Hud.lifePoints.vPos.x = 96;
 	Hud.lifePoints.vPos.y = 91;
 	sfSprite_setPosition(Hud.lifePoints.sprite, Hud.lifePoints.vPos);
-	printf_s("origin x : %.2f ,y : %.2f\n", Hud.lifePoints.vOrigin.x, Hud.lifePoints.vOrigin.y);
+	//printf_s("origin x : %.2f ,y : %.2f\n", Hud.lifePoints.vOrigin.x, Hud.lifePoints.vOrigin.y);
 
 	//
 	Hud.money.sprite = createSprite("resources/textures/HUD/Globule_Rouge.png");
@@ -998,23 +1061,28 @@ int main()
 			switch (mainMenuState)
 			{
 
-#pragma region ON_LOGO
-			case ON_LOGO:
+	#pragma region ON_LOGO
+				case ON_LOGO:
 
-				if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
-				{
-					/*Commencer*/
-					if (sfFloatRect_contains(&MainMenu.startLabel.boundingBox, vMousePos.x, vMousePos.y))
+					if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
 					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+						/*Commencer*/
+						if (sfFloatRect_contains(&MainMenu.startLabel.boundingBox, vMousePos.x, vMousePos.y))
 						{
-							sfSprite_setColor(MainMenu.startLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+							if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
 							{
-								isMousePressed = sfTrue;
-								mainMenuNextState = ON_START;
-								mainMenuState = ON_LOGO_TRANSITION;
+								sfSprite_setColor(MainMenu.startLabel.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									mainMenuNextState = ON_START;
+									mainMenuState = ON_LOGO_TRANSITION;
+									sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
+								}
+							}
+							else
+							{
 								sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
 							}
 						}
@@ -1022,24 +1090,24 @@ int main()
 						{
 							sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
 						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-					}
 
-					/*Credits*/
-					if (sfFloatRect_contains(&MainMenu.creditsLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+						/*Credits*/
+						if (sfFloatRect_contains(&MainMenu.creditsLabel.boundingBox, vMousePos.x, vMousePos.y))
 						{
-							sfSprite_setColor(MainMenu.creditsLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+							if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
 							{
-								isMousePressed = sfTrue;
-								mainMenuNextState = ON_CREDITS;
-								mainMenuState = ON_LOGO_TRANSITION;
+								sfSprite_setColor(MainMenu.creditsLabel.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									mainMenuNextState = ON_CREDITS;
+									mainMenuState = ON_LOGO_TRANSITION;
+									sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
+								}
+							}
+							else
+							{
 								sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
 							}
 						}
@@ -1047,23 +1115,23 @@ int main()
 						{
 							sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
 						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
-					}
-					/*Quitter*/
-					if (sfFloatRect_contains(&MainMenu.exitLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+						/*Quitter*/
+						if (sfFloatRect_contains(&MainMenu.exitLabel.boundingBox, vMousePos.x, vMousePos.y))
 						{
-							sfSprite_setColor(MainMenu.exitLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+							if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
 							{
-								isMousePressed = sfTrue;
-								mainMenuNextState = ON_EXIT;
-								mainMenuState = ON_LOGO_TRANSITION;
+								sfSprite_setColor(MainMenu.exitLabel.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									mainMenuNextState = ON_EXIT;
+									mainMenuState = ON_LOGO_TRANSITION;
+									sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+								}
+							}
+							else
+							{
 								sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
 							}
 						}
@@ -1072,72 +1140,254 @@ int main()
 							sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
 						}
 					}
+
+					sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.LogoSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.paperClip.sprite, NULL);
+					break;
+
+	#pragma endregion ON_LOGO
+
+	#pragma region ON_LOGO_TRANSITION
+				case ON_LOGO_TRANSITION:
+					if (MainMenu.paperClip.vPos.y > -60 || MainMenu.LogoSheet.vPos.y < 1840)
+					{
+						if (MainMenu.paperClip.vPos.y > -60)
+						{
+							MainMenu.paperClip.vPos.x -= 3;
+							MainMenu.paperClip.vPos.y -= 5;
+							sfSprite_setPosition(MainMenu.paperClip.sprite, MainMenu.paperClip.vPos);
+						}
+						else if (MainMenu.LogoSheet.vPos.y < 1840)
+						{
+							MainMenu.LogoSheet.vPos.x += 2 * testincreaseX;
+							MainMenu.LogoSheet.vPos.y += 6 * testincreaseY;
+							testincreaseX += 0.05;
+							testincreaseY += 00.1;
+							sfSprite_setPosition(MainMenu.LogoSheet.sprite, MainMenu.LogoSheet.vPos);
+						}
+					}
 					else
 					{
-						sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+						mainMenuState = mainMenuNextState;
 					}
-				}
-
-				sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.LogoSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.paperClip.sprite, NULL);
-				break;
-
-#pragma endregion ON_LOGO
-
-#pragma region ON_LOGO_TRANSITION
-			case ON_LOGO_TRANSITION:
-				if (MainMenu.paperClip.vPos.y > -60 || MainMenu.LogoSheet.vPos.y < 1840)
-				{
-					if (MainMenu.paperClip.vPos.y > -60)
+					switch (mainMenuNextState)
 					{
-						MainMenu.paperClip.vPos.x -= 3;
-						MainMenu.paperClip.vPos.y -= 5;
-						sfSprite_setPosition(MainMenu.paperClip.sprite, MainMenu.paperClip.vPos);
+					case ON_START:
+						MainMenu.startSheet.vPos.x = 1127.5;
+						MainMenu.startSheet.vPos.y = 567;
+						MainMenu.saveSlot1.vPos.x = 1022;
+						MainMenu.saveSlot1.vPos.y = 307.5;
+						MainMenu.saveSlot2.vPos.x = 1024;
+						MainMenu.saveSlot2.vPos.y = 570.5;
+						MainMenu.saveSlot3.vPos.x = 1012;
+						MainMenu.saveSlot3.vPos.y = 834.5;
+						MainMenu.miniMapSlot1.vPos.x = 1668;
+						MainMenu.miniMapSlot1.vPos.y = 317.5;
+						MainMenu.miniMapSlot2.vPos.x = 1661;
+						MainMenu.miniMapSlot2.vPos.y = 576.5;
+						MainMenu.miniMapSlot3.vPos.x = 1658;
+						MainMenu.miniMapSlot3.vPos.y = 850;
+						sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+						sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+						sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+						sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
+						sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
+						sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
+						sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
+						sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot1.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot2.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot3.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.saveSlot1.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.saveSlot2.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.saveSlot3.sprite, NULL);
+						break;
+					case ON_CREDITS:
+						sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+						break;
+					case ON_EXIT:
+						sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.exitYes.sprite, NULL);
+						sfRenderWindow_drawSprite(window, MainMenu.exitNo.sprite, NULL);
+						break;
+					default:
+						break;
 					}
-					else if (MainMenu.LogoSheet.vPos.y < 1840)
-					{
-						MainMenu.LogoSheet.vPos.x += 2 * testincreaseX;
-						MainMenu.LogoSheet.vPos.y += 6 * testincreaseY;
-						testincreaseX += 0.05;
-						testincreaseY += 00.1;
-						sfSprite_setPosition(MainMenu.LogoSheet.sprite, MainMenu.LogoSheet.vPos);
-					}
-				}
-				else
-				{
-					mainMenuState = mainMenuNextState;
-				}
-				switch (mainMenuNextState)
-				{
+					sfRenderWindow_drawSprite(window, MainMenu.LogoSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.paperClip.sprite, NULL);
+					break;
+
+	#pragma endregion ON_LOGO_TRANSITION
+
+	#pragma region ON_START
 				case ON_START:
-					MainMenu.startSheet.vPos.x = 1127.5;
-					MainMenu.startSheet.vPos.y = 567;
-					MainMenu.saveSlot1.vPos.x = 1022;
-					MainMenu.saveSlot1.vPos.y = 307.5;
-					MainMenu.saveSlot2.vPos.x = 1024;
-					MainMenu.saveSlot2.vPos.y = 570.5;
-					MainMenu.saveSlot3.vPos.x = 1012;
-					MainMenu.saveSlot3.vPos.y = 834.5;
-					MainMenu.miniMapSlot1.vPos.x = 1668;
-					MainMenu.miniMapSlot1.vPos.y = 317.5;
-					MainMenu.miniMapSlot2.vPos.x = 1661;
-					MainMenu.miniMapSlot2.vPos.y = 576.5;
-					MainMenu.miniMapSlot3.vPos.x = 1658;
-					MainMenu.miniMapSlot3.vPos.y = 850;
-					sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
-					sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
-					sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
-					sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
-					sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
-					sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
-					sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
+
+					if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
+					{
+						/*Credits*/
+						if (sfFloatRect_contains(&MainMenu.creditsLabel.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.creditsLabel.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									mainMenuState = ON_CREDITS;
+									sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
+						}
+						/*Quitter*/
+						if (sfFloatRect_contains(&MainMenu.exitLabel.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.exitLabel.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									mainMenuState = ON_EXIT;
+									sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+						}
+					}
+
+
+					if (vMousePos.x >= 0 && vMousePos.x <= 1920 && vMousePos.y >= 0 && vMousePos.y <= 1080)
+					{
+						/*Slot1*/
+						if (sfFloatRect_contains(&MainMenu.saveSlot1.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.saveSlot1.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+								{
+									isMousePressed = sfTrue;
+									testincreaseX = 1;
+									testincreaseY = 1;
+									mainMenuState = ON_START_TRANSITION;
+									unlockedLevels = unLockedLevelsSolt1;
+									selectedSaveSlot = 1;
+									sfSprite_setColor(MainMenu.saveSlot1.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.saveSlot1.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.saveSlot1.sprite, sfWhite);
+						}
+
+						/*Slot2*/
+						if (sfFloatRect_contains(&MainMenu.saveSlot2.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.saveSlot2.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+								{
+									//isMousePressed = sfTrue;
+									//mainMenuState = ON_START;
+									testincreaseX = 1;
+									testincreaseY = 1;
+									mainMenuState = ON_START_TRANSITION;
+									unlockedLevels = unLockedLevelsSolt2;
+									selectedSaveSlot = 2;
+									sfSprite_setColor(MainMenu.saveSlot2.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.saveSlot2.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.saveSlot2.sprite, sfWhite);
+						}
+
+						/*Slot3*/
+						if (sfFloatRect_contains(&MainMenu.saveSlot3.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.saveSlot3.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+								{
+									//isMousePressed = sfTrue;
+									//mainMenuState = ON_START;
+									testincreaseX = 1;
+									testincreaseY = 1;
+									mainMenuState = ON_START_TRANSITION;
+									unlockedLevels = unLockedLevelsSolt3;
+									selectedSaveSlot = 3;
+									sfSprite_setColor(MainMenu.saveSlot3.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.saveSlot3.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.saveSlot3.sprite, sfWhite);
+						}
+					}
+
+
 					sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
@@ -1152,7 +1402,288 @@ int main()
 					sfRenderWindow_drawSprite(window, MainMenu.saveSlot2.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.saveSlot3.sprite, NULL);
 					break;
+
+	#pragma endregion ON_START
+
+	#pragma region ON_START_TRANSITION
+				case ON_START_TRANSITION:
+					//printf_s("START TRANSITION !!!!!\n");
+				
+					if (MainMenu.startSheet.vPos.y < 1840)
+					{
+					
+						MainMenu.startSheet.vPos.x += 2 * testincreaseX;
+						MainMenu.startSheet.vPos.y += 6 * testincreaseY;
+						MainMenu.saveSlot1.vPos.x += 2 * testincreaseX;
+						MainMenu.saveSlot2.vPos.x += 2 * testincreaseX;
+						MainMenu.saveSlot3.vPos.x += 2 * testincreaseX;
+						MainMenu.saveSlot1.vPos.y += 6 * testincreaseY;
+						MainMenu.saveSlot2.vPos.y += 6 * testincreaseY;
+						MainMenu.saveSlot3.vPos.y += 6 * testincreaseY;
+						MainMenu.miniMapSlot1.vPos.x += 2 * testincreaseX;
+						MainMenu.miniMapSlot1.vPos.y += 6 * testincreaseY;
+						MainMenu.miniMapSlot2.vPos.x += 2 * testincreaseX;
+						MainMenu.miniMapSlot2.vPos.y += 6 * testincreaseY;
+						MainMenu.miniMapSlot3.vPos.x += 2 * testincreaseX;
+						MainMenu.miniMapSlot3.vPos.y += 6 * testincreaseY;
+						testincreaseX += 0.05;
+						testincreaseY += 00.1;
+						sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+						sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+						sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+						sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
+						sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
+						sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
+						sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
+					}
+					else
+					{
+						testincreaseX = 1;
+						testincreaseY = 1;
+						mainMenuState = ON_START_LEVEL_SELECTOR;
+					}
+
+					sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
+					if (unlockedLevels >= 0)
+					{
+						sfRenderWindow_drawSprite(window, MainMenu.level1Icon.sprite, NULL);
+					}
+					if (unlockedLevels >= 2)
+					{
+						sfRenderWindow_drawSprite(window, MainMenu.level2Icon.sprite, NULL);
+					}
+					sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot1.sprite,NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot2.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot3.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.saveSlot1.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.saveSlot2.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.saveSlot3.sprite, NULL);
+
+
+					break;
+
+	#pragma endregion ON_START_TRANSITION
+
+	#pragma region ON_START_LEVEL_SELECTOR
+				case ON_START_LEVEL_SELECTOR:
+					//printf_s("Unlocked levels :%d\n", unlockedLevels);
+					if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
+					{
+
+						/*Credits*/
+						if (sfFloatRect_contains(&MainMenu.creditsLabel.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.creditsLabel.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									mainMenuState = ON_CREDITS;
+									sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
+						}
+						/*Quitter*/
+						if (sfFloatRect_contains(&MainMenu.exitLabel.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.exitLabel.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									mainMenuState = ON_EXIT;
+									sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+						}
+					}
+					sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
+					sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
+
+
+					/*level 1*/
+					if (sfFloatRect_contains(&MainMenu.level1Icon.boundingBox, vMousePos.x, vMousePos.y) && unlockedLevels >= 0)
+					{
+						if (sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+							&& sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+						{
+							sfSprite_setColor(MainMenu.level1Icon.sprite, sfRed);
+							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+							{
+								isMousePressed = sfTrue;
+								iCurrentLevel = ESTOMAC;
+								loadGameFromLevelNumber(iCurrentLevel, &CurrentLevelAssets, ListEnnemy, ListTowerBullet, ListEnnemyBullet, ListTower, ListTowerSlot, ListWhiteCell);
+								/*chargement du chemin des ennemis (la map estomac en possède 2*/
+								/*loadEnnemyPathPoint(ListEnnemyPathPoint1, iCurrentLevel, 1);
+								loadEnnemyPathPoint(ListEnnemyPathPoint2, iCurrentLevel, 2);*/
+
+								///*chargement de la vague*/
+								//loadEnnemyWave(ListEnnemyWave, iCurrentLevel);
+
+								/*chargement des emplacements des socles*/
+								loadTowerSlots(ListTowerSlot, iCurrentLevel);
+							
+								iGoalHp = 100;
+								GameState = GAME;
+								sfSprite_setColor(MainMenu.level1Icon.sprite, sfWhite);
+							}
+
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.level1Icon.sprite, sfWhite);
+						}
+					}
+					else
+					{
+						sfSprite_setColor(MainMenu.level1Icon.sprite, sfWhite);
+					}
+
+					/*level 2*/
+					if (sfFloatRect_contains(&MainMenu.level2Icon.boundingBox, vMousePos.x, vMousePos.y) && unlockedLevels >= 2)
+					{
+						if (sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+							&& sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+						{
+							sfSprite_setColor(MainMenu.level2Icon.sprite, sfRed);
+							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+							{
+								isMousePressed = sfTrue;
+								iCurrentLevel = COEUR;
+								loadGameFromLevelNumber(iCurrentLevel, &CurrentLevelAssets, ListEnnemy, ListTowerBullet, ListEnnemyBullet, ListTower, ListTowerSlot, ListWhiteCell);
+							
+								iGoalHp = 100;
+								GameState = GAME;
+								sfSprite_setColor(MainMenu.level2Icon.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.level2Icon.sprite, sfWhite);
+						}
+					}
+					else
+					{
+						sfSprite_setColor(MainMenu.level2Icon.sprite, sfWhite);
+					}
+
+					if (unlockedLevels >= 0)
+					{
+						sfRenderWindow_drawSprite(window, MainMenu.level1Icon.sprite, NULL);
+					}
+					if (unlockedLevels >= 2)
+					{
+						sfRenderWindow_drawSprite(window, MainMenu.level2Icon.sprite, NULL);
+					}
+
+					break;
+
+	#pragma endregion ON_START_LEVEL_SELECTOR
+
+	#pragma region ON_CREDITS
 				case ON_CREDITS:
+
+					if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
+					{
+						/*Commencer*/
+						if (sfFloatRect_contains(&MainMenu.startLabel.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.startLabel.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									mainMenuState = ON_START;
+									MainMenu.startSheet.vPos.x = 1127.5;
+									MainMenu.startSheet.vPos.y = 567;
+									MainMenu.saveSlot1.vPos.x = 1022;
+									MainMenu.saveSlot1.vPos.y = 307.5;
+									MainMenu.saveSlot2.vPos.x = 1024;
+									MainMenu.saveSlot2.vPos.y = 570.5;
+									MainMenu.saveSlot3.vPos.x = 1012;
+									MainMenu.saveSlot3.vPos.y = 834.5;
+									MainMenu.miniMapSlot1.vPos.x = 1668;
+									MainMenu.miniMapSlot1.vPos.y = 317.5;
+									MainMenu.miniMapSlot2.vPos.x = 1661;
+									MainMenu.miniMapSlot2.vPos.y = 576.5;
+									MainMenu.miniMapSlot3.vPos.x = 1658;
+									MainMenu.miniMapSlot3.vPos.y = 850;
+									sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+									sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+									sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+									sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
+									sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
+									sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
+									sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
+									sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
+						}
+						/*Quitter*/
+						if (sfFloatRect_contains(&MainMenu.exitLabel.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.exitLabel.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									mainMenuState = ON_EXIT;
+									sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
+						}
+					}
+
 					sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
@@ -1161,7 +1692,156 @@ int main()
 					sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
 					break;
+
+	#pragma endregion ON_CREDITS
+
+	#pragma region ON_EXIT
 				case ON_EXIT:
+
+					if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
+					{
+						/*Commencer*/
+						if (sfFloatRect_contains(&MainMenu.startLabel.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.startLabel.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									mainMenuState = ON_START;
+									MainMenu.startSheet.vPos.x = 1127.5;
+									MainMenu.startSheet.vPos.y = 567;
+									MainMenu.saveSlot1.vPos.x = 1022;
+									MainMenu.saveSlot1.vPos.y = 307.5;
+									MainMenu.saveSlot2.vPos.x = 1024;
+									MainMenu.saveSlot2.vPos.y = 570.5;
+									MainMenu.saveSlot3.vPos.x = 1012;
+									MainMenu.saveSlot3.vPos.y = 834.5;
+									MainMenu.miniMapSlot1.vPos.x = 1668;
+									MainMenu.miniMapSlot1.vPos.y = 317.5;
+									MainMenu.miniMapSlot2.vPos.x = 1661;
+									MainMenu.miniMapSlot2.vPos.y = 576.5;
+									MainMenu.miniMapSlot3.vPos.x = 1658;
+									MainMenu.miniMapSlot3.vPos.y = 850;
+									sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+									sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+									sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+									sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
+									sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
+									sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
+									sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
+									sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
+						}
+
+						/*Credits*/
+						if (sfFloatRect_contains(&MainMenu.creditsLabel.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.creditsLabel.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									mainMenuState = ON_CREDITS;
+									sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
+						}
+					}
+					if (vMousePos.x >= 0 && vMousePos.x <= 1920 && vMousePos.y >= 0 && vMousePos.y <= 1080)
+					{
+						/*quitter oui*/
+						if (sfFloatRect_contains(&MainMenu.exitYes.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.exitYes.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									sfRenderWindow_close(window);
+									sfSprite_setColor(MainMenu.exitYes.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.exitYes.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.exitYes.sprite, sfWhite);
+						}
+
+						/*quitter non*/
+						if (sfFloatRect_contains(&MainMenu.exitNo.boundingBox, vMousePos.x, vMousePos.y))
+						{
+							if (sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
+								&& sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
+							{
+								sfSprite_setColor(MainMenu.exitNo.sprite, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
+								{
+									isMousePressed = sfTrue;
+									mainMenuState = ON_START;
+									MainMenu.startSheet.vPos.x = 1127.5;
+									MainMenu.startSheet.vPos.y = 567;
+									MainMenu.saveSlot1.vPos.x = 1022;
+									MainMenu.saveSlot1.vPos.y = 307.5;
+									MainMenu.saveSlot2.vPos.x = 1024;
+									MainMenu.saveSlot2.vPos.y = 570.5;
+									MainMenu.saveSlot3.vPos.x = 1012;
+									MainMenu.saveSlot3.vPos.y = 834.5;
+									MainMenu.miniMapSlot1.vPos.x = 1668;
+									MainMenu.miniMapSlot1.vPos.y = 317.5;
+									MainMenu.miniMapSlot2.vPos.x = 1661;
+									MainMenu.miniMapSlot2.vPos.y = 576.5;
+									MainMenu.miniMapSlot3.vPos.x = 1658;
+									MainMenu.miniMapSlot3.vPos.y = 850;
+									sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
+									sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
+									sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
+									sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
+									sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
+									sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
+									sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
+									sfSprite_setColor(MainMenu.exitNo.sprite, sfWhite);
+								}
+							}
+							else
+							{
+								sfSprite_setColor(MainMenu.exitNo.sprite, sfWhite);
+							}
+						}
+						else
+						{
+							sfSprite_setColor(MainMenu.exitNo.sprite, sfWhite);
+						}
+					}
+
+
 					sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
@@ -1171,624 +1851,10 @@ int main()
 					sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.exitYes.sprite, NULL);
 					sfRenderWindow_drawSprite(window, MainMenu.exitNo.sprite, NULL);
+
 					break;
-				default:
-					break;
-				}
-				sfRenderWindow_drawSprite(window, MainMenu.LogoSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.paperClip.sprite, NULL);
-				break;
 
-#pragma endregion ON_LOGO_TRANSITION
-
-#pragma region ON_START
-			case ON_START:
-
-				if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
-				{
-					/*Credits*/
-					if (sfFloatRect_contains(&MainMenu.creditsLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.creditsLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								mainMenuState = ON_CREDITS;
-								sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
-					}
-					/*Quitter*/
-					if (sfFloatRect_contains(&MainMenu.exitLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.exitLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								mainMenuState = ON_EXIT;
-								sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
-					}
-				}
-
-
-				if (vMousePos.x >= 0 && vMousePos.x <= 1920 && vMousePos.y >= 0 && vMousePos.y <= 1080)
-				{
-					/*Slot1*/
-					if (sfFloatRect_contains(&MainMenu.saveSlot1.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.saveSlot1.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-							{
-								isMousePressed = sfTrue;
-								testincreaseX = 1;
-								testincreaseY = 1;
-								mainMenuState = ON_START_TRANSITION;
-								unlockedLevels = unLockedLevelsSolt1;
-								sfSprite_setColor(MainMenu.saveSlot1.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.saveSlot1.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.saveSlot1.sprite, sfWhite);
-					}
-
-					/*Slot2*/
-					if (sfFloatRect_contains(&MainMenu.saveSlot2.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.saveSlot2.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-							{
-								//isMousePressed = sfTrue;
-								//mainMenuState = ON_START;
-								testincreaseX = 1;
-								testincreaseY = 1;
-								mainMenuState = ON_START_TRANSITION;
-								unlockedLevels = unLockedLevelsSolt2;
-								sfSprite_setColor(MainMenu.saveSlot2.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.saveSlot2.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.saveSlot2.sprite, sfWhite);
-					}
-
-					/*Slot3*/
-					if (sfFloatRect_contains(&MainMenu.saveSlot3.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.saveMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.saveSlot3.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-							{
-								//isMousePressed = sfTrue;
-								//mainMenuState = ON_START;
-								testincreaseX = 1;
-								testincreaseY = 1;
-								mainMenuState = ON_START_TRANSITION;
-								unlockedLevels = unLockedLevelsSolt3;
-								sfSprite_setColor(MainMenu.saveSlot3.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.saveSlot3.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.saveSlot3.sprite, sfWhite);
-					}
-				}
-
-
-				sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot1.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot2.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot3.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.saveSlot1.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.saveSlot2.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.saveSlot3.sprite, NULL);
-				break;
-
-#pragma endregion ON_START
-
-#pragma region ON_START_TRANSITION
-			case ON_START_TRANSITION:
-				//printf_s("START TRANSITION !!!!!\n");
-				
-				if (MainMenu.startSheet.vPos.y < 1840)
-				{
-					
-					MainMenu.startSheet.vPos.x += 2 * testincreaseX;
-					MainMenu.startSheet.vPos.y += 6 * testincreaseY;
-					MainMenu.saveSlot1.vPos.x += 2 * testincreaseX;
-					MainMenu.saveSlot2.vPos.x += 2 * testincreaseX;
-					MainMenu.saveSlot3.vPos.x += 2 * testincreaseX;
-					MainMenu.saveSlot1.vPos.y += 6 * testincreaseY;
-					MainMenu.saveSlot2.vPos.y += 6 * testincreaseY;
-					MainMenu.saveSlot3.vPos.y += 6 * testincreaseY;
-					MainMenu.miniMapSlot1.vPos.x += 2 * testincreaseX;
-					MainMenu.miniMapSlot1.vPos.y += 6 * testincreaseY;
-					MainMenu.miniMapSlot2.vPos.x += 2 * testincreaseX;
-					MainMenu.miniMapSlot2.vPos.y += 6 * testincreaseY;
-					MainMenu.miniMapSlot3.vPos.x += 2 * testincreaseX;
-					MainMenu.miniMapSlot3.vPos.y += 6 * testincreaseY;
-					testincreaseX += 0.05;
-					testincreaseY += 00.1;
-					sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
-					sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
-					sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
-					sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
-					sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
-					sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
-					sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
-				}
-				else
-				{
-					testincreaseX = 1;
-					testincreaseY = 1;
-					mainMenuState = ON_START_LEVEL_SELECTOR;
-				}
-
-				sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
-				if (unlockedLevels >= 0)
-				{
-					sfRenderWindow_drawSprite(window, MainMenu.level1Icon.sprite, NULL);
-				}
-				if (unlockedLevels >= 2)
-				{
-					sfRenderWindow_drawSprite(window, MainMenu.level2Icon.sprite, NULL);
-				}
-				sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot1.sprite,NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot2.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.miniMapSlot3.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.saveSlot1.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.saveSlot2.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.saveSlot3.sprite, NULL);
-
-
-				break;
-
-#pragma endregion ON_START_TRANSITION
-
-#pragma region ON_START_LEVEL_SELECTOR
-			case ON_START_LEVEL_SELECTOR:
-				printf_s("Unlocked levels :%d\n", unlockedLevels);
-				if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
-				{
-
-					/*Credits*/
-					if (sfFloatRect_contains(&MainMenu.creditsLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.creditsLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								mainMenuState = ON_CREDITS;
-								sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
-					}
-					/*Quitter*/
-					if (sfFloatRect_contains(&MainMenu.exitLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.exitLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								mainMenuState = ON_EXIT;
-								sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
-					}
-				}
-				sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
-
-
-				/*level 1*/
-				if (sfFloatRect_contains(&MainMenu.level1Icon.boundingBox, vMousePos.x, vMousePos.y) && unlockedLevels >= 0)
-				{
-					if (sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-						&& sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-					{
-						sfSprite_setColor(MainMenu.level1Icon.sprite, sfRed);
-						if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-						{
-							isMousePressed = sfTrue;
-							iCurrentLevel = ESTOMAC;
-							loadGameFromLevelNumber(iCurrentLevel, &CurrentLevelAssets, ListEnnemy, ListTowerBullet, ListEnnemyBullet, ListTower, ListTowerSlot, ListWhiteCell);
-							/*chargement du chemin des ennemis (la map estomac en possède 2*/
-							/*loadEnnemyPathPoint(ListEnnemyPathPoint1, iCurrentLevel, 1);
-							loadEnnemyPathPoint(ListEnnemyPathPoint2, iCurrentLevel, 2);*/
-
-							///*chargement de la vague*/
-							//loadEnnemyWave(ListEnnemyWave, iCurrentLevel);
-
-							/*chargement des emplacements des socles*/
-							loadTowerSlots(ListTowerSlot, iCurrentLevel);
-							
-							iGoalHp = 100;
-							GameState = GAME;
-							sfSprite_setColor(MainMenu.level1Icon.sprite, sfWhite);
-						}
-
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.level1Icon.sprite, sfWhite);
-					}
-				}
-				else
-				{
-					sfSprite_setColor(MainMenu.level1Icon.sprite, sfWhite);
-				}
-
-				/*level 2*/
-				if (sfFloatRect_contains(&MainMenu.level2Icon.boundingBox, vMousePos.x, vMousePos.y) && unlockedLevels >= 2)
-				{
-					if (sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-						&& sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.levelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-					{
-						sfSprite_setColor(MainMenu.level2Icon.sprite, sfRed);
-						if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
-						{
-							isMousePressed = sfTrue;
-							iCurrentLevel = COEUR;
-							loadGameFromLevelNumber(iCurrentLevel, &CurrentLevelAssets, ListEnnemy, ListTowerBullet, ListEnnemyBullet, ListTower, ListTowerSlot, ListWhiteCell);
-							
-							iGoalHp = 100;
-							GameState = GAME;
-							sfSprite_setColor(MainMenu.level2Icon.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.level2Icon.sprite, sfWhite);
-					}
-				}
-				else
-				{
-					sfSprite_setColor(MainMenu.level2Icon.sprite, sfWhite);
-				}
-
-				if (unlockedLevels >= 0)
-				{
-					sfRenderWindow_drawSprite(window, MainMenu.level1Icon.sprite, NULL);
-				}
-				if (unlockedLevels >= 2)
-				{
-					sfRenderWindow_drawSprite(window, MainMenu.level2Icon.sprite, NULL);
-				}
-
-				break;
-
-#pragma endregion ON_START_LEVEL_SELECTOR
-
-#pragma region ON_CREDITS
-			case ON_CREDITS:
-
-				if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
-				{
-					/*Commencer*/
-					if (sfFloatRect_contains(&MainMenu.startLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.startLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								mainMenuState = ON_START;
-								MainMenu.startSheet.vPos.x = 1127.5;
-								MainMenu.startSheet.vPos.y = 567;
-								MainMenu.saveSlot1.vPos.x = 1022;
-								MainMenu.saveSlot1.vPos.y = 307.5;
-								MainMenu.saveSlot2.vPos.x = 1024;
-								MainMenu.saveSlot2.vPos.y = 570.5;
-								MainMenu.saveSlot3.vPos.x = 1012;
-								MainMenu.saveSlot3.vPos.y = 834.5;
-								MainMenu.miniMapSlot1.vPos.x = 1668;
-								MainMenu.miniMapSlot1.vPos.y = 317.5;
-								MainMenu.miniMapSlot2.vPos.x = 1661;
-								MainMenu.miniMapSlot2.vPos.y = 576.5;
-								MainMenu.miniMapSlot3.vPos.x = 1658;
-								MainMenu.miniMapSlot3.vPos.y = 850;
-								sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
-								sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
-								sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
-								sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
-								sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
-								sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
-								sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
-								sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-					}
-					/*Quitter*/
-					if (sfFloatRect_contains(&MainMenu.exitLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.exitLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								mainMenuState = ON_EXIT;
-								sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.exitLabel.sprite, sfWhite);
-					}
-				}
-
-				sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
-				break;
-
-#pragma endregion ON_CREDITS
-
-#pragma region ON_EXIT
-			case ON_EXIT:
-
-				if (vMousePos.x >= 0 && vMousePos.x <= LABEL_MASK_WIDTH && vMousePos.y >= 0 && vMousePos.y <= LABEL_MASK_HEIGHT)
-				{
-					/*Commencer*/
-					if (sfFloatRect_contains(&MainMenu.startLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.startLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								mainMenuState = ON_START;
-								MainMenu.startSheet.vPos.x = 1127.5;
-								MainMenu.startSheet.vPos.y = 567;
-								MainMenu.saveSlot1.vPos.x = 1022;
-								MainMenu.saveSlot1.vPos.y = 307.5;
-								MainMenu.saveSlot2.vPos.x = 1024;
-								MainMenu.saveSlot2.vPos.y = 570.5;
-								MainMenu.saveSlot3.vPos.x = 1012;
-								MainMenu.saveSlot3.vPos.y = 834.5;
-								MainMenu.miniMapSlot1.vPos.x = 1668;
-								MainMenu.miniMapSlot1.vPos.y = 317.5;
-								MainMenu.miniMapSlot2.vPos.x = 1661;
-								MainMenu.miniMapSlot2.vPos.y = 576.5;
-								MainMenu.miniMapSlot3.vPos.x = 1658;
-								MainMenu.miniMapSlot3.vPos.y = 850;
-								sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
-								sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
-								sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
-								sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
-								sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
-								sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
-								sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
-								sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.startLabel.sprite, sfWhite);
-					}
-
-					/*Credits*/
-					if (sfFloatRect_contains(&MainMenu.creditsLabel.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.labelMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.creditsLabel.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								mainMenuState = ON_CREDITS;
-								sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.creditsLabel.sprite, sfWhite);
-					}
-				}
-				if (vMousePos.x >= 0 && vMousePos.x <= 1920 && vMousePos.y >= 0 && vMousePos.y <= 1080)
-				{
-					/*quitter oui*/
-					if (sfFloatRect_contains(&MainMenu.exitYes.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.exitYes.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								sfRenderWindow_close(window);
-								sfSprite_setColor(MainMenu.exitYes.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.exitYes.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.exitYes.sprite, sfWhite);
-					}
-
-					/*quitter non*/
-					if (sfFloatRect_contains(&MainMenu.exitNo.boundingBox, vMousePos.x, vMousePos.y))
-					{
-						if (sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).r == 255 && sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).g == 0
-							&& sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).b == 0 && sfImage_getPixel(MainMenu.exitMask, vMousePosToFloat.x, vMousePosToFloat.y).a == 255)
-						{
-							sfSprite_setColor(MainMenu.exitNo.sprite, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft && !isMousePressed))
-							{
-								isMousePressed = sfTrue;
-								mainMenuState = ON_START;
-								MainMenu.startSheet.vPos.x = 1127.5;
-								MainMenu.startSheet.vPos.y = 567;
-								MainMenu.saveSlot1.vPos.x = 1022;
-								MainMenu.saveSlot1.vPos.y = 307.5;
-								MainMenu.saveSlot2.vPos.x = 1024;
-								MainMenu.saveSlot2.vPos.y = 570.5;
-								MainMenu.saveSlot3.vPos.x = 1012;
-								MainMenu.saveSlot3.vPos.y = 834.5;
-								MainMenu.miniMapSlot1.vPos.x = 1668;
-								MainMenu.miniMapSlot1.vPos.y = 317.5;
-								MainMenu.miniMapSlot2.vPos.x = 1661;
-								MainMenu.miniMapSlot2.vPos.y = 576.5;
-								MainMenu.miniMapSlot3.vPos.x = 1658;
-								MainMenu.miniMapSlot3.vPos.y = 850;
-								sfSprite_setPosition(MainMenu.miniMapSlot1.sprite, MainMenu.miniMapSlot1.vPos);
-								sfSprite_setPosition(MainMenu.miniMapSlot2.sprite, MainMenu.miniMapSlot2.vPos);
-								sfSprite_setPosition(MainMenu.miniMapSlot3.sprite, MainMenu.miniMapSlot3.vPos);
-								sfSprite_setPosition(MainMenu.startSheet.sprite, MainMenu.startSheet.vPos);
-								sfSprite_setPosition(MainMenu.saveSlot1.sprite, MainMenu.saveSlot1.vPos);
-								sfSprite_setPosition(MainMenu.saveSlot2.sprite, MainMenu.saveSlot2.vPos);
-								sfSprite_setPosition(MainMenu.saveSlot3.sprite, MainMenu.saveSlot3.vPos);
-								sfSprite_setColor(MainMenu.exitNo.sprite, sfWhite);
-							}
-						}
-						else
-						{
-							sfSprite_setColor(MainMenu.exitNo.sprite, sfWhite);
-						}
-					}
-					else
-					{
-						sfSprite_setColor(MainMenu.exitNo.sprite, sfWhite);
-					}
-				}
-
-
-				sfRenderWindow_drawSprite(window, MainMenu.startSheetLS.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.startLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.creditsLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.exitSheet.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.exitLabel.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.exitYes.sprite, NULL);
-				sfRenderWindow_drawSprite(window, MainMenu.exitNo.sprite, NULL);
-
-				break;
-
-#pragma endregion ON_EXIT
+	#pragma endregion ON_EXIT
 				default:
 					break;
 			}
@@ -1799,6 +1865,7 @@ int main()
 			}
 			break;
 #pragma endregion CASE MENU
+
 
 #pragma region CASE GAME
 		case GAME:
@@ -1901,416 +1968,422 @@ int main()
 
 	#pragma region ADD ENNEMY WAVES // GUILLAUME
 
-				if (iWaveIsActive == sfFalse)
+				if (!isPaused)
 				{
 
-					fTimeSinceLastWave += timeSinceLastFrame;
-					if (fTimeSinceLastWave > TIME_BETWEEN_WAVE)
+					if (iWaveIsActive == sfFalse)
 					{
-						if (sfKeyboard_isKeyPressed(sfKeyG) == sfTrue)
+
+						fTimeSinceLastWave += timeSinceLastFrame;
+						if (fTimeSinceLastWave > TIME_BETWEEN_WAVE)
 						{
-							printf("debug");
+							if (sfKeyboard_isKeyPressed(sfKeyG) == sfTrue)
+							{
+								printf("debug");
+							}
+							iWaveIsActive = sfTrue;
+							fTimeSinceLastWave = 0;
+							iCurrentWave++;
+							iCurrentNbrCancer = 0;
+							iCurrentNbrCholesterol = 0;
+							iCurrentNbrCaillot = 0;
+							iNbrTotal = 0;
+							iWaveEnnemyNbr = 0;
+							iWaveEnnemyDead = 0;
+							fTimeBetweenEnnemySpawn = TIME_BETWEEN_ENNEMY_SPAWN;
 						}
-						iWaveIsActive = sfTrue;
-						fTimeSinceLastWave = 0;
-						iCurrentWave++;
-						iCurrentNbrCancer = 0;
-						iCurrentNbrCholesterol = 0;
-						iCurrentNbrCaillot = 0;
-						iNbrTotal = 0;
-						iWaveEnnemyNbr = 0;
-						iWaveEnnemyDead = 0;
-						fTimeBetweenEnnemySpawn = TIME_BETWEEN_ENNEMY_SPAWN;
 					}
-				}
 
-				/*LECTURE DANS LA LISTE DES VAGUES*/
-				CurrentEnnemyWave = CurrentLevelAssets.ListEnnemyWave->LastElement;
-				while (CurrentEnnemyWave != NULL)
-				{
-					/*je repère la vague actuelle*/
-					if (iCurrentWave == CurrentEnnemyWave->EnnemyWave->iNumWave)
+					/*LECTURE DANS LA LISTE DES VAGUES*/
+					CurrentEnnemyWave = CurrentLevelAssets.ListEnnemyWave->LastElement;
+					while (CurrentEnnemyWave != NULL)
 					{
-						iNbrCancer = CurrentEnnemyWave->EnnemyWave->iNbrCancer;
-						iNbrCholesterol = CurrentEnnemyWave->EnnemyWave->iNbrCholesterol;
-						iNbrCaillot = CurrentEnnemyWave->EnnemyWave->iNbrCaillot;
-						iNbrTotal = CurrentEnnemyWave->EnnemyWave->iNbrTotal;
-						iWaveMax = CurrentEnnemyWave->EnnemyWave->iMaxWave;
-					}
+						/*je repère la vague actuelle*/
+						if (iCurrentWave == CurrentEnnemyWave->EnnemyWave->iNumWave)
+						{
+							iNbrCancer = CurrentEnnemyWave->EnnemyWave->iNbrCancer;
+							iNbrCholesterol = CurrentEnnemyWave->EnnemyWave->iNbrCholesterol;
+							iNbrCaillot = CurrentEnnemyWave->EnnemyWave->iNbrCaillot;
+							iNbrTotal = CurrentEnnemyWave->EnnemyWave->iNbrTotal;
+							iWaveMax = CurrentEnnemyWave->EnnemyWave->iMaxWave;
+						}
 					
-					CurrentEnnemyWave = CurrentEnnemyWave->PreviousElement;
-				}
+						CurrentEnnemyWave = CurrentEnnemyWave->PreviousElement;
+					}
 
 				
-				//printf("CUURENTWAVE : %d\t\n", iCurrentWave);
-				if (iWaveIsActive == sfTrue)
-				{
-					/*condition pour arreter la vague*/
-					if (iWaveEnnemyDead >= iNbrTotal)
+					//printf("CUURENTWAVE : %d\t\n", iCurrentWave);
+					if (iWaveIsActive == sfTrue)
 					{
-						/*si le nombre d'ennemis mort attaint le nombre d'ennemis total de la vague alors elle se finit*/
-						iWaveIsActive = sfFalse;
-						
-					}
-
-	#pragma region ADD ENNEMY //GUILLAUME
-
-					fTimeBetweenEnnemySpawn += timeSinceLastFrame;
-					if (fTimeBetweenEnnemySpawn >= TIME_BETWEEN_ENNEMY_SPAWN)
-					{
-						fTimeBetweenEnnemySpawn = 0;
-						/*ajout d'ennemi si le nombre d'ennemi de la vague n'est pas encore atteint*/
-						if (iWaveEnnemyNbr < iNbrTotal)
+						/*condition pour arreter la vague*/
+						if (iWaveEnnemyDead >= iNbrTotal)
 						{
-							iWaveEnnemyNbr++;
+							/*si le nombre d'ennemis mort attaint le nombre d'ennemis total de la vague alors elle se finit*/
+							iWaveIsActive = sfFalse;
+						
+						}
 
-							NewEnnemy = AddElementBeginList(ListEnnemy);
-							NewEnnemy->Ennemy = malloc(sizeof(t_Ennemy));
+		#pragma region ADD ENNEMY //GUILLAUME
 
-#pragma region SELECTION ENNEMI EN FONCTION DE LA LISTE
+						fTimeBetweenEnnemySpawn += timeSinceLastFrame;
+						if (fTimeBetweenEnnemySpawn >= TIME_BETWEEN_ENNEMY_SPAWN)
+						{
+							fTimeBetweenEnnemySpawn = 0;
+							/*ajout d'ennemi si le nombre d'ennemi de la vague n'est pas encore atteint*/
+							if (iWaveEnnemyNbr < iNbrTotal)
+							{
+								iWaveEnnemyNbr++;
 
-							/*aléatoire tant que toutes les catégories n'ont pas atteint leurs nombre max*/
-							if (iCurrentNbrCancer < iNbrCancer && iCurrentNbrCholesterol < iNbrCholesterol && iCurrentNbrCaillot < iNbrCaillot)
-							{
-								NewEnnemy->Ennemy->Type = rand() % CAILLOT + CANCER; // random sur les 3
-							}
-							/*si tous les cancers ont spawn*/
-							else if (iCurrentNbrCancer >= iNbrCancer && iCurrentNbrCholesterol < iNbrCholesterol && iCurrentNbrCaillot < iNbrCaillot)
-							{
-								NewEnnemy->Ennemy->Type = rand() % CAILLOT + CHOLESTEROL;
-							}
-							/*si tous les cholesterol ont spawn*/
-							else if (iCurrentNbrCancer < iNbrCancer && iCurrentNbrCholesterol >= iNbrCholesterol && iCurrentNbrCaillot < iNbrCaillot)
-							{
-								NewEnnemy->Ennemy->Type = rand() % 2 + 1;
-								if (NewEnnemy->Ennemy->Type == 2)
+								NewEnnemy = AddElementBeginList(ListEnnemy);
+								NewEnnemy->Ennemy = malloc(sizeof(t_Ennemy));
+
+	#pragma region SELECTION ENNEMI EN FONCTION DE LA LISTE
+
+								/*aléatoire tant que toutes les catégories n'ont pas atteint leurs nombre max*/
+								if (iCurrentNbrCancer < iNbrCancer && iCurrentNbrCholesterol < iNbrCholesterol && iCurrentNbrCaillot < iNbrCaillot)
+								{
+									NewEnnemy->Ennemy->Type = rand() % CAILLOT + CANCER; // random sur les 3
+								}
+								/*si tous les cancers ont spawn*/
+								else if (iCurrentNbrCancer >= iNbrCancer && iCurrentNbrCholesterol < iNbrCholesterol && iCurrentNbrCaillot < iNbrCaillot)
+								{
+									NewEnnemy->Ennemy->Type = rand() % CAILLOT + CHOLESTEROL;
+								}
+								/*si tous les cholesterol ont spawn*/
+								else if (iCurrentNbrCancer < iNbrCancer && iCurrentNbrCholesterol >= iNbrCholesterol && iCurrentNbrCaillot < iNbrCaillot)
+								{
+									NewEnnemy->Ennemy->Type = rand() % 2 + 1;
+									if (NewEnnemy->Ennemy->Type == 2)
+									{
+										NewEnnemy->Ennemy->Type = CANCER;
+									}
+									if (NewEnnemy->Ennemy->Type == 1)
+									{
+										NewEnnemy->Ennemy->Type = CAILLOT;
+									}
+								}
+								/*si tous les caillot ont spawn*/
+								else if (iCurrentNbrCancer < iNbrCancer && iCurrentNbrCholesterol < iNbrCholesterol && iCurrentNbrCaillot >= iNbrCaillot)
+								{
+									NewEnnemy->Ennemy->Type = rand() % CHOLESTEROL + CANCER;
+								}
+								/*si tous les CAILLOT & CHOLESTEROL ont spawn*/
+								else if (iCurrentNbrCancer < iNbrCancer && iCurrentNbrCholesterol >= iNbrCholesterol && iCurrentNbrCaillot >= iNbrCaillot)
 								{
 									NewEnnemy->Ennemy->Type = CANCER;
 								}
-								if (NewEnnemy->Ennemy->Type == 1)
+								/*si tous les CAILLOT & CANCER ont spawn*/
+								else if (iCurrentNbrCancer >= iNbrCancer && iCurrentNbrCholesterol < iNbrCholesterol && iCurrentNbrCaillot >= iNbrCaillot)
+								{
+									NewEnnemy->Ennemy->Type = CHOLESTEROL;
+								}
+								/*si tous les CANCER & CHOLESTEROL ont spawn*/
+								else if (iCurrentNbrCancer >= iNbrCancer && iCurrentNbrCholesterol >= iNbrCholesterol && iCurrentNbrCaillot < iNbrCaillot)
 								{
 									NewEnnemy->Ennemy->Type = CAILLOT;
 								}
-							}
-							/*si tous les caillot ont spawn*/
-							else if (iCurrentNbrCancer < iNbrCancer && iCurrentNbrCholesterol < iNbrCholesterol && iCurrentNbrCaillot >= iNbrCaillot)
-							{
-								NewEnnemy->Ennemy->Type = rand() % CHOLESTEROL + CANCER;
-							}
-							/*si tous les CAILLOT & CHOLESTEROL ont spawn*/
-							else if (iCurrentNbrCancer < iNbrCancer && iCurrentNbrCholesterol >= iNbrCholesterol && iCurrentNbrCaillot >= iNbrCaillot)
-							{
-								NewEnnemy->Ennemy->Type = CANCER;
-							}
-							/*si tous les CAILLOT & CANCER ont spawn*/
-							else if (iCurrentNbrCancer >= iNbrCancer && iCurrentNbrCholesterol < iNbrCholesterol && iCurrentNbrCaillot >= iNbrCaillot)
-							{
-								NewEnnemy->Ennemy->Type = CHOLESTEROL;
-							}
-							/*si tous les CANCER & CHOLESTEROL ont spawn*/
-							else if (iCurrentNbrCancer >= iNbrCancer && iCurrentNbrCholesterol >= iNbrCholesterol && iCurrentNbrCaillot < iNbrCaillot)
-							{
-								NewEnnemy->Ennemy->Type = CAILLOT;
-							}
 
-#pragma endregion SELECTION ENNEMI EN FONCTION DE LA LISTE
+	#pragma endregion SELECTION ENNEMI EN FONCTION DE LA LISTE
 							
-							/*GESTION EN FONCTION DU TYPE*/
+								/*GESTION EN FONCTION DU TYPE*/
 
-#pragma region GESTION EN FONCTION DU TYPE //GUILLAUME
+	#pragma region GESTION EN FONCTION DU TYPE //GUILLAUME
 
 							
-							printf("%d\n", NewEnnemy->Ennemy->Type);
-							if (NewEnnemy->Ennemy->Type == CANCER)
-							{
-								/*incrémentation du compteur de cancer*/
-								iCurrentNbrCancer++;
+								//printf("%d\n", NewEnnemy->Ennemy->Type);
+								if (NewEnnemy->Ennemy->Type == CANCER)
+								{
+									/*incrémentation du compteur de cancer*/
+									iCurrentNbrCancer++;
 
-								NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy1;
+									NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy1;
 
-								NewEnnemy->Ennemy->fControlRadius = CANCER_CONTROL_RADIUS;
-								NewEnnemy->Ennemy->fGuardRadius = CANCER_GUARD_RADIUS;
+									NewEnnemy->Ennemy->fControlRadius = CANCER_CONTROL_RADIUS;
+									NewEnnemy->Ennemy->fGuardRadius = CANCER_GUARD_RADIUS;
 
-								/*anim*/
-								NewEnnemy->Ennemy->animRect.width = CANCER_WIDTH;
-								NewEnnemy->Ennemy->animRect.height = CANCER_HEIGHT;
-								NewEnnemy->Ennemy->animRect.left = 0;
-								NewEnnemy->Ennemy->animRect.top = 0;
-								NewEnnemy->Ennemy->iNbrFrameX = CANCER_NBR_FRAME_X;
-								NewEnnemy->Ennemy->iNbrFrameY = CANCER_NBR_FRAME_Y;
-								NewEnnemy->Ennemy->fTimeBetweenAnimation = CANCER_TIME_BETWEEN_ANIMATION;
-								NewEnnemy->Ennemy->fTimeSinceLastAnimation = 0;
+									/*anim*/
+									NewEnnemy->Ennemy->animRect.width = CANCER_WIDTH;
+									NewEnnemy->Ennemy->animRect.height = CANCER_HEIGHT;
+									NewEnnemy->Ennemy->animRect.left = 0;
+									NewEnnemy->Ennemy->animRect.top = 0;
+									NewEnnemy->Ennemy->iNbrFrameX = CANCER_NBR_FRAME_X;
+									NewEnnemy->Ennemy->iNbrFrameY = CANCER_NBR_FRAME_Y;
+									NewEnnemy->Ennemy->fTimeBetweenAnimation = CANCER_TIME_BETWEEN_ANIMATION;
+									NewEnnemy->Ennemy->fTimeSinceLastAnimation = 0;
 
-								/*stats*/
-								NewEnnemy->Ennemy->fSpeedMax = CANCER_SPEED;
-								NewEnnemy->Ennemy->Deg = CANCER_DEG;
-								NewEnnemy->Ennemy->HpMax = CANCER_HP;
-								NewEnnemy->Ennemy->Hp = CANCER_HP;
-								NewEnnemy->Ennemy->iMoneyValue = CANCER_MONEY_VALUE;
-							}
-							else if (NewEnnemy->Ennemy->Type == CHOLESTEROL)
-							{
-								/*incrémentation du compteur de cholesterol*/
-								iCurrentNbrCholesterol++;
+									/*stats*/
+									NewEnnemy->Ennemy->fSpeedMax = CANCER_SPEED;
+									NewEnnemy->Ennemy->Deg = CANCER_DEG;
+									NewEnnemy->Ennemy->HpMax = CANCER_HP;
+									NewEnnemy->Ennemy->Hp = CANCER_HP;
+									NewEnnemy->Ennemy->iMoneyValue = CANCER_MONEY_VALUE;
+								}
+								else if (NewEnnemy->Ennemy->Type == CHOLESTEROL)
+								{
+									/*incrémentation du compteur de cholesterol*/
+									iCurrentNbrCholesterol++;
 
-								NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy2;
+									NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy2;
 
-								/*gestion de taille*/
-								NewEnnemy->Ennemy->iSize = BIG;
+									/*gestion de taille*/
+									NewEnnemy->Ennemy->iSize = BIG;
 
-								NewEnnemy->Ennemy->fControlRadius = CHOLESTEROL_CONTROL_RADIUS;
-								NewEnnemy->Ennemy->fGuardRadius = CHOLESTEROL_GUARD_RADIUS;
+									NewEnnemy->Ennemy->fControlRadius = CHOLESTEROL_CONTROL_RADIUS;
+									NewEnnemy->Ennemy->fGuardRadius = CHOLESTEROL_GUARD_RADIUS;
 
-								/*anim*/
-								NewEnnemy->Ennemy->animRect.width = CHOLESTEROL_WIDTH;
-								NewEnnemy->Ennemy->animRect.height = CHOLESTEROL_HEIGHT;
-								NewEnnemy->Ennemy->animRect.left = 0;
-								NewEnnemy->Ennemy->animRect.top = 0;
-								NewEnnemy->Ennemy->iNbrFrameX = CHOLESTEROL_NBR_FRAME_X;
-								NewEnnemy->Ennemy->iNbrFrameY = CHOLESTEROL_NBR_FRAME_Y;
-								NewEnnemy->Ennemy->fTimeBetweenAnimation = CHOLESTEROL_TIME_BETWEEN_ANIMATION;
-								NewEnnemy->Ennemy->fTimeSinceLastAnimation = 0;
+									/*anim*/
+									NewEnnemy->Ennemy->animRect.width = CHOLESTEROL_WIDTH;
+									NewEnnemy->Ennemy->animRect.height = CHOLESTEROL_HEIGHT;
+									NewEnnemy->Ennemy->animRect.left = 0;
+									NewEnnemy->Ennemy->animRect.top = 0;
+									NewEnnemy->Ennemy->iNbrFrameX = CHOLESTEROL_NBR_FRAME_X;
+									NewEnnemy->Ennemy->iNbrFrameY = CHOLESTEROL_NBR_FRAME_Y;
+									NewEnnemy->Ennemy->fTimeBetweenAnimation = CHOLESTEROL_TIME_BETWEEN_ANIMATION;
+									NewEnnemy->Ennemy->fTimeSinceLastAnimation = 0;
 
-								/*stats*/
-								NewEnnemy->Ennemy->fSpeedMax = CHOLESTEROL_SPEED;
-								NewEnnemy->Ennemy->Deg = CHOLESTEROL_DEG;
-								NewEnnemy->Ennemy->HpMax = CHOLESTEROL_HP;
-								NewEnnemy->Ennemy->Hp = CHOLESTEROL_HP;
-								NewEnnemy->Ennemy->iMoneyValue = CHOLESTEROL_MONEY_VALUE;
+									/*stats*/
+									NewEnnemy->Ennemy->fSpeedMax = CHOLESTEROL_SPEED;
+									NewEnnemy->Ennemy->Deg = CHOLESTEROL_DEG;
+									NewEnnemy->Ennemy->HpMax = CHOLESTEROL_HP;
+									NewEnnemy->Ennemy->Hp = CHOLESTEROL_HP;
+									NewEnnemy->Ennemy->iMoneyValue = CHOLESTEROL_MONEY_VALUE;
 
-								NewEnnemy->Ennemy->iNbrTowerBetweenAttack = CHOLESTEROL_NBR_TOWER_BETWEEN_ATTACK;
-								NewEnnemy->Ennemy->fTimeBetweenAttack = CHOLESTEROL_TIME_BETWEEN_ATTACK;
-							}
-							else if (NewEnnemy->Ennemy->Type == CAILLOT)
-							{
-								/*incrémentation du compteur de caillot*/
-								iCurrentNbrCaillot++;
+									NewEnnemy->Ennemy->iNbrTowerBetweenAttack = CHOLESTEROL_NBR_TOWER_BETWEEN_ATTACK;
+									NewEnnemy->Ennemy->fTimeBetweenAttack = CHOLESTEROL_TIME_BETWEEN_ATTACK;
+								}
+								else if (NewEnnemy->Ennemy->Type == CAILLOT)
+								{
+									/*incrémentation du compteur de caillot*/
+									iCurrentNbrCaillot++;
 
-								NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy3;
+									NewEnnemy->Ennemy->sp_Ennemy = Sp_Ennemy3;
 
-								NewEnnemy->Ennemy->fControlRadius = CAILLOT_CONTROL_RADIUS;
-								NewEnnemy->Ennemy->fGuardRadius = CAILLOT_GUARD_RADIUS;
+									NewEnnemy->Ennemy->fControlRadius = CAILLOT_CONTROL_RADIUS;
+									NewEnnemy->Ennemy->fGuardRadius = CAILLOT_GUARD_RADIUS;
 
-								/*anim*/
-								NewEnnemy->Ennemy->animRect.width = CAILLOT_WIDTH;
-								NewEnnemy->Ennemy->animRect.height = CAILLOT_HEIGHT;
-								NewEnnemy->Ennemy->animRect.left = 0;
-								NewEnnemy->Ennemy->animRect.top = 0;
-								NewEnnemy->Ennemy->iNbrFrameX = CAILLOT_NBR_FRAME_X;
-								NewEnnemy->Ennemy->iNbrFrameY = CAILLOT_NBR_FRAME_Y;
-								NewEnnemy->Ennemy->fTimeBetweenAnimation = CAILLOT_TIME_BETWEEN_ANIMATION;
-								NewEnnemy->Ennemy->fTimeSinceLastAnimation = 0;
+									/*anim*/
+									NewEnnemy->Ennemy->animRect.width = CAILLOT_WIDTH;
+									NewEnnemy->Ennemy->animRect.height = CAILLOT_HEIGHT;
+									NewEnnemy->Ennemy->animRect.left = 0;
+									NewEnnemy->Ennemy->animRect.top = 0;
+									NewEnnemy->Ennemy->iNbrFrameX = CAILLOT_NBR_FRAME_X;
+									NewEnnemy->Ennemy->iNbrFrameY = CAILLOT_NBR_FRAME_Y;
+									NewEnnemy->Ennemy->fTimeBetweenAnimation = CAILLOT_TIME_BETWEEN_ANIMATION;
+									NewEnnemy->Ennemy->fTimeSinceLastAnimation = 0;
 
-								/*stats*/
-								NewEnnemy->Ennemy->fSpeedMax = CAILLOT_SPEED;
-								NewEnnemy->Ennemy->Deg = CAILLOT_DEG;
-								NewEnnemy->Ennemy->HpMax = CAILLOT_HP;
-								NewEnnemy->Ennemy->Hp = CAILLOT_HP;
-								NewEnnemy->Ennemy->iMoneyValue = CAILLOT_MONEY_VALUE;
+									/*stats*/
+									NewEnnemy->Ennemy->fSpeedMax = CAILLOT_SPEED;
+									NewEnnemy->Ennemy->Deg = CAILLOT_DEG;
+									NewEnnemy->Ennemy->HpMax = CAILLOT_HP;
+									NewEnnemy->Ennemy->Hp = CAILLOT_HP;
+									NewEnnemy->Ennemy->iMoneyValue = CAILLOT_MONEY_VALUE;
 
-								NewEnnemy->Ennemy->iNbrTowerBetweenAttack = CAILLOT_NBR_TOWER_BETWEEN_ATTACK;
-								NewEnnemy->Ennemy->fTimeBetweenAttack = CAILLOT_TIME_BETWEEN_ATTACK;
-							}
-							NewEnnemy->Ennemy->iTowerIsChosen = 0;
-							NewEnnemy->Ennemy->iTowerToAttackId = -1;
-							NewEnnemy->Ennemy->iIsAttack = sfFalse;
-							NewEnnemy->Ennemy->fTimeSinceLastAttack = 0;
+									NewEnnemy->Ennemy->iNbrTowerBetweenAttack = CAILLOT_NBR_TOWER_BETWEEN_ATTACK;
+									NewEnnemy->Ennemy->fTimeBetweenAttack = CAILLOT_TIME_BETWEEN_ATTACK;
+								}
+								NewEnnemy->Ennemy->iTowerIsChosen = 0;
+								NewEnnemy->Ennemy->iTowerToAttackId = -1;
+								NewEnnemy->Ennemy->iIsAttack = sfFalse;
+								NewEnnemy->Ennemy->fTimeSinceLastAttack = 0;
 
-							/*variables d'animation*/
-							NewEnnemy->Ennemy->iAnimationFrameX = 0;
-							NewEnnemy->Ennemy->iAnimationFrameY = 0;
+								/*variables d'animation*/
+								NewEnnemy->Ennemy->iAnimationFrameX = 0;
+								NewEnnemy->Ennemy->iAnimationFrameY = 0;
 
-							NewEnnemy->Ennemy->vScale.x = 1;
-							NewEnnemy->Ennemy->vScale.y = 1;
+								NewEnnemy->Ennemy->vScale.x = 1;
+								NewEnnemy->Ennemy->vScale.y = 1;
 
-							NewEnnemy->Ennemy->vOrigin.x = NewEnnemy->Ennemy->animRect.width / 2;
-							NewEnnemy->Ennemy->vOrigin.y = NewEnnemy->Ennemy->animRect.height / 2;
-							sfSprite_setOrigin(NewEnnemy->Ennemy->sp_Ennemy, NewEnnemy->Ennemy->vOrigin);
+								NewEnnemy->Ennemy->vOrigin.x = NewEnnemy->Ennemy->animRect.width / 2;
+								NewEnnemy->Ennemy->vOrigin.y = NewEnnemy->Ennemy->animRect.height / 2;
+								sfSprite_setOrigin(NewEnnemy->Ennemy->sp_Ennemy, NewEnnemy->Ennemy->vOrigin);
 
-							NewEnnemy->Ennemy->fSpeed = 0;
-							NewEnnemy->Ennemy->fSpeedFactor = 1;
+								NewEnnemy->Ennemy->fSpeed = 0;
+								NewEnnemy->Ennemy->fSpeedFactor = 1;
 
-#pragma endregion GESTION EN FONCTION DU TYPE ENNEMIE //GUILLAUME
+	#pragma endregion GESTION EN FONCTION DU TYPE ENNEMIE //GUILLAUME
 
-							/*GESTION SPAWN*/
+								/*GESTION SPAWN*/
 
-#pragma region GESTION SPAWN //GUILLAUME
+	#pragma region GESTION SPAWN //GUILLAUME
 
-#pragma region LECTURE DANS LE FICHIER DE SPAWN
+	#pragma region LECTURE DANS LE FICHIER DE SPAWN
 
-							FILE* file = NULL;
-							char* filePath = malloc(50);
-							int iEnnemySpawnNbr = 0;
-							sprintf_s(filePath, 50, "resources/datas/ennemySpawns%d.txt", iCurrentLevel);
-							fopen_s(&file, filePath, "r");
+								FILE* file = NULL;
+								char* filePath = malloc(50);
+								int iEnnemySpawnNbr = 0;
+								sprintf_s(filePath, 50, "resources/datas/ennemySpawns%d.txt", iCurrentLevel);
+								fopen_s(&file, filePath, "r");
 
-							if (file == NULL)
-							{
-								printf("erreur ouverture de fichier ennemySpawn\n");
-								return EXIT_FAILURE;
-							}
+								if (file == NULL)
+								{
+									printf("erreur ouverture de fichier ennemySpawn\n");
+									return EXIT_FAILURE;
+								}
 
-							fscanf_s(file, "iEnnemySpawnNbr=%d\n", &iEnnemySpawnNbr);
-							NewEnnemy->Ennemy->vTargetPostion.x = 0;
-							NewEnnemy->Ennemy->vTargetPostion.y = 0;
-							fscanf_s(file, "vTarX=%f,vTarY=%f\n", &NewEnnemy->Ennemy->vTargetPostion.x, &NewEnnemy->Ennemy->vTargetPostion.y);
-							//printf("ENNEMYSPAWN : %d | TAR X=%.2f | TAR Y=%.2f\n", iEnnemySpawnNbr, NewEnnemy->Ennemy->vTargetPostion.x, NewEnnemy->Ennemy->vTargetPostion.y);
-							NewEnnemy->Ennemy->iStartPos = 0;
-							NewEnnemy->Ennemy->iStartPos = rand() % iEnnemySpawnNbr + 1; // choix de la ligne a lire
-							for (int i = 0; i < NewEnnemy->Ennemy->iStartPos; i++)
-							{
-								NewEnnemy->Ennemy->vSpawnPosition.x = 0;
-								NewEnnemy->Ennemy->vSpawnPosition.y = 0;
-								NewEnnemy->Ennemy->dirState = 0;
-								fscanf_s(file, "vPosX=%f,vPosY=%f,iDir=%d\n", &NewEnnemy->Ennemy->vSpawnPosition.x, &NewEnnemy->Ennemy->vSpawnPosition.y, &NewEnnemy->Ennemy->dirState);
-								//printf("X : %.2f |Y : %.2f | Dir : %d\n", NewEnnemy->Ennemy->vSpawnPosition.x, NewEnnemy->Ennemy->vSpawnPosition.y, NewEnnemy->Ennemy->iDirection);
-							}
+								fscanf_s(file, "iEnnemySpawnNbr=%d\n", &iEnnemySpawnNbr);
+								NewEnnemy->Ennemy->vTargetPostion.x = 0;
+								NewEnnemy->Ennemy->vTargetPostion.y = 0;
+								fscanf_s(file, "vTarX=%f,vTarY=%f\n", &NewEnnemy->Ennemy->vTargetPostion.x, &NewEnnemy->Ennemy->vTargetPostion.y);
+								//printf("ENNEMYSPAWN : %d | TAR X=%.2f | TAR Y=%.2f\n", iEnnemySpawnNbr, NewEnnemy->Ennemy->vTargetPostion.x, NewEnnemy->Ennemy->vTargetPostion.y);
+								NewEnnemy->Ennemy->iStartPos = 0;
+								NewEnnemy->Ennemy->iStartPos = rand() % iEnnemySpawnNbr + 1; // choix de la ligne a lire
+								for (int i = 0; i < NewEnnemy->Ennemy->iStartPos; i++)
+								{
+									NewEnnemy->Ennemy->vSpawnPosition.x = 0;
+									NewEnnemy->Ennemy->vSpawnPosition.y = 0;
+									NewEnnemy->Ennemy->dirState = 0;
+									fscanf_s(file, "vPosX=%f,vPosY=%f,iDir=%d\n", &NewEnnemy->Ennemy->vSpawnPosition.x, &NewEnnemy->Ennemy->vSpawnPosition.y, &NewEnnemy->Ennemy->dirState);
+									//printf("X : %.2f |Y : %.2f | Dir : %d\n", NewEnnemy->Ennemy->vSpawnPosition.x, NewEnnemy->Ennemy->vSpawnPosition.y, NewEnnemy->Ennemy->iDirection);
+								}
 
-							NewEnnemy->Ennemy->iRandSpawnValueVariation = rand() % ENNEMY_VARIANT_SPAWN + 0;
+								NewEnnemy->Ennemy->iRandSpawnValueVariation = rand() % ENNEMY_VARIANT_SPAWN + 0;
 
-							/*gestion x*/
-							NewEnnemy->Ennemy->iRandSpawnDirectionVariation = rand() % 2 + 1;
-							if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 1)
-							{
-								NewEnnemy->Ennemy->vSpawnPosition.x += ENNEMY_VARIANT_SPAWN;
-							}
-							else if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 2)
-							{
-								NewEnnemy->Ennemy->vSpawnPosition.x -= ENNEMY_VARIANT_SPAWN;
-							}
-							/*gestion y*/
-							NewEnnemy->Ennemy->iRandSpawnDirectionVariation = rand() % 2 + 1;
-							if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 1)
-							{
-								NewEnnemy->Ennemy->vSpawnPosition.y += ENNEMY_VARIANT_SPAWN;
-							}
-							else if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 2)
-							{
-								NewEnnemy->Ennemy->vSpawnPosition.y -= ENNEMY_VARIANT_SPAWN;
-							}
-							fclose(file);
+								/*gestion x*/
+								NewEnnemy->Ennemy->iRandSpawnDirectionVariation = rand() % 2 + 1;
+								if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 1)
+								{
+									NewEnnemy->Ennemy->vSpawnPosition.x += ENNEMY_VARIANT_SPAWN;
+								}
+								else if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 2)
+								{
+									NewEnnemy->Ennemy->vSpawnPosition.x -= ENNEMY_VARIANT_SPAWN;
+								}
+								/*gestion y*/
+								NewEnnemy->Ennemy->iRandSpawnDirectionVariation = rand() % 2 + 1;
+								if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 1)
+								{
+									NewEnnemy->Ennemy->vSpawnPosition.y += ENNEMY_VARIANT_SPAWN;
+								}
+								else if (NewEnnemy->Ennemy->iRandSpawnDirectionVariation == 2)
+								{
+									NewEnnemy->Ennemy->vSpawnPosition.y -= ENNEMY_VARIANT_SPAWN;
+								}
+								fclose(file);
 
-#pragma endregion LECTURE DANS LE FICHIER DE SPAWN
+	#pragma endregion LECTURE DANS LE FICHIER DE SPAWN
 
-							NewEnnemy->Ennemy->vCurrentPosition = NewEnnemy->Ennemy->vSpawnPosition;
-							sfSprite_setPosition(NewEnnemy->Ennemy->sp_Ennemy, NewEnnemy->Ennemy->vCurrentPosition);
+								NewEnnemy->Ennemy->vCurrentPosition = NewEnnemy->Ennemy->vSpawnPosition;
+								sfSprite_setPosition(NewEnnemy->Ennemy->sp_Ennemy, NewEnnemy->Ennemy->vCurrentPosition);
 
 
-#pragma endregion GESTION SPAWN //GUILLAUME
+	#pragma endregion GESTION SPAWN //GUILLAUME
 
-							/*INITIALISATION PARAMETRES ENNEMIS*/
+								/*INITIALISATION PARAMETRES ENNEMIS*/
 
-#pragma region INITIALISATION PARAMETRES ENNEMIS
+	#pragma region INITIALISATION PARAMETRES ENNEMIS
 
-							NewEnnemy->Ennemy->iPosPathToTarget = 1;
-							NewEnnemy->Ennemy->vPosPathToTarget.x = 0;
-							NewEnnemy->Ennemy->vPosPathToTarget.y = 0;
+								NewEnnemy->Ennemy->iPosPathToTarget = 1;
+								NewEnnemy->Ennemy->vPosPathToTarget.x = 0;
+								NewEnnemy->Ennemy->vPosPathToTarget.y = 0;
 
-							/*QUAND J'AJOUTE L'ENNEMI IL EST ORIENTE VERS L'OBJECTIF*/
-							NewEnnemy->Ennemy->fCurrentAngleDirection = 0;
-							NewEnnemy->Ennemy->fCollideIncrementation = 1;
+								/*QUAND J'AJOUTE L'ENNEMI IL EST ORIENTE VERS L'OBJECTIF*/
+								NewEnnemy->Ennemy->fCurrentAngleDirection = 0;
+								NewEnnemy->Ennemy->fCollideIncrementation = 1;
 
-							NewEnnemy->Ennemy->fAngleSprite = 0;
+								NewEnnemy->Ennemy->fAngleSprite = 0;
 
-							NewEnnemy->Ennemy->iRandDirection = 0;
-							NewEnnemy->Ennemy->iRandDirectionIsChosen = 0;
+								NewEnnemy->Ennemy->iRandDirection = 0;
+								NewEnnemy->Ennemy->iRandDirectionIsChosen = 0;
 
-							/*varaibles de variation de direction*/
-							NewEnnemy->Ennemy->fTimeSinceLastVariation = 0;
-							NewEnnemy->Ennemy->fWanderAngle = 0;
-							NewEnnemy->Ennemy->vWanderCenter.x = 0;
-							NewEnnemy->Ennemy->vWanderCenter.y = 0;
-							NewEnnemy->Ennemy->vWanderDirection.x = 0;
-							NewEnnemy->Ennemy->vWanderDirection.y = 0;
+								/*varaibles de variation de direction*/
+								NewEnnemy->Ennemy->fTimeSinceLastVariation = 0;
+								NewEnnemy->Ennemy->fWanderAngle = 0;
+								NewEnnemy->Ennemy->vWanderCenter.x = 0;
+								NewEnnemy->Ennemy->vWanderCenter.y = 0;
+								NewEnnemy->Ennemy->vWanderDirection.x = 0;
+								NewEnnemy->Ennemy->vWanderDirection.y = 0;
 
-							/*despawn*/
-							NewEnnemy->Ennemy->iDespawn = 0;
-							NewEnnemy->Ennemy->fTimeSinceStartDespawn = 0;
+								/*despawn*/
+								NewEnnemy->Ennemy->iDespawn = 0;
+								NewEnnemy->Ennemy->fTimeSinceStartDespawn = 0;
 
-							/*ATTAQUE*/
-							NewEnnemy->Ennemy->vDistToTowerDetectionPos.x = 0;
-							NewEnnemy->Ennemy->vDistToTowerDetectionPos.y = 0;
-							NewEnnemy->Ennemy->EnnemyIsInTheDetectionZone = sfFalse;
-							NewEnnemy->Ennemy->iNbrTowerSinceLastAttack = 0;
-							NewEnnemy->Ennemy->fTimeSinceLastAttack = 0;
-							NewEnnemy->Ennemy->iCurrentTowerDetectionZoneId = -1;
+								/*ATTAQUE*/
+								NewEnnemy->Ennemy->vDistToTowerDetectionPos.x = 0;
+								NewEnnemy->Ennemy->vDistToTowerDetectionPos.y = 0;
+								NewEnnemy->Ennemy->EnnemyIsInTheDetectionZone = sfFalse;
+								NewEnnemy->Ennemy->iNbrTowerSinceLastAttack = 0;
+								NewEnnemy->Ennemy->fTimeSinceLastAttack = 0;
+								NewEnnemy->Ennemy->iCurrentTowerDetectionZoneId = -1;
 
-							/*random du chemin asuivre sur le nombre de chemins présennt dans le niveau*/
-							NewEnnemy->Ennemy->PathToFollow = rand() % CurrentLevelAssets.iNbrEnnemyPath;
+								/*random du chemin asuivre sur le nombre de chemins présennt dans le niveau*/
+								NewEnnemy->Ennemy->PathToFollow = rand() % CurrentLevelAssets.iNbrEnnemyPath;
 							
-							NewEnnemy->Ennemy->isHit = sfFalse;
-							NewEnnemy->Ennemy->tCurrentLifeBarDisplay = 0;
-							NewEnnemy->Ennemy->tStartLifeBarDisplay = 0;
-							NewEnnemy->Ennemy->tSinceLifeBarDisplay = 0;
+								NewEnnemy->Ennemy->isHit = sfFalse;
+								NewEnnemy->Ennemy->tCurrentLifeBarDisplay = 0;
+								NewEnnemy->Ennemy->tStartLifeBarDisplay = 0;
+								NewEnnemy->Ennemy->tSinceLifeBarDisplay = 0;
 
 
-#pragma endregion INITIALISATION PARAMETRES ENNEMIS
+	#pragma endregion INITIALISATION PARAMETRES ENNEMIS
 							
-							/*BARRE DE VIE*/
+								/*BARRE DE VIE*/
 
-#pragma region BARRE DE VIE //SEB
+	#pragma region BARRE DE VIE //SEB
 
-							/*rectangle de fond noir*/
-							NewEnnemy->Ennemy->RectangleShapeBack = sfRectangleShape_create();
-							NewEnnemy->Ennemy->vSizeRectangleShapeBack.x = LIFEBAR_MAX_SIZE_X;
-							NewEnnemy->Ennemy->vSizeRectangleShapeBack.y = LIFEBAR_SIZE_Y;
-							sfRectangleShape_setSize(NewEnnemy->Ennemy->RectangleShapeBack, NewEnnemy->Ennemy->vSizeRectangleShapeBack);
-							NewEnnemy->Ennemy->vOriginRectangleShapeBack.x = NewEnnemy->Ennemy->vSizeRectangleShapeBack.x / 2;
-							NewEnnemy->Ennemy->vOriginRectangleShapeBack.y = NewEnnemy->Ennemy->vSizeRectangleShapeBack.y / 2;
-							sfRectangleShape_setOrigin(NewEnnemy->Ennemy->RectangleShapeBack, NewEnnemy->Ennemy->vOriginRectangleShapeBack);
-							sfRectangleShape_setFillColor(NewEnnemy->Ennemy->RectangleShapeBack, Color_Black_transp);
-							sfRectangleShape_setOutlineThickness(NewEnnemy->Ennemy->RectangleShapeBack, 2);
-							sfRectangleShape_setOutlineColor(NewEnnemy->Ennemy->RectangleShapeBack, sfBlack);
-							//NewEnnemy->Ennemy->vOriginRectangleShapeBack.x = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShapeBack).width / 2;
-							//NewEnnemy->Ennemy->vOriginRectangleShapeBack.y = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShapeBack).height / 2;
-							//sfRectangleShape_setOrigin(NewEnnemy->Ennemy->RectangleShapeBack, NewEnnemy->Ennemy->vOriginRectangleShapeBack);
+								/*rectangle de fond noir*/
+								NewEnnemy->Ennemy->RectangleShapeBack = sfRectangleShape_create();
+								NewEnnemy->Ennemy->vSizeRectangleShapeBack.x = LIFEBAR_MAX_SIZE_X;
+								NewEnnemy->Ennemy->vSizeRectangleShapeBack.y = LIFEBAR_SIZE_Y;
+								sfRectangleShape_setSize(NewEnnemy->Ennemy->RectangleShapeBack, NewEnnemy->Ennemy->vSizeRectangleShapeBack);
+								NewEnnemy->Ennemy->vOriginRectangleShapeBack.x = NewEnnemy->Ennemy->vSizeRectangleShapeBack.x / 2;
+								NewEnnemy->Ennemy->vOriginRectangleShapeBack.y = NewEnnemy->Ennemy->vSizeRectangleShapeBack.y / 2;
+								sfRectangleShape_setOrigin(NewEnnemy->Ennemy->RectangleShapeBack, NewEnnemy->Ennemy->vOriginRectangleShapeBack);
+								sfRectangleShape_setFillColor(NewEnnemy->Ennemy->RectangleShapeBack, Color_Black_transp);
+								sfRectangleShape_setOutlineThickness(NewEnnemy->Ennemy->RectangleShapeBack, 2);
+								sfRectangleShape_setOutlineColor(NewEnnemy->Ennemy->RectangleShapeBack, sfBlack);
+								//NewEnnemy->Ennemy->vOriginRectangleShapeBack.x = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShapeBack).width / 2;
+								//NewEnnemy->Ennemy->vOriginRectangleShapeBack.y = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShapeBack).height / 2;
+								//sfRectangleShape_setOrigin(NewEnnemy->Ennemy->RectangleShapeBack, NewEnnemy->Ennemy->vOriginRectangleShapeBack);
 
-							/*rectangle de vie*/
-							NewEnnemy->Ennemy->RectangleShape = sfRectangleShape_create();
-							NewEnnemy->Ennemy->vSizeRectangleShape.x = LIFEBAR_MAX_SIZE_X;
-							NewEnnemy->Ennemy->vSizeRectangleShape.y = LIFEBAR_SIZE_Y;
-							sfRectangleShape_setSize(NewEnnemy->Ennemy->RectangleShape, NewEnnemy->Ennemy->vSizeRectangleShape);
-							sfRectangleShape_setFillColor(NewEnnemy->Ennemy->RectangleShape, sfRed);
-							//NewEnnemy->Ennemy->vOriginRectangleShape.x = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShape).width / 2;
-							//NewEnnemy->Ennemy->vOriginRectangleShape.y = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShape).height / 2;
-							//sfRectangleShape_setOrigin(NewEnnemy->Ennemy->RectangleShape, NewEnnemy->Ennemy->vOriginRectangleShapeBack);
-							iSpaceButtonIsButtonPressedCheck = 1;
+								/*rectangle de vie*/
+								NewEnnemy->Ennemy->RectangleShape = sfRectangleShape_create();
+								NewEnnemy->Ennemy->vSizeRectangleShape.x = LIFEBAR_MAX_SIZE_X;
+								NewEnnemy->Ennemy->vSizeRectangleShape.y = LIFEBAR_SIZE_Y;
+								sfRectangleShape_setSize(NewEnnemy->Ennemy->RectangleShape, NewEnnemy->Ennemy->vSizeRectangleShape);
+								sfRectangleShape_setFillColor(NewEnnemy->Ennemy->RectangleShape, sfRed);
+								//NewEnnemy->Ennemy->vOriginRectangleShape.x = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShape).width / 2;
+								//NewEnnemy->Ennemy->vOriginRectangleShape.y = sfRectangleShape_getGlobalBounds(NewEnnemy->Ennemy->RectangleShape).height / 2;
+								//sfRectangleShape_setOrigin(NewEnnemy->Ennemy->RectangleShape, NewEnnemy->Ennemy->vOriginRectangleShapeBack);
+								iSpaceButtonIsButtonPressedCheck = 1;
 
-#pragma endregion BARRE DE VIE //SEB
+	#pragma endregion BARRE DE VIE //SEB
 
-#pragma region TIMER DOMMAGES TOUR 2 //SEB
+	#pragma region TIMER DOMMAGES TOUR 2 //SEB
 
-							NewEnnemy->Ennemy->tStartDOT = (float)clock() / CLOCKS_PER_SEC;
-							NewEnnemy->Ennemy->tCurrentDOT = 0;
-							NewEnnemy->Ennemy->tSinceDOT = 0;
+								NewEnnemy->Ennemy->tStartDOT = (float)clock() / CLOCKS_PER_SEC;
+								NewEnnemy->Ennemy->tCurrentDOT = 0;
+								NewEnnemy->Ennemy->tSinceDOT = 0;
 
-#pragma endregion TIMER DOMMAGES TOUR 2 //SEB
+	#pragma endregion TIMER DOMMAGES TOUR 2 //SEB
 
-						}
+							}
 						
+						}
 					}
+
+
+		#pragma endregion ADD ENNEMY //GUILLAUME
+
 				}
-
-
-	#pragma endregion ADD ENNEMY //GUILLAUME
-
 	#pragma endregion ADD ENNEMY WAVES
 
 	#pragma region READ LIST ENNEMY CALCUL //GUILLAUME
-				if (sfKeyboard_isKeyPressed(sfKeyD) == sfTrue)
+				if (!isPaused)
 				{
-					printf("debug");
-				}
-				CurrentEnnemy = ListEnnemy->FirstElement;
-				while (CurrentEnnemy != NULL)
-				{
-					/*GESTION DE DIRECTION*/
+					if (sfKeyboard_isKeyPressed(sfKeyD) == sfTrue)
+					{
+						printf("debug");
+					}
+					CurrentEnnemy = ListEnnemy->FirstElement;
+					while (CurrentEnnemy != NULL)
+					{
+						/*GESTION DE DIRECTION*/
 
-					
 
-	#pragma region GESTION DEPLACEMENTS  //GUILLAUME
 
-						/*J'OBTIENS LA COULEUR SITUE SOUS L'ENNEMI*/
+#pragma region GESTION DEPLACEMENTS  //GUILLAUME
+
+					/*J'OBTIENS LA COULEUR SITUE SOUS L'ENNEMI*/
 						if (CurrentEnnemy->Ennemy->vCurrentPosition.x > 0 && CurrentEnnemy->Ennemy->vCurrentPosition.x < WINDOW_WIDTH
 							&& CurrentEnnemy->Ennemy->vCurrentPosition.y > 0 && CurrentEnnemy->Ennemy->vCurrentPosition.y < WINDOW_HEIGHT)
 						{
@@ -2320,7 +2393,7 @@ int main()
 						if (manageEnnemi(CurrentEnnemy, CurrentLevelAssets.mapMask, timeSinceLastFrame) == sfFalse)
 						{
 
-		#pragma region DIRECTION SPRITE EN FONCTION DE LA COULEUR //GUILLAUME
+#pragma region DIRECTION SPRITE EN FONCTION DE LA COULEUR //GUILLAUME
 
 							/*COULEUR BLEU (HAUT-DROITE)*/
 							if (CurrentEnnemy->Ennemy->Color_ToCheck.b == 255)
@@ -2343,9 +2416,9 @@ int main()
 								CurrentEnnemy->Ennemy->dirState = DOWN_RIGHT;
 							}
 
-		#pragma endregion DIRECTION SPRITE EN FONCTION DE LA COULEUR //GUILLAUME
+#pragma endregion DIRECTION SPRITE EN FONCTION DE LA COULEUR //GUILLAUME
 
-		#pragma region DIRECTION SPRITE EN FONCTION DE LA DIRECTION //GUILLAUME
+#pragma region DIRECTION SPRITE EN FONCTION DE LA DIRECTION //GUILLAUME
 
 							CurrentEnnemy->Ennemy->fCurrentAngleDirection = GetAngleDegreeFromVector(CurrentEnnemy->Ennemy->vCurrentDirection);
 							//if (CurrentEnnemy->Ennemy->fCurrentAngleDirection >= 0 && CurrentEnnemy->Ennemy->fCurrentAngleDirection <= 360)
@@ -2399,13 +2472,13 @@ int main()
 
 							if (CurrentEnnemy->Id == 0)
 							{
-								printf("vNormalizeDirection.x %.2f\t", CurrentEnnemy->Ennemy->vNormalizeDirection.x);
-								printf("vNormalizeDirection.y %.2f\t\n", CurrentEnnemy->Ennemy->vNormalizeDirection.y);
+								//printf("vNormalizeDirection.x %.2f\t", CurrentEnnemy->Ennemy->vNormalizeDirection.x);
+								//printf("vNormalizeDirection.y %.2f\t\n", CurrentEnnemy->Ennemy->vNormalizeDirection.y);
 							}
 
-		#pragma endregion DIRECTION SPRITE EN FONCTION DE LA DIRECTION //GUILLAUME
+#pragma endregion DIRECTION SPRITE EN FONCTION DE LA DIRECTION //GUILLAUME
 
-		#pragma region DEPLACEMENT PAR COULEUR TEST
+#pragma region DEPLACEMENT PAR COULEUR TEST
 
 							/*if (iCurrentLevel == TEST)
 							{
@@ -2427,43 +2500,43 @@ int main()
 								}
 							}*/
 
-		#pragma endregion DEPLACEMENT PAR COULEUR TEST
+#pragma endregion DEPLACEMENT PAR COULEUR TEST
 
-		#pragma region DEPLACEMENT PAR POINT
+#pragma region DEPLACEMENT PAR POINT
 
-							
-								/*PROCHAIN POINT QUE DOIT VISER L'ENNEMI*/
 
-								/*JE LIS LA LISTE DE POINT DU NIVEAU*/
-								
-								CurrentEnnemyPathPoint = CurrentLevelAssets.TabListEnnemyPathPoint[CurrentEnnemy->Ennemy->PathToFollow]->LastElement;
-								while (CurrentEnnemyPathPoint != NULL)
+							/*PROCHAIN POINT QUE DOIT VISER L'ENNEMI*/
+
+							/*JE LIS LA LISTE DE POINT DU NIVEAU*/
+
+							CurrentEnnemyPathPoint = CurrentLevelAssets.TabListEnnemyPathPoint[CurrentEnnemy->Ennemy->PathToFollow]->LastElement;
+							while (CurrentEnnemyPathPoint != NULL)
+							{
+								/*LE POINT VISE*/
+								if (CurrentEnnemy->Ennemy->iPosPathToTarget == CurrentEnnemyPathPoint->EnnemyPathPoint->Num)
 								{
-									/*LE POINT VISE*/
-									if (CurrentEnnemy->Ennemy->iPosPathToTarget == CurrentEnnemyPathPoint->EnnemyPathPoint->Num)
-									{
-										CurrentEnnemy->Ennemy->vPosPathToTarget.x = CurrentEnnemyPathPoint->EnnemyPathPoint->vPos.x;
-										CurrentEnnemy->Ennemy->vPosPathToTarget.y = CurrentEnnemyPathPoint->EnnemyPathPoint->vPos.y;
-										CurrentEnnemy->Ennemy->vCurrentDirection.x = CurrentEnnemy->Ennemy->vPosPathToTarget.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
-										CurrentEnnemy->Ennemy->vCurrentDirection.y = CurrentEnnemy->Ennemy->vPosPathToTarget.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
-										CurrentEnnemy->Ennemy->fDesiredAngleDirection = GetAngleDegreeFromVector(CurrentEnnemy->Ennemy->vCurrentDirection);
+									CurrentEnnemy->Ennemy->vPosPathToTarget.x = CurrentEnnemyPathPoint->EnnemyPathPoint->vPos.x;
+									CurrentEnnemy->Ennemy->vPosPathToTarget.y = CurrentEnnemyPathPoint->EnnemyPathPoint->vPos.y;
+									CurrentEnnemy->Ennemy->vCurrentDirection.x = CurrentEnnemy->Ennemy->vPosPathToTarget.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
+									CurrentEnnemy->Ennemy->vCurrentDirection.y = CurrentEnnemy->Ennemy->vPosPathToTarget.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
+									CurrentEnnemy->Ennemy->fDesiredAngleDirection = GetAngleDegreeFromVector(CurrentEnnemy->Ennemy->vCurrentDirection);
 
-										/*si il y a magnitude avec le point je change de cible*/
-										if (Magnitude(CurrentEnnemy->Ennemy->vCurrentDirection) < 50)
+									/*si il y a magnitude avec le point je change de cible*/
+									if (Magnitude(CurrentEnnemy->Ennemy->vCurrentDirection) < 50)
+									{
+										if (CurrentEnnemyPathPoint->PreviousElement != NULL)
 										{
-											if (CurrentEnnemyPathPoint->PreviousElement != NULL)
-											{
-												CurrentEnnemy->Ennemy->iPosPathToTarget = CurrentEnnemyPathPoint->PreviousElement->EnnemyPathPoint->Num;
-											}
+											CurrentEnnemy->Ennemy->iPosPathToTarget = CurrentEnnemyPathPoint->PreviousElement->EnnemyPathPoint->Num;
 										}
 									}
-
-									CurrentEnnemyPathPoint = CurrentEnnemyPathPoint->PreviousElement;
 								}
 
-		#pragma endregion DEPLACEMENT PAR POINT
+								CurrentEnnemyPathPoint = CurrentEnnemyPathPoint->PreviousElement;
+							}
 
-		#pragma region VARIATION LEGERE //GUILLAUME
+#pragma endregion DEPLACEMENT PAR POINT
+
+#pragma region VARIATION LEGERE //GUILLAUME
 
 							/*méthode avec random*/
 							/*CurrentEnnemy->Ennemy->fTimeSinceLastVariation += timeSinceLastFrame;
@@ -2482,13 +2555,13 @@ int main()
 							}
 							}*/
 
-		#pragma endregion VARIATION LEGERE //GUILLAUME
+#pragma endregion VARIATION LEGERE //GUILLAUME
 
 							CurrentEnnemy->Ennemy->fCurrentAngleDirection = CurrentEnnemy->Ennemy->fDesiredAngleDirection;
 							CurrentEnnemy->Ennemy->vCurrentDirection = GetDirectionFromAngleDegrees(CurrentEnnemy->Ennemy->fCurrentAngleDirection);
 						}
 
-		#pragma region CAS DE COLLISION //GUILLAUME
+#pragma region CAS DE COLLISION //GUILLAUME
 
 						/*GESTION COLLISION*/
 						else if (manageEnnemi(CurrentEnnemy, CurrentLevelAssets.mapMask, timeSinceLastFrame) == sfTrue)
@@ -2562,425 +2635,439 @@ int main()
 							CurrentEnnemy->Ennemy->vCurrentDirection = GetDirectionFromAngleDegrees(CurrentEnnemy->Ennemy->fCurrentAngleDirection);
 						}
 
-		#pragma endregion CAS DE COLLISION //GUILLAUME
+#pragma endregion CAS DE COLLISION //GUILLAUME
 
 
-	#pragma endregion GESTION DEPLACEMENTS //GUILLAUME
+#pragma endregion GESTION DEPLACEMENTS //GUILLAUME
 
-					/*DETECTION DU NOMBRE DE VEINE PASSER PAR L'ENNEMI*/
+						/*DETECTION DU NOMBRE DE VEINE PASSER PAR L'ENNEMI*/
 
-	#pragma region GESTION COMPTEUR DE VEINE PASSE PAR ENNEMI
+#pragma region GESTION COMPTEUR DE VEINE PASSE PAR ENNEMI
 
-					CurrentTowerSlot = ListTowerSlot->FirstElement;
-					while (CurrentTowerSlot != NULL)
-					{
-						if (CurrentEnnemy->Ennemy->EnnemyIsInTheDetectionZone == sfFalse)
+						CurrentTowerSlot = ListTowerSlot->FirstElement;
+						while (CurrentTowerSlot != NULL)
 						{
-							CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.x = CurrentTowerSlot->TowerSlot->vSpawnPos.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
-							CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.y = CurrentTowerSlot->TowerSlot->vSpawnPos.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
-							/*Veine actuelle dans laquelle se situe l'ennemi*/
-							if (Magnitude(CurrentEnnemy->Ennemy->vDistToTowerDetectionPos) < DETECTION_POSITION_RADIUS)
+							if (CurrentEnnemy->Ennemy->EnnemyIsInTheDetectionZone == sfFalse)
 							{
-
-								CurrentEnnemy->Ennemy->iCurrentTowerDetectionZoneId = CurrentTowerSlot->Id;
-								CurrentEnnemy->Ennemy->EnnemyIsInTheDetectionZone = sfTrue;
-
-							}
-						}
-
-						/*je fais mon calcul pour définir que l'ennemi a passer la veine seulement avec la veine que je sauvegarde*/
-						if (CurrentEnnemy->Ennemy->iCurrentTowerDetectionZoneId == CurrentTowerSlot->Id)
-						{
-							CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.x = CurrentTowerSlot->TowerSlot->vSpawnPos.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
-							CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.y = CurrentTowerSlot->TowerSlot->vSpawnPos.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
-							if (Magnitude(CurrentEnnemy->Ennemy->vDistToTowerDetectionPos) > DETECTION_POSITION_RADIUS + 20
-								&& CurrentEnnemy->Ennemy->EnnemyIsInTheDetectionZone == sfTrue)
-							{
-								CurrentEnnemy->Ennemy->EnnemyIsInTheDetectionZone = sfFalse;
-								CurrentEnnemy->Ennemy->iNbrTowerSinceLastAttack++;
-								CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.x = 0;
-								CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.y = 0;
-							}
-
-						}
-
-						CurrentTowerSlot = CurrentTowerSlot->NextElement;
-					}
-
-					/*CONDITIONS POUR QU'UN ENNEMI ATTAQUE*/
-					if (CurrentEnnemy->Ennemy->iIsAttack == sfFalse)
-					{
-						CurrentEnnemy->Ennemy->fTimeSinceLastAttack += timeSinceLastFrame;
-						if (CurrentEnnemy->Ennemy->fTimeSinceLastAttack > CurrentEnnemy->Ennemy->fTimeBetweenAttack
-							&& CurrentEnnemy->Ennemy->iNbrTowerSinceLastAttack >= CurrentEnnemy->Ennemy->iNbrTowerBetweenAttack)
-						{
-							CurrentEnnemy->Ennemy->iTowerToAttackId = -1;
-							CurrentEnnemy->Ennemy->iTowerIsChosen = 0;
-							CurrentEnnemy->Ennemy->iIsAttack = sfTrue;
-						}
-					}
-
-	#pragma endregion GESTION COMPTEUR DE VEINE PASSE PAR ENNEMI
-
-	#pragma region ATTAQUE CAILLOT DE SANG
-
-
-
-					if (CurrentEnnemy->Ennemy->Type == CAILLOT)
-					{
-						/*attaque du cholesterol*/
-						if (CurrentEnnemy->Ennemy->iIsAttack == sfTrue)
-						{
-							/*repérage tour le plus proche grâce a la magnitude*/
-							CurrentTowerSlot = ListTowerSlot->FirstElement;
-							while (CurrentTowerSlot != NULL)
-							{
-								/*si une tour est construite je calcule la distance entre le point de spawn des globules blancs
-								qui correspond donc a la position de la zone de détection*/
-								if (CurrentTowerSlot->TowerSlot->IsBuild == sfTrue)
+								CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.x = CurrentTowerSlot->TowerSlot->vSpawnPos.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
+								CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.y = CurrentTowerSlot->TowerSlot->vSpawnPos.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
+								/*Veine actuelle dans laquelle se situe l'ennemi*/
+								if (Magnitude(CurrentEnnemy->Ennemy->vDistToTowerDetectionPos) < DETECTION_POSITION_RADIUS)
 								{
-									CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.x = CurrentTowerSlot->TowerSlot->vSpawnPos.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
-									CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.y = CurrentTowerSlot->TowerSlot->vSpawnPos.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
-									if (Magnitude(CurrentEnnemy->Ennemy->vDistToTowerDetectionPos) < DETECTION_POSITION_RADIUS)
-									{
-										/*la tour a attaquer possède l'id du slot*/
 
-										if (CurrentEnnemy->Ennemy->iTowerIsChosen == 0)
+									CurrentEnnemy->Ennemy->iCurrentTowerDetectionZoneId = CurrentTowerSlot->Id;
+									CurrentEnnemy->Ennemy->EnnemyIsInTheDetectionZone = sfTrue;
+
+								}
+							}
+
+							/*je fais mon calcul pour définir que l'ennemi a passer la veine seulement avec la veine que je sauvegarde*/
+							if (CurrentEnnemy->Ennemy->iCurrentTowerDetectionZoneId == CurrentTowerSlot->Id)
+							{
+								CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.x = CurrentTowerSlot->TowerSlot->vSpawnPos.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
+								CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.y = CurrentTowerSlot->TowerSlot->vSpawnPos.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
+								if (Magnitude(CurrentEnnemy->Ennemy->vDistToTowerDetectionPos) > DETECTION_POSITION_RADIUS + 20
+									&& CurrentEnnemy->Ennemy->EnnemyIsInTheDetectionZone == sfTrue)
+								{
+									CurrentEnnemy->Ennemy->EnnemyIsInTheDetectionZone = sfFalse;
+									CurrentEnnemy->Ennemy->iNbrTowerSinceLastAttack++;
+									CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.x = 0;
+									CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.y = 0;
+								}
+
+							}
+
+							CurrentTowerSlot = CurrentTowerSlot->NextElement;
+						}
+
+						/*CONDITIONS POUR QU'UN ENNEMI ATTAQUE*/
+						if (CurrentEnnemy->Ennemy->iIsAttack == sfFalse)
+						{
+							CurrentEnnemy->Ennemy->fTimeSinceLastAttack += timeSinceLastFrame;
+							if (CurrentEnnemy->Ennemy->fTimeSinceLastAttack > CurrentEnnemy->Ennemy->fTimeBetweenAttack
+								&& CurrentEnnemy->Ennemy->iNbrTowerSinceLastAttack >= CurrentEnnemy->Ennemy->iNbrTowerBetweenAttack)
+							{
+								CurrentEnnemy->Ennemy->iTowerToAttackId = -1;
+								CurrentEnnemy->Ennemy->iTowerIsChosen = 0;
+								CurrentEnnemy->Ennemy->iIsAttack = sfTrue;
+							}
+						}
+
+#pragma endregion GESTION COMPTEUR DE VEINE PASSE PAR ENNEMI
+
+#pragma region ATTAQUE CAILLOT DE SANG
+
+
+
+						if (CurrentEnnemy->Ennemy->Type == CAILLOT)
+						{
+							/*attaque du cholesterol*/
+							if (CurrentEnnemy->Ennemy->iIsAttack == sfTrue)
+							{
+								/*repérage tour le plus proche grâce a la magnitude*/
+								CurrentTowerSlot = ListTowerSlot->FirstElement;
+								while (CurrentTowerSlot != NULL)
+								{
+									/*si une tour est construite je calcule la distance entre le point de spawn des globules blancs
+									qui correspond donc a la position de la zone de détection*/
+									if (CurrentTowerSlot->TowerSlot->IsBuild == sfTrue)
+									{
+										CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.x = CurrentTowerSlot->TowerSlot->vSpawnPos.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
+										CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.y = CurrentTowerSlot->TowerSlot->vSpawnPos.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
+										if (Magnitude(CurrentEnnemy->Ennemy->vDistToTowerDetectionPos) < DETECTION_POSITION_RADIUS)
 										{
-											CurrentEnnemy->Ennemy->iTowerToAttackId = CurrentTowerSlot->TowerSlot->TowerBuildId;
-											CurrentEnnemy->Ennemy->vPosTowerToAttack.x = CurrentTowerSlot->TowerSlot->vPos.x;
-											CurrentEnnemy->Ennemy->vPosTowerToAttack.y = CurrentTowerSlot->TowerSlot->vPos.y;
-											CurrentEnnemy->Ennemy->iTowerIsChosen = 1;
+											/*la tour a attaquer possède l'id du slot*/
+
+											if (CurrentEnnemy->Ennemy->iTowerIsChosen == 0)
+											{
+												CurrentEnnemy->Ennemy->iTowerToAttackId = CurrentTowerSlot->TowerSlot->TowerBuildId;
+												CurrentEnnemy->Ennemy->vPosTowerToAttack.x = CurrentTowerSlot->TowerSlot->vPos.x;
+												CurrentEnnemy->Ennemy->vPosTowerToAttack.y = CurrentTowerSlot->TowerSlot->vPos.y;
+												CurrentEnnemy->Ennemy->iTowerIsChosen = 1;
+											}
 										}
 									}
+									CurrentTowerSlot = CurrentTowerSlot->NextElement;
 								}
-								CurrentTowerSlot = CurrentTowerSlot->NextElement;
-							}
 
-							CurrentTower = ListTower->FirstElement;
-							while (CurrentTower != NULL)
-							{
-								if (CurrentEnnemy->Ennemy->iTowerIsChosen == 1)
+								CurrentTower = ListTower->FirstElement;
+								while (CurrentTower != NULL)
 								{
-									//printf("debug");
-									/*la tour visé*/
-									if (CurrentEnnemy->Ennemy->iTowerToAttackId == CurrentTower->Id)
+									if (CurrentEnnemy->Ennemy->iTowerIsChosen == 1)
 									{
-										CurrentEnnemy->Ennemy->vCurrentDirection.x = CurrentEnnemy->Ennemy->vPosTowerToAttack.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
-										CurrentEnnemy->Ennemy->vCurrentDirection.y = CurrentEnnemy->Ennemy->vPosTowerToAttack.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
-										//if (Magnitude(CurrentEnnemy->Ennemy->vCurrentDirection) < DETECTION_SLOT_RADIUS)
-										if (CurrentEnnemy->Ennemy->Color_ToCheck.r == 255)
+										//printf("debug");
+										/*la tour visé*/
+										if (CurrentEnnemy->Ennemy->iTowerToAttackId == CurrentTower->Id)
 										{
-											CurrentEnnemy->Ennemy->fTimeSinceLastAttack = 0;
-											CurrentEnnemy->Ennemy->iNbrTowerSinceLastAttack = 0;
-											/*dégats sur la tour*/
-											CurrentTower->Tower->iHP -= CurrentEnnemy->Ennemy->Deg;
+											CurrentEnnemy->Ennemy->vCurrentDirection.x = CurrentEnnemy->Ennemy->vPosTowerToAttack.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
+											CurrentEnnemy->Ennemy->vCurrentDirection.y = CurrentEnnemy->Ennemy->vPosTowerToAttack.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
+											//if (Magnitude(CurrentEnnemy->Ennemy->vCurrentDirection) < DETECTION_SLOT_RADIUS)
+											if (CurrentEnnemy->Ennemy->Color_ToCheck.r == 255)
+											{
+												CurrentEnnemy->Ennemy->fTimeSinceLastAttack = 0;
+												CurrentEnnemy->Ennemy->iNbrTowerSinceLastAttack = 0;
+												/*dégats sur la tour*/
+												CurrentTower->Tower->iHP -= CurrentEnnemy->Ennemy->Deg;
+												CurrentEnnemy->Ennemy->iIsAttack = sfFalse;
+												CurrentEnnemy->Ennemy->fTimeSinceLastAttack = 0;
+											}
+										}
+									}
+									CurrentTower = CurrentTower->NextElement;
+								}
+							}
+						}
+
+						if (CurrentEnnemy->Id == 0)
+						{
+							//printf("NBR TOWER SINCE LAST ATTACK : %d\n", CurrentEnnemy->Ennemy->iNbrTowerSinceLastAttack);
+						}
+
+#pragma endregion ATTAQUE CAILLOT DE SANG
+
+#pragma region ATTAQUE CHOLESTEROL
+
+						if (CurrentEnnemy->Ennemy->Type == CHOLESTEROL)
+						{
+
+
+							/*attaque du cholesterol*/
+							if (CurrentEnnemy->Ennemy->iIsAttack == sfTrue)
+							{
+								/*repérage tour le plus proche grâce a la magnitude*/
+								CurrentTowerSlot = ListTowerSlot->FirstElement;
+								while (CurrentTowerSlot != NULL)
+								{
+									/*si une tour est construite je calcule la distance entre le point de spawn des globules blancs
+									qui correspond donc a la position de la zone de détection*/
+									if (CurrentTowerSlot->TowerSlot->IsBuild == sfTrue)
+									{
+										CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.x = CurrentTowerSlot->TowerSlot->vSpawnPos.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
+										CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.y = CurrentTowerSlot->TowerSlot->vSpawnPos.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
+										if (Magnitude(CurrentEnnemy->Ennemy->vDistToTowerDetectionPos) < DETECTION_POSITION_RADIUS)
+										{
+											/*la tour a attaquer possède l'id du slot*/
+
+											if (CurrentEnnemy->Ennemy->iTowerIsChosen == 0)
+											{
+												CurrentEnnemy->Ennemy->iTowerToAttackId = CurrentTowerSlot->TowerSlot->TowerBuildId;
+												CurrentEnnemy->Ennemy->iTowerIsChosen = 1;
+											}
+										}
+									}
+									CurrentTowerSlot = CurrentTowerSlot->NextElement;
+								}
+
+								CurrentTower = ListTower->FirstElement;
+								while (CurrentTower != NULL)
+								{
+									if (CurrentEnnemy->Ennemy->iTowerIsChosen == 1)
+									{
+										//printf("debug");
+										/*la tour visé*/
+										if (CurrentEnnemy->Ennemy->iTowerToAttackId == CurrentTower->Id)
+										{
+											CurrentEnnemy->Ennemy->vPosTowerToAttack.x = CurrentTower->Tower->vPos.x;
+											CurrentEnnemy->Ennemy->vPosTowerToAttack.y = CurrentTower->Tower->vPos.y;
+
+											/*création d'une balle*/
+#pragma region CHOLESTEROL BULLET
+
+											NewEnnemyBullet = AddElementBeginListEnnemyBullet(ListEnnemyBullet);
+											NewEnnemyBullet->EnnemyBullet = malloc(sizeof(t_EnnemyBullet));
+
+											NewEnnemyBullet->EnnemyBullet->iTowerToTargetId = CurrentEnnemy->Ennemy->iTowerToAttackId;
+											NewEnnemyBullet->EnnemyBullet->sprite = Sp_EnnemyBullet;
+											NewEnnemyBullet->EnnemyBullet->Deg = CurrentEnnemy->Ennemy->Deg;
+											NewEnnemyBullet->EnnemyBullet->fSpeedMax = CHOLESTEROL_BULLET_SPEED;
+											NewEnnemyBullet->EnnemyBullet->fSpeed = 0;
+											NewEnnemyBullet->EnnemyBullet->iHP = 1;
+
+											NewEnnemyBullet->EnnemyBullet->vOrigin.x = sfSprite_getGlobalBounds(NewEnnemyBullet->EnnemyBullet->sprite).width / 2;
+											NewEnnemyBullet->EnnemyBullet->vOrigin.y = sfSprite_getGlobalBounds(NewEnnemyBullet->EnnemyBullet->sprite).height / 2;
+											sfSprite_setOrigin(NewEnnemyBullet->EnnemyBullet->sprite, NewEnnemyBullet->EnnemyBullet->vOrigin);
+											NewEnnemyBullet->EnnemyBullet->vPos.x = CurrentEnnemy->Ennemy->vCurrentPosition.x;
+											NewEnnemyBullet->EnnemyBullet->vPos.y = CurrentEnnemy->Ennemy->vCurrentPosition.y;
+											sfSprite_setPosition(NewEnnemyBullet->EnnemyBullet->sprite, NewEnnemyBullet->EnnemyBullet->vPos);
+											NewEnnemyBullet->EnnemyBullet->vCurrentDirection.x = CurrentTower->Tower->vPos.x - NewEnnemyBullet->EnnemyBullet->vPos.x;
+											NewEnnemyBullet->EnnemyBullet->vCurrentDirection.y = CurrentTower->Tower->vPos.y - NewEnnemyBullet->EnnemyBullet->vPos.y;
+											NewEnnemyBullet->EnnemyBullet->fAngleSprite = GetAngleDegreeFromVector(NewEnnemyBullet->EnnemyBullet->vCurrentDirection);
+											sfSprite_setRotation(NewEnnemyBullet->EnnemyBullet->sprite, NewEnnemyBullet->EnnemyBullet->fAngleSprite);
+
+#pragma endregion CHOLESTEROL BULLET
 											CurrentEnnemy->Ennemy->iIsAttack = sfFalse;
 											CurrentEnnemy->Ennemy->fTimeSinceLastAttack = 0;
 										}
 									}
+
+									CurrentTower = CurrentTower->NextElement;
 								}
-								CurrentTower = CurrentTower->NextElement;
 							}
 						}
-					}
 
-					if (CurrentEnnemy->Id == 0)
-					{
-						//printf("NBR TOWER SINCE LAST ATTACK : %d\n", CurrentEnnemy->Ennemy->iNbrTowerSinceLastAttack);
-					}
+#pragma endregion ATTAQUE CHOLESTEROL
 
-	#pragma endregion ATTAQUE CAILLOT DE SANG
+#pragma region GESTION CHOLESTEROL
 
-	#pragma region ATTAQUE CHOLESTEROL
-
-					if (CurrentEnnemy->Ennemy->Type == CHOLESTEROL)
-					{
-
-
-						/*attaque du cholesterol*/
-						if (CurrentEnnemy->Ennemy->iIsAttack == sfTrue)
+						if (CurrentEnnemy->Ennemy->Type == CHOLESTEROL)
 						{
-							/*repérage tour le plus proche grâce a la magnitude*/
-							CurrentTowerSlot = ListTowerSlot->FirstElement;
-							while (CurrentTowerSlot != NULL)
+							if (CurrentEnnemy->Ennemy->Hp < (CurrentEnnemy->Ennemy->HpMax * 0.7))
 							{
-								/*si une tour est construite je calcule la distance entre le point de spawn des globules blancs
-								qui correspond donc a la position de la zone de détection*/
-								if (CurrentTowerSlot->TowerSlot->IsBuild == sfTrue)
-								{
-									CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.x = CurrentTowerSlot->TowerSlot->vSpawnPos.x - CurrentEnnemy->Ennemy->vCurrentPosition.x;
-									CurrentEnnemy->Ennemy->vDistToTowerDetectionPos.y = CurrentTowerSlot->TowerSlot->vSpawnPos.y - CurrentEnnemy->Ennemy->vCurrentPosition.y;
-									if (Magnitude(CurrentEnnemy->Ennemy->vDistToTowerDetectionPos) < DETECTION_POSITION_RADIUS)
-									{
-										/*la tour a attaquer possède l'id du slot*/
-
-										if (CurrentEnnemy->Ennemy->iTowerIsChosen == 0)
-										{
-											CurrentEnnemy->Ennemy->iTowerToAttackId = CurrentTowerSlot->TowerSlot->TowerBuildId;
-											CurrentEnnemy->Ennemy->iTowerIsChosen = 1;
-										}
-									}
-								}
-								CurrentTowerSlot = CurrentTowerSlot->NextElement;
+								CurrentEnnemy->Ennemy->iSize = MEDIUM;
+								CurrentEnnemy->Ennemy->Deg = 3;
+								CurrentEnnemy->Ennemy->fSpeedMax = CHOLESTEROL_SPEED * 1.5;
+								CurrentEnnemy->Ennemy->vScale.x = 0.6;
+								CurrentEnnemy->Ennemy->vScale.y = 0.6;
 							}
 
-							CurrentTower = ListTower->FirstElement;
-							while (CurrentTower != NULL)
+							if (CurrentEnnemy->Ennemy->Hp < (CurrentEnnemy->Ennemy->HpMax * 0.3))
 							{
-								if (CurrentEnnemy->Ennemy->iTowerIsChosen == 1)
-								{
-									printf("debug");
-									/*la tour visé*/
-									if (CurrentEnnemy->Ennemy->iTowerToAttackId == CurrentTower->Id)
-									{
-										CurrentEnnemy->Ennemy->vPosTowerToAttack.x = CurrentTower->Tower->vPos.x;
-										CurrentEnnemy->Ennemy->vPosTowerToAttack.y = CurrentTower->Tower->vPos.y;
-
-										/*création d'une balle*/
-	#pragma region CHOLESTEROL BULLET
-
-										NewEnnemyBullet = AddElementBeginListEnnemyBullet(ListEnnemyBullet);
-										NewEnnemyBullet->EnnemyBullet = malloc(sizeof(t_EnnemyBullet));
-
-										NewEnnemyBullet->EnnemyBullet->iTowerToTargetId = CurrentEnnemy->Ennemy->iTowerToAttackId;
-										NewEnnemyBullet->EnnemyBullet->sprite = Sp_EnnemyBullet;
-										NewEnnemyBullet->EnnemyBullet->Deg = CurrentEnnemy->Ennemy->Deg;
-										NewEnnemyBullet->EnnemyBullet->fSpeedMax = CHOLESTEROL_BULLET_SPEED;
-										NewEnnemyBullet->EnnemyBullet->fSpeed = 0;
-										NewEnnemyBullet->EnnemyBullet->iHP = 1;
-
-										NewEnnemyBullet->EnnemyBullet->vOrigin.x = sfSprite_getGlobalBounds(NewEnnemyBullet->EnnemyBullet->sprite).width / 2;
-										NewEnnemyBullet->EnnemyBullet->vOrigin.y = sfSprite_getGlobalBounds(NewEnnemyBullet->EnnemyBullet->sprite).height / 2;
-										sfSprite_setOrigin(NewEnnemyBullet->EnnemyBullet->sprite, NewEnnemyBullet->EnnemyBullet->vOrigin);
-										NewEnnemyBullet->EnnemyBullet->vPos.x = CurrentEnnemy->Ennemy->vCurrentPosition.x;
-										NewEnnemyBullet->EnnemyBullet->vPos.y = CurrentEnnemy->Ennemy->vCurrentPosition.y;
-										sfSprite_setPosition(NewEnnemyBullet->EnnemyBullet->sprite, NewEnnemyBullet->EnnemyBullet->vPos);
-										NewEnnemyBullet->EnnemyBullet->vCurrentDirection.x = CurrentTower->Tower->vPos.x - NewEnnemyBullet->EnnemyBullet->vPos.x;
-										NewEnnemyBullet->EnnemyBullet->vCurrentDirection.y = CurrentTower->Tower->vPos.y - NewEnnemyBullet->EnnemyBullet->vPos.y;
-										NewEnnemyBullet->EnnemyBullet->fAngleSprite = GetAngleDegreeFromVector(NewEnnemyBullet->EnnemyBullet->vCurrentDirection);
-										sfSprite_setRotation(NewEnnemyBullet->EnnemyBullet->sprite, NewEnnemyBullet->EnnemyBullet->fAngleSprite);
-
-	#pragma endregion CHOLESTEROL BULLET
-										CurrentEnnemy->Ennemy->iIsAttack = sfFalse;
-										CurrentEnnemy->Ennemy->fTimeSinceLastAttack = 0;
-									}
-								}
-
-								CurrentTower = CurrentTower->NextElement;
+								CurrentEnnemy->Ennemy->iSize = SMALL;
+								CurrentEnnemy->Ennemy->Deg = 1;
+								CurrentEnnemy->Ennemy->fSpeedMax = CHOLESTEROL_SPEED * 2;
+								CurrentEnnemy->Ennemy->vScale.x = 0.3;
+								CurrentEnnemy->Ennemy->vScale.y = 0.3;
 							}
 						}
-					}
 
-	#pragma endregion ATTAQUE CHOLESTEROL
+#pragma endregion GESTION CHOLESTEROL
 
-	#pragma region GESTION CHOLESTEROL
+						/*GESTION VELOCITE / VITESSE*/
 
-					if (CurrentEnnemy->Ennemy->Type == CHOLESTEROL)
-					{
-						if (CurrentEnnemy->Ennemy->Hp < (CurrentEnnemy->Ennemy->HpMax * 0.7))
+#pragma region GESTION VELOCITE / VITESSE //GUILLAUME
+
+						if (CurrentEnnemy->Ennemy->fSpeed < 0)
 						{
-							CurrentEnnemy->Ennemy->iSize = MEDIUM;
-							CurrentEnnemy->Ennemy->Deg = 3;
-							CurrentEnnemy->Ennemy->fSpeedMax = CHOLESTEROL_SPEED * 1.5;
-							CurrentEnnemy->Ennemy->vScale.x = 0.6;
-							CurrentEnnemy->Ennemy->vScale.y = 0.6;
+							CurrentEnnemy->Ennemy->fSpeed = 0;
 						}
 
-						if (CurrentEnnemy->Ennemy->Hp < (CurrentEnnemy->Ennemy->HpMax * 0.3))
+						if (CurrentEnnemy->Ennemy->fSpeed < CurrentEnnemy->Ennemy->fSpeedMax)
 						{
-							CurrentEnnemy->Ennemy->iSize = SMALL;
-							CurrentEnnemy->Ennemy->Deg = 1;
-							CurrentEnnemy->Ennemy->fSpeedMax = CHOLESTEROL_SPEED * 2;
-							CurrentEnnemy->Ennemy->vScale.x = 0.3;
-							CurrentEnnemy->Ennemy->vScale.y = 0.3;
+							CurrentEnnemy->Ennemy->fSpeed += ENNEMY_ACCELERATION;
 						}
-					}
-
-	#pragma endregion GESTION CHOLESTEROL
-
-					/*GESTION VELOCITE / VITESSE*/
-
-	#pragma region GESTION VELOCITE / VITESSE //GUILLAUME
-
-					if (CurrentEnnemy->Ennemy->fSpeed < 0)
-					{
-						CurrentEnnemy->Ennemy->fSpeed = 0;
-					}
-
-					if (CurrentEnnemy->Ennemy->fSpeed < CurrentEnnemy->Ennemy->fSpeedMax)
-					{
-						CurrentEnnemy->Ennemy->fSpeed += ENNEMY_ACCELERATION;
-					}
-					else if (CurrentEnnemy->Ennemy->fSpeed > CurrentEnnemy->Ennemy->fSpeedMax)
-					{
-						CurrentEnnemy->Ennemy->fSpeed -= ENNEMY_ACCELERATION;
-					}
-
-	#pragma endregion GESTION VELOCITE / VITESSE //GUILLAUME
-
-	#pragma region POSITION & VELOCITE
-
-					/*VELOCITY*/
-					CurrentEnnemy->Ennemy->vCurrentVelocity.x = CurrentEnnemy->Ennemy->vCurrentDirection.x * (CurrentEnnemy->Ennemy->fSpeed*CurrentEnnemy->Ennemy->fSpeedFactor);
-					CurrentEnnemy->Ennemy->vCurrentVelocity.y = CurrentEnnemy->Ennemy->vCurrentDirection.y *(CurrentEnnemy->Ennemy->fSpeed*CurrentEnnemy->Ennemy->fSpeedFactor);
-					CurrentEnnemy->Ennemy->vCurrentVelocity = Truncate(CurrentEnnemy->Ennemy->vCurrentVelocity, CurrentEnnemy->Ennemy->fSpeedMax);
-
-					/*POSIITON*/
-					CurrentEnnemy->Ennemy->vCurrentPosition.x += CurrentEnnemy->Ennemy->vCurrentVelocity.x * timeSinceLastFrame;
-					CurrentEnnemy->Ennemy->vCurrentPosition.y += CurrentEnnemy->Ennemy->vCurrentVelocity.y * timeSinceLastFrame;
-
-	#pragma endregion POSITION & VELOCITE
-
-	#pragma region ANIMATION
-
-					CurrentEnnemy->Ennemy->fTimeSinceLastAnimation += timeSinceLastFrame;
-					if (CurrentEnnemy->Ennemy->fTimeSinceLastAnimation > CurrentEnnemy->Ennemy->fTimeBetweenAnimation)
-					{
-						CurrentEnnemy->Ennemy->fTimeSinceLastAnimation = 0;
-						/*if (CurrentEnnemy->Ennemy->iAnimationFrameX < CurrentEnnemy->Ennemy->iNbrFrameX - 1)
+						else if (CurrentEnnemy->Ennemy->fSpeed > CurrentEnnemy->Ennemy->fSpeedMax)
 						{
-						CurrentEnnemy->Ennemy->iAnimationFrameX++;
+							CurrentEnnemy->Ennemy->fSpeed -= ENNEMY_ACCELERATION;
 						}
-						else
-						CurrentEnnemy->Ennemy->iAnimationFrameX = 0;*/
 
-					}
+#pragma endregion GESTION VELOCITE / VITESSE //GUILLAUME
 
-					CurrentEnnemy->Ennemy->animRect.left = CurrentEnnemy->Ennemy->animRect.width * CurrentEnnemy->Ennemy->iAnimationFrameX;
-					CurrentEnnemy->Ennemy->animRect.top = CurrentEnnemy->Ennemy->animRect.height * CurrentEnnemy->Ennemy->dirState;
+#pragma region POSITION & VELOCITE
 
+						/*VELOCITY*/
+						CurrentEnnemy->Ennemy->vCurrentVelocity.x = CurrentEnnemy->Ennemy->vCurrentDirection.x * (CurrentEnnemy->Ennemy->fSpeed*CurrentEnnemy->Ennemy->fSpeedFactor);
+						CurrentEnnemy->Ennemy->vCurrentVelocity.y = CurrentEnnemy->Ennemy->vCurrentDirection.y *(CurrentEnnemy->Ennemy->fSpeed*CurrentEnnemy->Ennemy->fSpeedFactor);
+						CurrentEnnemy->Ennemy->vCurrentVelocity = Truncate(CurrentEnnemy->Ennemy->vCurrentVelocity, CurrentEnnemy->Ennemy->fSpeedMax);
 
-	#pragma endregion ANIMATION
+						/*POSIITON*/
+						CurrentEnnemy->Ennemy->vCurrentPosition.x += CurrentEnnemy->Ennemy->vCurrentVelocity.x * timeSinceLastFrame;
+						CurrentEnnemy->Ennemy->vCurrentPosition.y += CurrentEnnemy->Ennemy->vCurrentVelocity.y * timeSinceLastFrame;
 
-	#pragma region PERTE DE PV OBJECTIF
+#pragma endregion POSITION & VELOCITE
 
-					if (CurrentEnnemy->Ennemy->vCurrentPosition.x < CurrentEnnemy->Ennemy->vTargetPostion.x + ENNEMY_DIST_FROM_TARGET_TO_DELETE
-						&& CurrentEnnemy->Ennemy->vCurrentPosition.x > CurrentEnnemy->Ennemy->vTargetPostion.x - ENNEMY_DIST_FROM_TARGET_TO_DELETE
-						&& CurrentEnnemy->Ennemy->vCurrentPosition.y < CurrentEnnemy->Ennemy->vTargetPostion.y + ENNEMY_DIST_FROM_TARGET_TO_DELETE
-						&& CurrentEnnemy->Ennemy->vCurrentPosition.y > CurrentEnnemy->Ennemy->vTargetPostion.y - ENNEMY_DIST_FROM_TARGET_TO_DELETE)
-					{
-						CurrentEnnemy->Ennemy->iDespawn = 1;
-					}
+#pragma region ANIMATION
 
-					if (CurrentEnnemy->Ennemy->iDespawn == 1)
-					{
-						if (iGoalHp > 0)
+						CurrentEnnemy->Ennemy->fTimeSinceLastAnimation += timeSinceLastFrame;
+						if (CurrentEnnemy->Ennemy->fTimeSinceLastAnimation > CurrentEnnemy->Ennemy->fTimeBetweenAnimation)
 						{
-							iGoalHp -= CurrentEnnemy->Ennemy->Deg;
+							CurrentEnnemy->Ennemy->fTimeSinceLastAnimation = 0;
+							/*if (CurrentEnnemy->Ennemy->iAnimationFrameX < CurrentEnnemy->Ennemy->iNbrFrameX - 1)
+							{
+							CurrentEnnemy->Ennemy->iAnimationFrameX++;
+							}
+							else
+							CurrentEnnemy->Ennemy->iAnimationFrameX = 0;*/
+
 						}
-						else
+
+						CurrentEnnemy->Ennemy->animRect.left = CurrentEnnemy->Ennemy->animRect.width * CurrentEnnemy->Ennemy->iAnimationFrameX;
+						CurrentEnnemy->Ennemy->animRect.top = CurrentEnnemy->Ennemy->animRect.height * CurrentEnnemy->Ennemy->dirState;
+
+
+#pragma endregion ANIMATION
+
+#pragma region PERTE DE PV OBJECTIF
+
+						if (CurrentEnnemy->Ennemy->vCurrentPosition.x < CurrentEnnemy->Ennemy->vTargetPostion.x + ENNEMY_DIST_FROM_TARGET_TO_DELETE
+							&& CurrentEnnemy->Ennemy->vCurrentPosition.x > CurrentEnnemy->Ennemy->vTargetPostion.x - ENNEMY_DIST_FROM_TARGET_TO_DELETE
+							&& CurrentEnnemy->Ennemy->vCurrentPosition.y < CurrentEnnemy->Ennemy->vTargetPostion.y + ENNEMY_DIST_FROM_TARGET_TO_DELETE
+							&& CurrentEnnemy->Ennemy->vCurrentPosition.y > CurrentEnnemy->Ennemy->vTargetPostion.y - ENNEMY_DIST_FROM_TARGET_TO_DELETE)
 						{
-							iGoalHp = 0;
+							CurrentEnnemy->Ennemy->iDespawn = 1;
 						}
-						/*PIROUETTE*/
-						CurrentEnnemy->Ennemy->Hp = -200;
+
+						if (CurrentEnnemy->Ennemy->iDespawn == 1)
+						{
+							if (iGoalHp > 0)
+							{
+								iGoalHp -= CurrentEnnemy->Ennemy->Deg;
+							}
+							else
+							{
+								iGoalHp = 0;
+							}
+							/*PIROUETTE*/
+							CurrentEnnemy->Ennemy->Hp = -200;
+						}
+
+
+#pragma endregion PERTE DE PV OBJECTIF
+
+						//printf("ANGLE SPRITE : %.2f | CURRENT ANGLE : %.2f\n", CurrentEnnemy->Ennemy->fAngleSprite, CurrentEnnemy->Ennemy->fCurrentAngleDirection);
+						//CurrentEnnemy->Ennemy->fAngleSprite = GetAngleDegreeFromVector(CurrentEnnemy->Ennemy->vCurrentVelocity);
+
+						//printf("DIRECTION X : %.2f | DIRECTION Y : %.2f\n", CurrentEnnemy->Ennemy->vCurrentDirection.x, CurrentEnnemy->Ennemy->vCurrentDirection.y);
+						//printf("VELOCITY X : %.2f | VELOCITY Y : %.2f\n", CurrentEnnemy->Ennemy->vCurrentVelocity.x, CurrentEnnemy->Ennemy->vCurrentVelocity.y);
+						//printf("COLLIDE : %d\n", CurrentEnnemy->Ennemy->iIsColliding);
+						CurrentEnnemy = CurrentEnnemy->NextElement;
+
 					}
-
-
-	#pragma endregion PERTE DE PV OBJECTIF
-
-					//printf("ANGLE SPRITE : %.2f | CURRENT ANGLE : %.2f\n", CurrentEnnemy->Ennemy->fAngleSprite, CurrentEnnemy->Ennemy->fCurrentAngleDirection);
-					//CurrentEnnemy->Ennemy->fAngleSprite = GetAngleDegreeFromVector(CurrentEnnemy->Ennemy->vCurrentVelocity);
-
-					//printf("DIRECTION X : %.2f | DIRECTION Y : %.2f\n", CurrentEnnemy->Ennemy->vCurrentDirection.x, CurrentEnnemy->Ennemy->vCurrentDirection.y);
-					//printf("VELOCITY X : %.2f | VELOCITY Y : %.2f\n", CurrentEnnemy->Ennemy->vCurrentVelocity.x, CurrentEnnemy->Ennemy->vCurrentVelocity.y);
-					//printf("COLLIDE : %d\n", CurrentEnnemy->Ennemy->iIsColliding);
-					CurrentEnnemy = CurrentEnnemy->NextElement;
 
 				}
-
-	#pragma endregion READ LIST ENNEMY CALCUL //GUILLAUME
+#pragma endregion READ LIST ENNEMY CALCUL //GUILLAUME
 
 	#pragma region CALCUL LIST ENNEMY BULLET //GUILLAUME
 
-				CurrentEnnemyBullet = ListEnnemyBullet->FirstElement;
-				while (CurrentEnnemyBullet != NULL)
+				if (!isPaused)
 				{
-					/*VITESSE DE LA BALLE*/
-					if (CurrentEnnemyBullet->EnnemyBullet->fSpeed < 0)
-					{
-						CurrentEnnemyBullet->EnnemyBullet->fSpeed = 0;
-					}
-
-					if (CurrentEnnemyBullet->EnnemyBullet->fSpeed < CurrentEnnemyBullet->EnnemyBullet->fSpeedMax)
-					{
-						CurrentEnnemyBullet->EnnemyBullet->fSpeed += CHOLESTEROL_BULLET_ACCELERATION;
-					}
-					else if (CurrentEnnemyBullet->EnnemyBullet->fSpeed > CurrentEnnemyBullet->EnnemyBullet->fSpeedMax)
-					{
-						CurrentEnnemyBullet->EnnemyBullet->fSpeed -= CHOLESTEROL_BULLET_ACCELERATION;
-					}
-
-					/*DIRECTION DE LA BALLE*/
-					/*VELOCITY*/
-					CurrentEnnemyBullet->EnnemyBullet->vCurrentVelocity.x = CurrentEnnemyBullet->EnnemyBullet->vCurrentDirection.x * CurrentEnnemyBullet->EnnemyBullet->fSpeed;
-					CurrentEnnemyBullet->EnnemyBullet->vCurrentVelocity.y = CurrentEnnemyBullet->EnnemyBullet->vCurrentDirection.y * CurrentEnnemyBullet->EnnemyBullet->fSpeed;
-					CurrentEnnemyBullet->EnnemyBullet->vCurrentVelocity = Truncate(CurrentEnnemyBullet->EnnemyBullet->vCurrentVelocity, CurrentEnnemyBullet->EnnemyBullet->fSpeedMax);
-
-					/*POSIITON*/
-					CurrentEnnemyBullet->EnnemyBullet->vPos.x += CurrentEnnemyBullet->EnnemyBullet->vCurrentVelocity.x * timeSinceLastFrame;
-					CurrentEnnemyBullet->EnnemyBullet->vPos.y += CurrentEnnemyBullet->EnnemyBullet->vCurrentVelocity.y * timeSinceLastFrame;
-
-					/*COLLISION AVEC UNE TOWER*/
-					CurrentTower = ListTower->FirstElement;
-					while (CurrentTower != NULL)
-					{
-						if (CurrentTower->Id == CurrentEnnemyBullet->EnnemyBullet->iTowerToTargetId)
+						CurrentEnnemyBullet = ListEnnemyBullet->FirstElement;
+						while (CurrentEnnemyBullet != NULL)
 						{
-							if (SpriteIsOverPosition(CurrentEnnemyBullet->EnnemyBullet->vPos, CurrentEnnemyBullet->EnnemyBullet->vOrigin, CurrentTower->Tower->vPos, CurrentEnnemyBullet->EnnemyBullet->vOrigin))
+							/*VITESSE DE LA BALLE*/
+							if (CurrentEnnemyBullet->EnnemyBullet->fSpeed < 0)
 							{
-								CurrentTower->Tower->iHP -= CurrentEnnemyBullet->EnnemyBullet->Deg;
-								CurrentEnnemyBullet->EnnemyBullet->iHP = 0;
+								CurrentEnnemyBullet->EnnemyBullet->fSpeed = 0;
 							}
+
+							if (CurrentEnnemyBullet->EnnemyBullet->fSpeed < CurrentEnnemyBullet->EnnemyBullet->fSpeedMax)
+							{
+								CurrentEnnemyBullet->EnnemyBullet->fSpeed += CHOLESTEROL_BULLET_ACCELERATION;
+							}
+							else if (CurrentEnnemyBullet->EnnemyBullet->fSpeed > CurrentEnnemyBullet->EnnemyBullet->fSpeedMax)
+							{
+								CurrentEnnemyBullet->EnnemyBullet->fSpeed -= CHOLESTEROL_BULLET_ACCELERATION;
+							}
+
+							/*DIRECTION DE LA BALLE*/
+							/*VELOCITY*/
+							CurrentEnnemyBullet->EnnemyBullet->vCurrentVelocity.x = CurrentEnnemyBullet->EnnemyBullet->vCurrentDirection.x * CurrentEnnemyBullet->EnnemyBullet->fSpeed;
+							CurrentEnnemyBullet->EnnemyBullet->vCurrentVelocity.y = CurrentEnnemyBullet->EnnemyBullet->vCurrentDirection.y * CurrentEnnemyBullet->EnnemyBullet->fSpeed;
+							CurrentEnnemyBullet->EnnemyBullet->vCurrentVelocity = Truncate(CurrentEnnemyBullet->EnnemyBullet->vCurrentVelocity, CurrentEnnemyBullet->EnnemyBullet->fSpeedMax);
+
+							/*POSIITON*/
+							CurrentEnnemyBullet->EnnemyBullet->vPos.x += CurrentEnnemyBullet->EnnemyBullet->vCurrentVelocity.x * timeSinceLastFrame;
+							CurrentEnnemyBullet->EnnemyBullet->vPos.y += CurrentEnnemyBullet->EnnemyBullet->vCurrentVelocity.y * timeSinceLastFrame;
+
+							/*COLLISION AVEC UNE TOWER*/
+							CurrentTower = ListTower->FirstElement;
+							while (CurrentTower != NULL)
+							{
+								if (CurrentTower->Id == CurrentEnnemyBullet->EnnemyBullet->iTowerToTargetId)
+								{
+									if (SpriteIsOverPosition(CurrentEnnemyBullet->EnnemyBullet->vPos, CurrentEnnemyBullet->EnnemyBullet->vOrigin, CurrentTower->Tower->vPos, CurrentEnnemyBullet->EnnemyBullet->vOrigin))
+									{
+										CurrentTower->Tower->iHP -= CurrentEnnemyBullet->EnnemyBullet->Deg;
+										CurrentEnnemyBullet->EnnemyBullet->iHP = 0;
+										CurrentTower->Tower->isHit = sfTrue;
+										CurrentTower->Tower->tStartLifeBarDisplay = (float)clock() / CLOCKS_PER_SEC;
+									}
+								}
+								CurrentTower = CurrentTower->NextElement;
+							}
+							if (CurrentEnnemyBullet->EnnemyBullet->iHP <= 0)
+							{
+								DeleteElementByIdEnnemyBullet(ListEnnemyBullet, CurrentEnnemyBullet->Id);
+								break;
+							}
+							else
+								CurrentEnnemyBullet = CurrentEnnemyBullet->NextElement;
 						}
-						CurrentTower = CurrentTower->NextElement;
-					}
-					if (CurrentEnnemyBullet->EnnemyBullet->iHP <= 0)
-					{
-						DeleteElementByIdEnnemyBullet(ListEnnemyBullet, CurrentEnnemyBullet->Id);
-						break;
-					}
-					else
-						CurrentEnnemyBullet = CurrentEnnemyBullet->NextElement;
 				}
 
 	#pragma endregion CALCUL LIST ENNEMY BULLET //GUILLAUME
 
 	#pragma region LECTURE TRAITEMENT AFFICHAGE SLOTS TOURS //SEB
+
 				/*Lecture de liste pour le traitement/affichage des slot de tours*/
 				CurrentTowerSlot = ListTowerSlot->FirstElement;
 				while (CurrentTowerSlot != NULL)
 				{
-					vMousePos = sfMouse_getPosition(window);
-					vMousePosToFloat.x = (float)vMousePos.x;
-					vMousePosToFloat.y = (float)vMousePos.y;
-					Rect_TowerSlotBB.left = CurrentTowerSlot->TowerSlot->vPos.x - vOrigin_TowerSlot.x;
-					Rect_TowerSlotBB.top = CurrentTowerSlot->TowerSlot->vPos.y - vOrigin_TowerSlot.y;
-					Rect_TowerSlotBB.width = vOrigin_TowerSlot.x * 2;
-					Rect_TowerSlotBB.height = vOrigin_TowerSlot.y * 2;
-					if (sfFloatRect_contains(&Rect_TowerSlotBB, vMousePosToFloat.x, vMousePosToFloat.y) && !isInBuildChoice
-						&& !isBuildedChoice && !CurrentTowerSlot->TowerSlot->IsBuild)
+					if (!isPaused)
 					{
-						vMousePointToCheck.x = vOrigin_TowerSlot.x - (CurrentTowerSlot->TowerSlot->vPos.x - vMousePosToFloat.x);
-						vMousePointToCheck.y = vOrigin_TowerSlot.y - (CurrentTowerSlot->TowerSlot->vPos.y - vMousePosToFloat.y);
-						if (sfImage_getPixel(Img_TowerSlotMask, vMousePointToCheck.x, vMousePointToCheck.y).r == 255 && sfImage_getPixel(Img_TowerSlotMask, vMousePointToCheck.x, vMousePointToCheck.y).g == 0
-							&& sfImage_getPixel(Img_TowerSlotMask, vMousePointToCheck.x, vMousePointToCheck.y).b == 0 && sfImage_getPixel(Img_TowerSlotMask, vMousePointToCheck.x, vMousePointToCheck.y).a == 255)
+						vMousePos = sfMouse_getPosition(window);
+						vMousePosToFloat.x = (float)vMousePos.x;
+						vMousePosToFloat.y = (float)vMousePos.y;
+						Rect_TowerSlotBB.left = CurrentTowerSlot->TowerSlot->vPos.x - vOrigin_TowerSlot.x;
+						Rect_TowerSlotBB.top = CurrentTowerSlot->TowerSlot->vPos.y - vOrigin_TowerSlot.y;
+						Rect_TowerSlotBB.width = vOrigin_TowerSlot.x * 2;
+						Rect_TowerSlotBB.height = vOrigin_TowerSlot.y * 2;
+						if (sfFloatRect_contains(&Rect_TowerSlotBB, vMousePosToFloat.x, vMousePosToFloat.y) && !isInBuildChoice
+							&& !isBuildedChoice && !CurrentTowerSlot->TowerSlot->IsBuild)
 						{
-							sfSprite_setColor(Sp_TowerSlot, sfRed);
-							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed
-								&& !isInBuildChoice && !CurrentTowerSlot->TowerSlot->IsBuild)
+							vMousePointToCheck.x = vOrigin_TowerSlot.x - (CurrentTowerSlot->TowerSlot->vPos.x - vMousePosToFloat.x);
+							vMousePointToCheck.y = vOrigin_TowerSlot.y - (CurrentTowerSlot->TowerSlot->vPos.y - vMousePosToFloat.y);
+							if (sfImage_getPixel(Img_TowerSlotMask, vMousePointToCheck.x, vMousePointToCheck.y).r == 255 && sfImage_getPixel(Img_TowerSlotMask, vMousePointToCheck.x, vMousePointToCheck.y).g == 0
+								&& sfImage_getPixel(Img_TowerSlotMask, vMousePointToCheck.x, vMousePointToCheck.y).b == 0 && sfImage_getPixel(Img_TowerSlotMask, vMousePointToCheck.x, vMousePointToCheck.y).a == 255)
 							{
-								isInBuildChoice = sfTrue;
-								isMousePressed = sfTrue;
-								ActualTowerSlot = CurrentTowerSlot;
-								btn1->vPos = CurrentTowerSlot->TowerSlot->vPos;
-								btn2->vPos = CurrentTowerSlot->TowerSlot->vPos;
-								btn3->vPos = CurrentTowerSlot->TowerSlot->vPos;
+								sfSprite_setColor(Sp_TowerSlot, sfRed);
+								if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed
+									&& !isInBuildChoice && !CurrentTowerSlot->TowerSlot->IsBuild)
+								{
+									isInBuildChoice = sfTrue;
+									isMousePressed = sfTrue;
+									ActualTowerSlot = CurrentTowerSlot;
+									btn1->vPos = CurrentTowerSlot->TowerSlot->vPos;
+									btn2->vPos = CurrentTowerSlot->TowerSlot->vPos;
+									btn3->vPos = CurrentTowerSlot->TowerSlot->vPos;
+								}
+								else if (!sfMouse_isButtonPressed(sfMouseLeft))
+								{
+									isMousePressed = sfFalse;
+								}
 							}
-							else if (!sfMouse_isButtonPressed(sfMouseLeft))
+							else
 							{
-								isMousePressed = sfFalse;
+								sfSprite_setColor(Sp_TowerSlot, sfWhite);
 							}
 						}
 						else
@@ -2988,12 +3075,8 @@ int main()
 							sfSprite_setColor(Sp_TowerSlot, sfWhite);
 						}
 					}
-					else
-					{
-						sfSprite_setColor(Sp_TowerSlot, sfWhite);
-					}
-					sfSprite_setPosition(Sp_TowerSlot, CurrentTowerSlot->TowerSlot->vPos);
 
+					sfSprite_setPosition(Sp_TowerSlot, CurrentTowerSlot->TowerSlot->vPos);
 					sfRenderWindow_drawSprite(window, Sp_TowerSlot, NULL);
 					//if (btn1->isOver /*&& CurrentTowerSlot->TowerSlot->IsClicked*/)
 					//{
@@ -3023,269 +3106,506 @@ int main()
 
 	#pragma region LECTURE TRAITEMENT DES TOURS //SEB
 
-				/*Lecture de boucle TOUR pour le traitement*/
-				CurrentTower = ListTower->FirstElement;
-				while (CurrentTower != NULL)
+				if (!isPaused)
 				{
-					vMousePos = sfMouse_getPosition(window);
-					vMousePosToFloat.x = (float)vMousePos.x;
-					vMousePosToFloat.y = (float)vMousePos.y;
-
-					if (sfFloatRect_contains(&CurrentTower->Tower->boundingBox, vMousePosToFloat.x, vMousePosToFloat.y) && !isBuildedChoice)
+					/*Lecture de boucle TOUR pour le traitement*/
+					CurrentTower = ListTower->FirstElement;
+					while (CurrentTower != NULL)
 					{
+						vMousePos = sfMouse_getPosition(window);
+						vMousePosToFloat.x = (float)vMousePos.x;
+						vMousePosToFloat.y = (float)vMousePos.y;
 
-						vMousePointToCheck.x = (sfSprite_getGlobalBounds(CurrentTower->Tower->sprite).width / 2) - (CurrentTower->Tower->vPos.x - vMousePosToFloat.x);
-						vMousePointToCheck.y = (sfSprite_getGlobalBounds(CurrentTower->Tower->sprite).height - 15) - (CurrentTower->Tower->vPos.y - vMousePosToFloat.y);
-						if (sfImage_getPixel(Img_TowerMask, vMousePointToCheck.x, vMousePointToCheck.y).r == 255 && sfImage_getPixel(Img_TowerMask, vMousePointToCheck.x, vMousePointToCheck.y).g == 0
-							&& sfImage_getPixel(Img_TowerMask, vMousePointToCheck.x, vMousePointToCheck.y).b == 0 && sfImage_getPixel(Img_TowerMask, vMousePointToCheck.x, vMousePointToCheck.y).a == 255)
+						if (sfFloatRect_contains(&CurrentTower->Tower->boundingBox, vMousePosToFloat.x, vMousePosToFloat.y) && !isBuildedChoice)
 						{
-							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+
+							vMousePointToCheck.x = (sfSprite_getGlobalBounds(CurrentTower->Tower->sprite).width / 2) - (CurrentTower->Tower->vPos.x - vMousePosToFloat.x);
+							vMousePointToCheck.y = (sfSprite_getGlobalBounds(CurrentTower->Tower->sprite).height - 15) - (CurrentTower->Tower->vPos.y - vMousePosToFloat.y);
+							if (sfImage_getPixel(Img_TowerMask, vMousePointToCheck.x, vMousePointToCheck.y).r == 255 && sfImage_getPixel(Img_TowerMask, vMousePointToCheck.x, vMousePointToCheck.y).g == 0
+								&& sfImage_getPixel(Img_TowerMask, vMousePointToCheck.x, vMousePointToCheck.y).b == 0 && sfImage_getPixel(Img_TowerMask, vMousePointToCheck.x, vMousePointToCheck.y).a == 255)
 							{
-								isMousePressed = sfTrue;
-								isBuildedChoice = sfTrue;
-								ActualTower = CurrentTower;
-								btnUpgrade->vPos = ActualTower->Tower->vPos;
-								btnSell->vPos = ActualTower->Tower->vPos;
-							}
-							else if (!sfMouse_isButtonPressed(sfMouseLeft))
-							{
-								isMousePressed = sfFalse;
+								if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+								{
+									isMousePressed = sfTrue;
+									isBuildedChoice = sfTrue;
+									ActualTower = CurrentTower;
+									btnUpgrade->vPos = ActualTower->Tower->vPos;
+									btnSell->vPos = ActualTower->Tower->vPos;
+								}
+								else if (!sfMouse_isButtonPressed(sfMouseLeft))
+								{
+									isMousePressed = sfFalse;
+								}
 							}
 						}
-					}
 
-					/*delete de la tour //Guillaume*/
-					if (CurrentTower->Tower->iHP <= 0)
-					{
-						CurrentTowerSlot = ListTowerSlot->FirstElement;
-						while (CurrentTowerSlot != NULL)
+						/*delete de la tour //Guillaume*/
+						if (CurrentTower->Tower->iHP <= 0)
 						{
-							if (CurrentTowerSlot->Id == CurrentTower->Tower->iSlotId)
+							CurrentTowerSlot = ListTowerSlot->FirstElement;
+							while (CurrentTowerSlot != NULL)
 							{
-								CurrentTowerSlot->TowerSlot->IsBuild = sfFalse;
-								CurrentTowerSlot->TowerSlot->IsClicked = sfFalse;
-								break;
+								if (CurrentTowerSlot->Id == CurrentTower->Tower->iSlotId)
+								{
+									CurrentTowerSlot->TowerSlot->IsBuild = sfFalse;
+									CurrentTowerSlot->TowerSlot->IsClicked = sfFalse;
+									break;
+								}
+								//Rect_TowerSlotBB.left = CurrentTowerSlot->TowerSlot->vPos.x - vOrigin_TowerSlot.x;
+								//Rect_TowerSlotBB.top = CurrentTowerSlot->TowerSlot->vPos.y - vOrigin_TowerSlot.y;
+								//Rect_TowerSlotBB.width = vOrigin_TowerSlot.x * 2;
+								//Rect_TowerSlotBB.height = vOrigin_TowerSlot.y * 2;
+								//sfFloatRect test = sfSprite_getGlobalBounds(ActualTower->Tower->sprite);
+								//if (sfFloatRect_intersects(&ActualTower->Tower->boundingBox, &Rect_TowerSlotBB, NULL))
+								//{
+								//	CurrentTowerSlot->TowerSlot->IsBuild = 0;
+								//	CurrentTowerSlot->TowerSlot->IsClicked = 0;
+								//	break;
+								//}
+								CurrentTowerSlot = CurrentTowerSlot->NextElement;
 							}
-							//Rect_TowerSlotBB.left = CurrentTowerSlot->TowerSlot->vPos.x - vOrigin_TowerSlot.x;
-							//Rect_TowerSlotBB.top = CurrentTowerSlot->TowerSlot->vPos.y - vOrigin_TowerSlot.y;
-							//Rect_TowerSlotBB.width = vOrigin_TowerSlot.x * 2;
-							//Rect_TowerSlotBB.height = vOrigin_TowerSlot.y * 2;
-							//sfFloatRect test = sfSprite_getGlobalBounds(ActualTower->Tower->sprite);
-							//if (sfFloatRect_intersects(&ActualTower->Tower->boundingBox, &Rect_TowerSlotBB, NULL))
-							//{
-							//	CurrentTowerSlot->TowerSlot->IsBuild = 0;
-							//	CurrentTowerSlot->TowerSlot->IsClicked = 0;
-							//	break;
-							//}
-							CurrentTowerSlot = CurrentTowerSlot->NextElement;
+							DeleteEntityWithID(ListTower, CurrentTower->Id);
+							break;
 						}
-						DeleteEntityWithID(ListTower, CurrentTower->Id);
-						break;
+						else
+							CurrentTower = CurrentTower->NextElement;
 					}
-					else
-						CurrentTower = CurrentTower->NextElement;
 				}
-
 				////affichage du champ de vision de la tour selectionnée
-				if (isBuildedChoice)
+				if (isBuildedChoice && ActualTower->Tower->TowerType != TYPE3)
 				{
-					sfSprite_setPosition(Sp_fieldOfView, ActualTower->Tower->vPos);
-					sfRenderWindow_drawSprite(window, Sp_fieldOfView, NULL);
+					sfSprite_setPosition(ActualTower->Tower->fieldSpr, ActualTower->Tower->vPos);
+					sfRenderWindow_drawSprite(window, ActualTower->Tower->fieldSpr, NULL);
 				}
 	#pragma endregion LECTURE TRAITEMENT DES TOURS //SEB
 
 	#pragma region LECTURE TRAITEMENT SPAWN DES GLOBULES BLANCS //SEB
 
-				CurrentTower = ListTower->FirstElement;
-				while (CurrentTower != NULL)
+				if (!isPaused)
 				{
-					if (CurrentTower->Tower->TowerType == TYPE3)
-					{
-						CurrentTower->Tower->tCurrentSpawnWhiteCell = (float)clock() / CLOCKS_PER_SEC;
-						CurrentTower->Tower->tSinceSpawnWhiteCell = CurrentTower->Tower->tCurrentSpawnWhiteCell - CurrentTower->Tower->tStartSpawnWhiteCell;
-						//printf_s("iIsWhiteCellAlive : %d,tSinceSpawnWhiteCell : %.2f,CurrentTower->Tower->isFirstBuild : %d\n", CurrentTower->Tower->iIsWhiteCellAlive, CurrentTower->Tower->tSinceSpawnWhiteCell, CurrentTower->Tower->isFirstBuild);
-						if (!CurrentTower->Tower->iIsWhiteCellAlive && CurrentTower->Tower->isFirstBuild)
+						CurrentTower = ListTower->FirstElement;
+						while (CurrentTower != NULL)
 						{
-							NewWhiteCell = AddElementBeginListWhiteCell(ListWhiteCell);
-							NewWhiteCell->whiteCell = malloc(sizeof(t_whiteCell));
-							NewWhiteCell->whiteCell->isWalking = sfFalse;
-							NewWhiteCell->whiteCell->iTowerId = CurrentTower->Id;
-							NewWhiteCell->whiteCell->tStartAnim = (float)clock() / CLOCKS_PER_SEC;
-							NewWhiteCell->whiteCell->tSinceAnim = 0;
-							NewWhiteCell->whiteCell->tCurrentAnim = 0;
-							NewWhiteCell->whiteCell->animFrame = 0;
-							NewWhiteCell->whiteCell->dirState = DOWN_RIGHT;
-							NewWhiteCell->whiteCell->sprite = Spr_whiteCell;
-							NewWhiteCell->whiteCell->animRect.left = NewWhiteCell->whiteCell->animFrame * WHITE_CELL_WIDTH;
-							NewWhiteCell->whiteCell->animRect.top = NewWhiteCell->whiteCell->dirState * WHITE_CELL_HEIGHT;
-							NewWhiteCell->whiteCell->animRect.width = WHITE_CELL_WIDTH;
-							NewWhiteCell->whiteCell->animRect.height = WHITE_CELL_HEIGHT;
-							//sfSprite_setTextureRect(NewWhiteCell->whiteCell->sprite, NewWhiteCell->whiteCell->animRect);
-
-							/*deplacment par point*/
-							NewWhiteCell->whiteCell->vDirectionPosPathToTarget.x = 0;
-							NewWhiteCell->whiteCell->vDirectionPosPathToTarget.y = 0;
-							NewWhiteCell->whiteCell->vPosPathToTarget.x = 0;
-							NewWhiteCell->whiteCell->vPosPathToTarget.y = 0;
-							NewWhiteCell->whiteCell->iPosPathToTarget = 0;
-							NewWhiteCell->whiteCell->isSearchingForPathToFollow = sfTrue;
-							NewWhiteCell->whiteCell->PathToFollow = 0;
-
-							NewWhiteCell->whiteCell->Hp = 1;
-							
-							CurrentTower->Tower->isFirstBuild = sfFalse;
-							CurrentTowerSlot = ListTowerSlot->FirstElement;
-							while (CurrentTowerSlot != NULL)
+							if (CurrentTower->Tower->TowerType == TYPE3)
 							{
-								if (CurrentTowerSlot->Id == CurrentTower->Tower->iSlotId)
+								CurrentTower->Tower->tCurrentSpawnWhiteCell = (float)clock() / CLOCKS_PER_SEC;
+								CurrentTower->Tower->tSinceSpawnWhiteCell = CurrentTower->Tower->tCurrentSpawnWhiteCell - CurrentTower->Tower->tStartSpawnWhiteCell;
+								//printf_s("iIsWhiteCellAlive : %d,tSinceSpawnWhiteCell : %.2f,CurrentTower->Tower->isFirstBuild : %d\n", CurrentTower->Tower->iIsWhiteCellAlive, CurrentTower->Tower->tSinceSpawnWhiteCell, CurrentTower->Tower->isFirstBuild);
+								if (!CurrentTower->Tower->iIsWhiteCellAlive && CurrentTower->Tower->isFirstBuild)
 								{
-									NewWhiteCell->whiteCell->vPos = CurrentTowerSlot->TowerSlot->vSpawnPos;
-									CurrentTower->Tower->iIsWhiteCellAlive = sfTrue;
-									break;
+									NewWhiteCell = AddElementBeginListWhiteCell(ListWhiteCell);
+									NewWhiteCell->whiteCell = malloc(sizeof(t_whiteCell));
+									NewWhiteCell->whiteCell->isWalking = sfFalse;
+									NewWhiteCell->whiteCell->iTowerId = CurrentTower->Id;
+									NewWhiteCell->whiteCell->tStartAnim = (float)clock() / CLOCKS_PER_SEC;
+									NewWhiteCell->whiteCell->tSinceAnim = 0;
+									NewWhiteCell->whiteCell->tCurrentAnim = 0;
+									NewWhiteCell->whiteCell->animFrame = 0;
+									NewWhiteCell->whiteCell->dirState = DOWN_RIGHT;
+									NewWhiteCell->whiteCell->sprite = Spr_whiteCell;
+									NewWhiteCell->whiteCell->animRect.left = NewWhiteCell->whiteCell->animFrame * WHITE_CELL_WIDTH;
+									NewWhiteCell->whiteCell->animRect.top = NewWhiteCell->whiteCell->dirState * WHITE_CELL_HEIGHT;
+									NewWhiteCell->whiteCell->animRect.width = WHITE_CELL_WIDTH;
+									NewWhiteCell->whiteCell->animRect.height = WHITE_CELL_HEIGHT;
+									//sfSprite_setTextureRect(NewWhiteCell->whiteCell->sprite, NewWhiteCell->whiteCell->animRect);
+
+									/*deplacment par point*/
+									NewWhiteCell->whiteCell->vDirectionPosPathToTarget.x = 0;
+									NewWhiteCell->whiteCell->vDirectionPosPathToTarget.y = 0;
+									NewWhiteCell->whiteCell->vPosPathToTarget.x = 0;
+									NewWhiteCell->whiteCell->vPosPathToTarget.y = 0;
+									NewWhiteCell->whiteCell->iPosPathToTarget = 0;
+									NewWhiteCell->whiteCell->isSearchingForPathToFollow = sfTrue;
+									NewWhiteCell->whiteCell->PathToFollow = 0;
+
+									NewWhiteCell->whiteCell->Hp = 1;
+
+									CurrentTower->Tower->isFirstBuild = sfFalse;
+									CurrentTowerSlot = ListTowerSlot->FirstElement;
+									while (CurrentTowerSlot != NULL)
+									{
+										if (CurrentTowerSlot->Id == CurrentTower->Tower->iSlotId)
+										{
+											NewWhiteCell->whiteCell->vPos = CurrentTowerSlot->TowerSlot->vSpawnPos;
+											CurrentTower->Tower->iIsWhiteCellAlive = sfTrue;
+											break;
+										}
+										CurrentTowerSlot = CurrentTowerSlot->NextElement;
+									}
 								}
-								CurrentTowerSlot = CurrentTowerSlot->NextElement;
-							}
-						}
-						else if (!CurrentTower->Tower->iIsWhiteCellAlive && CurrentTower->Tower->tSinceSpawnWhiteCell > WHITE_CELL_CREATE_COOLDOWN
-							&& !CurrentTower->Tower->isFirstBuild)
-						{
-							NewWhiteCell = AddElementBeginListWhiteCell(ListWhiteCell);
-							NewWhiteCell->whiteCell = malloc(sizeof(t_whiteCell));
-							NewWhiteCell->whiteCell->isWalking = sfFalse;
-							NewWhiteCell->whiteCell->iTowerId = CurrentTower->Id;
-							NewWhiteCell->whiteCell->tStartAnim = (float)clock() / CLOCKS_PER_SEC;
-							NewWhiteCell->whiteCell->tSinceAnim = 0;
-							NewWhiteCell->whiteCell->tCurrentAnim = 0;
-							NewWhiteCell->whiteCell->animFrame = 0;
-							NewWhiteCell->whiteCell->dirState = UP_LEFT;
-							NewWhiteCell->whiteCell->sprite = Spr_whiteCell;
-							NewWhiteCell->whiteCell->animRect.left = NewWhiteCell->whiteCell->animFrame * WHITE_CELL_WIDTH;
-							NewWhiteCell->whiteCell->animRect.top = NewWhiteCell->whiteCell->dirState * WHITE_CELL_HEIGHT;
-							NewWhiteCell->whiteCell->animRect.width = WHITE_CELL_WIDTH;
-							NewWhiteCell->whiteCell->animRect.height = WHITE_CELL_HEIGHT;
-							//sfSprite_setTextureRect(NewWhiteCell->whiteCell->sprite, NewWhiteCell->whiteCell->animRect);
-
-							/*deplacment par point*/
-							NewWhiteCell->whiteCell->vDirectionPosPathToTarget.x = 0;
-							NewWhiteCell->whiteCell->vDirectionPosPathToTarget.y = 0;
-							NewWhiteCell->whiteCell->vPosPathToTarget.x = 0;
-							NewWhiteCell->whiteCell->vPosPathToTarget.y = 0;
-							NewWhiteCell->whiteCell->iPosPathToTarget = 0;
-							NewWhiteCell->whiteCell->isSearchingForPathToFollow = sfTrue;
-							NewWhiteCell->whiteCell->PathToFollow = 0;
-
-							NewWhiteCell->whiteCell->Hp = 1;
-
-							CurrentTowerSlot = ListTowerSlot->FirstElement;
-							while (CurrentTowerSlot != NULL)
-							{
-								if (CurrentTowerSlot->Id == CurrentTower->Tower->iSlotId)
+								else if (!CurrentTower->Tower->iIsWhiteCellAlive && CurrentTower->Tower->tSinceSpawnWhiteCell > (WHITE_CELL_CREATE_COOLDOWN * CurrentTower->Tower->tower3_cooldownFactor)
+									&& !CurrentTower->Tower->isFirstBuild)
 								{
-									NewWhiteCell->whiteCell->vPos = CurrentTowerSlot->TowerSlot->vSpawnPos;
-									CurrentTower->Tower->iIsWhiteCellAlive = sfTrue;
-									break;
+									NewWhiteCell = AddElementBeginListWhiteCell(ListWhiteCell);
+									NewWhiteCell->whiteCell = malloc(sizeof(t_whiteCell));
+									NewWhiteCell->whiteCell->isWalking = sfFalse;
+									NewWhiteCell->whiteCell->iTowerId = CurrentTower->Id;
+									NewWhiteCell->whiteCell->tStartAnim = (float)clock() / CLOCKS_PER_SEC;
+									NewWhiteCell->whiteCell->tSinceAnim = 0;
+									NewWhiteCell->whiteCell->tCurrentAnim = 0;
+									NewWhiteCell->whiteCell->animFrame = 0;
+									NewWhiteCell->whiteCell->dirState = UP_LEFT;
+									NewWhiteCell->whiteCell->sprite = Spr_whiteCell;
+									NewWhiteCell->whiteCell->animRect.left = NewWhiteCell->whiteCell->animFrame * WHITE_CELL_WIDTH;
+									NewWhiteCell->whiteCell->animRect.top = NewWhiteCell->whiteCell->dirState * WHITE_CELL_HEIGHT;
+									NewWhiteCell->whiteCell->animRect.width = WHITE_CELL_WIDTH;
+									NewWhiteCell->whiteCell->animRect.height = WHITE_CELL_HEIGHT;
+									//sfSprite_setTextureRect(NewWhiteCell->whiteCell->sprite, NewWhiteCell->whiteCell->animRect);
+
+									/*deplacment par point*/
+									NewWhiteCell->whiteCell->vDirectionPosPathToTarget.x = 0;
+									NewWhiteCell->whiteCell->vDirectionPosPathToTarget.y = 0;
+									NewWhiteCell->whiteCell->vPosPathToTarget.x = 0;
+									NewWhiteCell->whiteCell->vPosPathToTarget.y = 0;
+									NewWhiteCell->whiteCell->iPosPathToTarget = 0;
+									NewWhiteCell->whiteCell->isSearchingForPathToFollow = sfTrue;
+									NewWhiteCell->whiteCell->PathToFollow = 0;
+
+									NewWhiteCell->whiteCell->Hp = 1;
+
+									CurrentTowerSlot = ListTowerSlot->FirstElement;
+									while (CurrentTowerSlot != NULL)
+									{
+										if (CurrentTowerSlot->Id == CurrentTower->Tower->iSlotId)
+										{
+											NewWhiteCell->whiteCell->vPos = CurrentTowerSlot->TowerSlot->vSpawnPos;
+											CurrentTower->Tower->iIsWhiteCellAlive = sfTrue;
+											break;
+										}
+										CurrentTowerSlot = CurrentTowerSlot->NextElement;
+									}
 								}
-								CurrentTowerSlot = CurrentTowerSlot->NextElement;
 							}
+							CurrentTower = CurrentTower->NextElement;
 						}
-					}
-					CurrentTower = CurrentTower->NextElement;
 				}
 
 	#pragma endregion LECTURE TRAITEMENT SPAWN DES GLOBULES BLANCS //SEB
 
 	#pragma region LECTURE DESTRUCTION ENNEMIS MORTS //SEB
 
-				/*isSearchingForDead = sfTrue;
-
-				while (isSearchingForDead)
-				{*/
-				CurrentEnnemy = ListEnnemy->FirstElement;
-				while (CurrentEnnemy != NULL)
+				if (!isPaused)
 				{
-					//asBreak = sfFalse;
-					if (CurrentEnnemy->Ennemy->Hp <= 0 || CurrentEnnemy->Ennemy->vCurrentPosition.y > WINDOW_HEIGHT + 200)
-					{
-						if (CurrentEnnemy == ListEnnemy->FirstElement && CurrentEnnemy == ListEnnemy->LastElement)
+						/*isSearchingForDead = sfTrue;
+
+						while (isSearchingForDead)
+						{*/
+						CurrentEnnemy = ListEnnemy->FirstElement;
+						while (CurrentEnnemy != NULL)
 						{
-							printf("debug");
+							//asBreak = sfFalse;
+							if (CurrentEnnemy->Ennemy->Hp <= 0 || CurrentEnnemy->Ennemy->vCurrentPosition.y > WINDOW_HEIGHT + 200)
+							{
+								if (CurrentEnnemy == ListEnnemy->FirstElement && CurrentEnnemy == ListEnnemy->LastElement)
+								{
+									//printf("debug");
+								}
+								if (CurrentEnnemy->Ennemy->Hp != -200)
+								{
+									iPlayerMoney += CurrentEnnemy->Ennemy->iMoneyValue;
+								}
+								iWaveEnnemyDead++;
+								DeleteEnemyWithID(ListEnnemy, CurrentEnnemy->Id);
+								//DeleteElementById(ListEnnemy, CurrentEnnemy->Id);
+								//asBreak = sfTrue;
+								break;
+							}
+							else
+							{
+								CurrentEnnemy = CurrentEnnemy->NextElement;
+							}
 						}
-						if (CurrentEnnemy->Ennemy->Hp != -200)
+						/*if (!asBreak)
 						{
-							iPlayerMoney += CurrentEnnemy->Ennemy->iMoneyValue;
-						}
-						iWaveEnnemyDead++;
-						DeleteEnemyWithID(ListEnnemy, CurrentEnnemy->Id);
-						//DeleteElementById(ListEnnemy, CurrentEnnemy->Id);
-						//asBreak = sfTrue;
-						break;
-					}
-					else
-					{
-						CurrentEnnemy = CurrentEnnemy->NextElement;
-					}
+							isSearchingForDead = sfFalse;
+						}*/
+
+						//}
+
 				}
-				/*if (!asBreak)
-				{
-					isSearchingForDead = sfFalse;
-				}*/
-
-				//}
-
 	#pragma endregion LECTURE DESTRUCTION ENNEMIS MORTS //SEB
 
 	#pragma region LECTURE TRAITEMENT GLOBULES BLANCS //SEB
 
-				CurrentWhiteCell = ListWhiteCell->FirstElement;
-				while (CurrentWhiteCell != NULL)
+				if (!isPaused)
 				{
-					CurrentWhiteCell->whiteCell->boundingBox.left = CurrentWhiteCell->whiteCell->vPos.x - 30;
-					CurrentWhiteCell->whiteCell->boundingBox.top = CurrentWhiteCell->whiteCell->vPos.y - 130;
-					CurrentWhiteCell->whiteCell->boundingBox.width = 45;
-					CurrentWhiteCell->whiteCell->boundingBox.height = 146;
-					/*GLOBULE BLANC NON-ACTIF*/
-					if (!CurrentWhiteCell->whiteCell->isWalking)
-					{
-
-						asBreak = sfFalse;
-						//printf_s("posX :%.2f,posY: %.2f\n", CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y);
-						/*DETECTION DE L'ENNEMI*/
-						CurrentEnnemy = ListEnnemy->FirstElement;
-						while (CurrentEnnemy != NULL)
+						CurrentWhiteCell = ListWhiteCell->FirstElement;
+						while (CurrentWhiteCell != NULL)
 						{
-							CurrentWhiteCell->whiteCell->distanceVector.x = CurrentEnnemy->Ennemy->vCurrentPosition.x - CurrentWhiteCell->whiteCell->vPos.x;
-							CurrentWhiteCell->whiteCell->distanceVector.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentWhiteCell->whiteCell->vPos.y;
-							//printf_s("Cell x :%.2f, Cell y :%.2f, Ennemi X :%.2f, Ennemi Y :%.2f, Magnitude %.2f\n", CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y, CurrentEnnemy->Ennemy->vCurrentPosition.x, CurrentEnnemy->Ennemy->vCurrentPosition.y, Magnitude(CurrentWhiteCell->whiteCell->distanceVector));
-							if (Magnitude(CurrentWhiteCell->whiteCell->distanceVector) < WHITE_CELL_FIELD_OF_VIEW_RADIUS)
+							CurrentWhiteCell->whiteCell->boundingBox.left = CurrentWhiteCell->whiteCell->vPos.x - 30;
+							CurrentWhiteCell->whiteCell->boundingBox.top = CurrentWhiteCell->whiteCell->vPos.y - 130;
+							CurrentWhiteCell->whiteCell->boundingBox.width = 45;
+							CurrentWhiteCell->whiteCell->boundingBox.height = 146;
+							/*GLOBULE BLANC NON-ACTIF*/
+							if (!CurrentWhiteCell->whiteCell->isWalking)
 							{
-								CurrentWhiteCell->whiteCell->isWalking = sfTrue;
+
+								asBreak = sfFalse;
+								//printf_s("posX :%.2f,posY: %.2f\n", CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y);
+								/*DETECTION DE L'ENNEMI*/
+								CurrentEnnemy = ListEnnemy->FirstElement;
+								while (CurrentEnnemy != NULL)
+								{
+									CurrentWhiteCell->whiteCell->distanceVector.x = CurrentEnnemy->Ennemy->vCurrentPosition.x - CurrentWhiteCell->whiteCell->vPos.x;
+									CurrentWhiteCell->whiteCell->distanceVector.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentWhiteCell->whiteCell->vPos.y;
+									//printf_s("Cell x :%.2f, Cell y :%.2f, Ennemi X :%.2f, Ennemi Y :%.2f, Magnitude %.2f\n", CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y, CurrentEnnemy->Ennemy->vCurrentPosition.x, CurrentEnnemy->Ennemy->vCurrentPosition.y, Magnitude(CurrentWhiteCell->whiteCell->distanceVector));
+									if (Magnitude(CurrentWhiteCell->whiteCell->distanceVector) < WHITE_CELL_FIELD_OF_VIEW_RADIUS)
+									{
+										CurrentWhiteCell->whiteCell->isWalking = sfTrue;
+									}
+
+
+									CurrentEnnemy = CurrentEnnemy->NextElement;
+								}
 							}
-
-
-							CurrentEnnemy = CurrentEnnemy->NextElement;
-						}
-					}
-					/*GLOBULE BLANC ACTIF (& DANS LA FENETRE)*/
-					else if (CurrentWhiteCell->whiteCell->isWalking 
-						&& CurrentWhiteCell->whiteCell->vPos.x >= 0 && CurrentWhiteCell->whiteCell->vPos.x <= WINDOW_WIDTH
-						&& CurrentWhiteCell->whiteCell->vPos.y >= 0 && CurrentWhiteCell->whiteCell->vPos.y <= WINDOW_HEIGHT)
-					{
-						CurrentEnnemy = ListEnnemy->FirstElement;
-						while (CurrentEnnemy != NULL)
-						{
-							CurrentEnnemy->Ennemy->boundingBox.left = CurrentEnnemy->Ennemy->vCurrentPosition.x - CurrentEnnemy->Ennemy->vOrigin.x;
-							CurrentEnnemy->Ennemy->boundingBox.top = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentEnnemy->Ennemy->vOrigin.y;
-							CurrentEnnemy->Ennemy->boundingBox.width = CurrentEnnemy->Ennemy->vOrigin.x * 2;
-							CurrentEnnemy->Ennemy->boundingBox.height = CurrentEnnemy->Ennemy->vOrigin.y * 2;
-							//printf_s("Wc BB ,L:%.2f,T:%.2f,W:%.2f,H:%.2f\nEn BB ,L:%.2f,T:%.2f,W:%.2f,H:%.2f\n", CurrentWhiteCell->whiteCell->boundingBox.left, CurrentWhiteCell->whiteCell->boundingBox.top, CurrentWhiteCell->whiteCell->boundingBox.width, CurrentWhiteCell->whiteCell->boundingBox.height,
-							//CurrentEnnemy->Ennemy->boundingBox.left, CurrentEnnemy->Ennemy->boundingBox.top, CurrentEnnemy->Ennemy->boundingBox.width, CurrentEnnemy->Ennemy->boundingBox.height);
-							if (sfFloatRect_intersects(&CurrentWhiteCell->whiteCell->boundingBox, &CurrentEnnemy->Ennemy->boundingBox, NULL) && CurrentWhiteCell->whiteCell->isWalking)
+							/*GLOBULE BLANC ACTIF (& DANS LA FENETRE)*/
+							else if (CurrentWhiteCell->whiteCell->isWalking
+								&& CurrentWhiteCell->whiteCell->vPos.x >= 0 && CurrentWhiteCell->whiteCell->vPos.x <= WINDOW_WIDTH
+								&& CurrentWhiteCell->whiteCell->vPos.y >= 0 && CurrentWhiteCell->whiteCell->vPos.y <= WINDOW_HEIGHT)
 							{
-								//printf_s("Delete !!!! !! \n");
+								CurrentEnnemy = ListEnnemy->FirstElement;
+								while (CurrentEnnemy != NULL)
+								{
+									CurrentEnnemy->Ennemy->boundingBox.left = CurrentEnnemy->Ennemy->vCurrentPosition.x - CurrentEnnemy->Ennemy->vOrigin.x;
+									CurrentEnnemy->Ennemy->boundingBox.top = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentEnnemy->Ennemy->vOrigin.y;
+									CurrentEnnemy->Ennemy->boundingBox.width = CurrentEnnemy->Ennemy->vOrigin.x * 2;
+									CurrentEnnemy->Ennemy->boundingBox.height = CurrentEnnemy->Ennemy->vOrigin.y * 2;
+									//printf_s("Wc BB ,L:%.2f,T:%.2f,W:%.2f,H:%.2f\nEn BB ,L:%.2f,T:%.2f,W:%.2f,H:%.2f\n", CurrentWhiteCell->whiteCell->boundingBox.left, CurrentWhiteCell->whiteCell->boundingBox.top, CurrentWhiteCell->whiteCell->boundingBox.width, CurrentWhiteCell->whiteCell->boundingBox.height,
+									//CurrentEnnemy->Ennemy->boundingBox.left, CurrentEnnemy->Ennemy->boundingBox.top, CurrentEnnemy->Ennemy->boundingBox.width, CurrentEnnemy->Ennemy->boundingBox.height);
+									if (sfFloatRect_intersects(&CurrentWhiteCell->whiteCell->boundingBox, &CurrentEnnemy->Ennemy->boundingBox, NULL) && CurrentWhiteCell->whiteCell->isWalking)
+									{
+										//printf_s("Delete !!!! !! \n");
+										CurrentTower = ListTower->FirstElement;
+										while (CurrentTower != NULL)
+										{
+											//printf_s("Id :%d,iTowerId:%d\n", CurrentTower->Id, CurrentWhiteCell->whiteCell->iTowerId);
+											if (CurrentTower->Id == CurrentWhiteCell->whiteCell->iTowerId)
+											{
+												CurrentTower->Tower->iIsWhiteCellAlive = sfFalse;
+												CurrentTower->Tower->tStartSpawnWhiteCell = (float)clock() / CLOCKS_PER_SEC;
+												break;
+											}
+											CurrentTower = CurrentTower->NextElement;
+										}
+										CurrentEnnemy2 = ListEnnemy->FirstElement;
+										while (CurrentEnnemy2 != NULL)
+										{
+											CurrentWhiteCell->whiteCell->distanceVector.x = CurrentEnnemy2->Ennemy->vCurrentPosition.x - CurrentWhiteCell->whiteCell->vPos.x;
+											CurrentWhiteCell->whiteCell->distanceVector.y = CurrentEnnemy2->Ennemy->vCurrentPosition.y - CurrentWhiteCell->whiteCell->vPos.y;
+											if (Magnitude(CurrentWhiteCell->whiteCell->distanceVector) < WHITE_CELL_AREA_DAMAGE_RADIUS)
+											{
+												CurrentEnnemy2->Ennemy->Hp -= TOWER3_DAMAGES;
+												CurrentEnnemy2->Ennemy->isHit = sfTrue;
+												CurrentEnnemy2->Ennemy->tStartLifeBarDisplay = (float)clock() / CLOCKS_PER_SEC;
+											}
+
+											CurrentEnnemy2 = CurrentEnnemy2->NextElement;
+										}
+										DeleteElementByIdWhiteCell(ListWhiteCell, CurrentWhiteCell->Id);
+										asBreak = sfTrue;
+										break;
+									}
+									CurrentEnnemy = CurrentEnnemy->NextElement;
+								}
+								if (asBreak)
+								{
+									asBreak = sfFalse;
+									break;
+								}
+
+								/*ORIENTATION DU SPRITE PAR RAPPORT A LA COULEUR DU MASQUE DE COLLISION*/
+
+	#pragma region ORIENTATION GLOBULE BLANC COULEUR
+
+					/*BAS GAUCHE*/
+								if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
+								{
+									CurrentWhiteCell->whiteCell->dirState = UP_RIGHT; // INVERSE
+								}
+								/*BAS DROITE*/
+								else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 255)
+								{
+									CurrentWhiteCell->whiteCell->dirState = UP_LEFT; // INVERSE
+								}
+								/*HAUT GAUCHE*/
+								else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).r == 150
+									&& sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150)
+								{
+									CurrentWhiteCell->whiteCell->dirState = DOWN_RIGHT; // INVERSE
+
+								}
+								/*HAUT DROITE*/
+								else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150
+									&& sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 150)
+								{
+									CurrentWhiteCell->whiteCell->dirState = DOWN_LEFT; // INVERSE
+								}
+
+	#pragma endregion ORIENTATION GLOBULE BLANC COULEUR
+
+								/*DEPLACEMENT GLOBULE BLANC*/
+
+
+								/*METHODE PAR POINT*/
+
+	#pragma region DEPLACEMENT PAR POINT
+
+					/*Pour le globule blanc la lecture de liste se fait dans le sens inverse car il prend le chemin inverse des ennemis*/
+
+					/*CHERCHE LE CHEMIN LE PLUS PROCHE DE LA CELLULE SI ELLE N'EN POSSEDE PAS*/
+								if (CurrentWhiteCell->whiteCell->isSearchingForPathToFollow == sfTrue)
+								{
+									/*JE CHECK LE POINT LE PLUS PROCHE DU GLOBULE QUAND IL EST POSEE*/
+									for (int i = 0; i < CurrentLevelAssets.iNbrEnnemyPath; i++)
+									{
+										/*CHECK LIST*/
+										CurrentEnnemyPathPoint = CurrentLevelAssets.TabListEnnemyPathPoint[i]->FirstElement;
+										while (CurrentEnnemyPathPoint != NULL)
+										{
+											/*calcule avec la magnitude du point le plus proche dans la liste*/
+											CurrentWhiteCell->whiteCell->vPosPathToTarget.x = CurrentEnnemyPathPoint->EnnemyPathPoint->vPos.x;
+											CurrentWhiteCell->whiteCell->vPosPathToTarget.y = CurrentEnnemyPathPoint->EnnemyPathPoint->vPos.y;
+											CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget.x = CurrentWhiteCell->whiteCell->vPosPathToTarget.x - CurrentWhiteCell->whiteCell->vPos.x;
+											CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget.y = CurrentWhiteCell->whiteCell->vPosPathToTarget.y - CurrentWhiteCell->whiteCell->vPos.y;
+											/*DETECTION DU POINT LE PLUS PROCHE*/
+											if (Magnitude(CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget) < 150)
+											{
+												/*le globule blanc suit le chemin correspondant*/
+												CurrentWhiteCell->whiteCell->iPosPathToTarget = CurrentEnnemyPathPoint->EnnemyPathPoint->Num;
+												CurrentWhiteCell->whiteCell->PathToFollow = i;
+												CurrentWhiteCell->whiteCell->isSearchingForPathToFollow = sfFalse;
+											}
+											CurrentEnnemyPathPoint = CurrentEnnemyPathPoint->NextElement;
+										}
+									}
+								}
+								else if (CurrentWhiteCell->whiteCell->isSearchingForPathToFollow == sfFalse)
+								{
+									/*JE CHECK LE POINT LE PLUS PROCHE DU GLOBULE QUAND IL EST POSEE*/
+									CurrentEnnemyPathPoint = CurrentLevelAssets.TabListEnnemyPathPoint[CurrentWhiteCell->whiteCell->PathToFollow]->FirstElement;
+									while (CurrentEnnemyPathPoint != NULL)
+									{
+										/*LE GLOBULE BLANC SE DIRIGE VERS LE POINT LE POINT QU'IL VISE*/
+										if (CurrentEnnemyPathPoint->EnnemyPathPoint->Num == CurrentWhiteCell->whiteCell->iPosPathToTarget)
+										{
+											CurrentWhiteCell->whiteCell->vPosPathToTarget.x = CurrentEnnemyPathPoint->EnnemyPathPoint->vPos.x;
+											CurrentWhiteCell->whiteCell->vPosPathToTarget.y = CurrentEnnemyPathPoint->EnnemyPathPoint->vPos.y;
+											CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget.x = CurrentWhiteCell->whiteCell->vPosPathToTarget.x - CurrentWhiteCell->whiteCell->vPos.x;
+											CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget.y = CurrentWhiteCell->whiteCell->vPosPathToTarget.y - CurrentWhiteCell->whiteCell->vPos.y;
+
+											CurrentWhiteCell->whiteCell->vPos.x += Normalize(CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget).x * WHITE_CELL_SPD_FACTOR;
+											CurrentWhiteCell->whiteCell->vPos.y += Normalize(CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget).y * WHITE_CELL_SPD_FACTOR;
+										}
+										/*si il y a magnitude avec le point je change de cible*/
+										if (Magnitude(CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget) < 50)
+										{
+											if (CurrentEnnemyPathPoint->NextElement != NULL)
+											{
+												CurrentWhiteCell->whiteCell->iPosPathToTarget = CurrentEnnemyPathPoint->NextElement->EnnemyPathPoint->Num;
+											}
+											else
+											{
+												/*delete*/
+												CurrentWhiteCell->whiteCell->Hp = 0;
+											}
+										}
+										CurrentEnnemyPathPoint = CurrentEnnemyPathPoint->NextElement;
+									}
+								}
+
+	#pragma endregion DEPLACEMENT PAR POINT
+
+								/*METHODE COULEUR*/
+
+	#pragma region DEPLACMENT PAR COULEUR (TEST)
+
+					///*BAS GAUCHE*/
+					//if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
+					//{
+					//	//printf_s("Bas Gauche\n");
+					//	CurrentWhiteCell->whiteCell->dirState = UP_RIGHT; // INVERSE
+					//	CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(150 + 3);
+					//	CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
+					//	CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
+					//	CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
+					//}
+					///*BAS DROITE*/
+					//else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 255)
+					//{
+					//	//printf_s("Bas Droite\n");
+					//	CurrentWhiteCell->whiteCell->dirState = UP_LEFT; // INVERSE
+					//	CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(30 - 3);
+					//	CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
+					//	CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
+					//	CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
+					//}
+					///*HAUT GAUCHE*/
+					//else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).r == 150
+					//	&& sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150)
+					//{
+					//	//printf_s("Haut Gauche\n");
+					//	CurrentWhiteCell->whiteCell->dirState = DOWN_RIGHT; // INVERSE
+					//	CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(210 - 3);
+					//	CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
+					//	CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
+					//	CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
+					//}
+					///*HAUT DROITE*/
+					//else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150
+					//	&& sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 150)
+					//{
+					//	//printf_s("Haut Doite\n");
+					//	CurrentWhiteCell->whiteCell->dirState = DOWN_LEFT; // INVERSE
+					//	CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(330 + 3);
+					//	CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
+					//	CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
+					//	CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
+					//}
+					//else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).r == 255 && sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 255
+					//	&& sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
+					//{
+					//	//printf_s("Random dir\n");
+					//}
+					//else
+					//{
+					//	CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
+					//	CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
+					//	//printf_s("Not In\n");
+					//}
+
+	#pragma endregion DEPLACMENT PAR COULEUR (TEST)
+
+					/*ANIMATION GLOBULE BLANC*/
+
+	#pragma region ANIMATION GLOBULE BLANC
+
+								CurrentWhiteCell->whiteCell->tCurrentAnim = (float)clock() / CLOCKS_PER_SEC;
+								CurrentWhiteCell->whiteCell->tSinceAnim = CurrentWhiteCell->whiteCell->tCurrentAnim - CurrentWhiteCell->whiteCell->tStartAnim;
+
+								if (CurrentWhiteCell->whiteCell->tSinceAnim > WHITE_CELL_ANIM_SPEED)
+								{
+									CurrentWhiteCell->whiteCell->tStartAnim = CurrentWhiteCell->whiteCell->tCurrentAnim;
+
+									if (CurrentWhiteCell->whiteCell->animFrame < WHITE_CELL_FRAMES - 1)
+									{
+										CurrentWhiteCell->whiteCell->animFrame++;
+									}
+									else
+									{
+										CurrentWhiteCell->whiteCell->animFrame = 0;
+									}
+
+								}
+
+	#pragma endregion ANIMATION GLOBULE BLANC
+
+
+							}
+							else
+							{
 								CurrentTower = ListTower->FirstElement;
 								while (CurrentTower != NULL)
 								{
-									//printf_s("Id :%d,iTowerId:%d\n", CurrentTower->Id, CurrentWhiteCell->whiteCell->iTowerId);
 									if (CurrentTower->Id == CurrentWhiteCell->whiteCell->iTowerId)
 									{
 										CurrentTower->Tower->iIsWhiteCellAlive = sfFalse;
@@ -3294,259 +3614,35 @@ int main()
 									}
 									CurrentTower = CurrentTower->NextElement;
 								}
-								CurrentEnnemy2 = ListEnnemy->FirstElement;
-								while (CurrentEnnemy2 != NULL)
-								{
-									CurrentWhiteCell->whiteCell->distanceVector.x = CurrentEnnemy2->Ennemy->vCurrentPosition.x - CurrentWhiteCell->whiteCell->vPos.x;
-									CurrentWhiteCell->whiteCell->distanceVector.y = CurrentEnnemy2->Ennemy->vCurrentPosition.y - CurrentWhiteCell->whiteCell->vPos.y;
-									if (Magnitude(CurrentWhiteCell->whiteCell->distanceVector) < WHITE_CELL_AREA_DAMAGE_RADIUS)
-									{
-										CurrentEnnemy2->Ennemy->Hp -= TOWER3_DAMAGES;
-									}
-
-									CurrentEnnemy2 = CurrentEnnemy2->NextElement;
-								}
 								DeleteElementByIdWhiteCell(ListWhiteCell, CurrentWhiteCell->Id);
-								asBreak = sfTrue;
+
 								break;
 							}
-							CurrentEnnemy = CurrentEnnemy->NextElement;
-						}
-						if (asBreak)
-						{
-							asBreak = sfFalse;
-							break;
+
+
+
+							CurrentWhiteCell = CurrentWhiteCell->NextElement;
 						}
 
-						/*ORIENTATION DU SPRITE PAR RAPPORT A LA COULEUR DU MASQUE DE COLLISION*/
+						/*LECTURE DELETE DES GLOBULES BLANCS*/
 
-		#pragma region ORIENTATION GLOBULE BLANC COULEUR
+	#pragma region SUPPRESSION GLOBULE BLANCS AVEC LA VIE
 
-						/*BAS GAUCHE*/
-						if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
+						CurrentWhiteCell = ListWhiteCell->FirstElement;
+						while (CurrentWhiteCell != NULL)
 						{
-							CurrentWhiteCell->whiteCell->dirState = UP_RIGHT; // INVERSE
-						}
-						/*BAS DROITE*/
-						else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 255)
-						{
-							CurrentWhiteCell->whiteCell->dirState = UP_LEFT; // INVERSE
-						}
-						/*HAUT GAUCHE*/
-						else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).r == 150
-							&& sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150)
-						{
-							CurrentWhiteCell->whiteCell->dirState = DOWN_RIGHT; // INVERSE
-							
-						}
-						/*HAUT DROITE*/
-						else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150
-							&& sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 150)
-						{
-							CurrentWhiteCell->whiteCell->dirState = DOWN_LEFT; // INVERSE
-						}
-
-		#pragma endregion ORIENTATION GLOBULE BLANC COULEUR
-
-						/*DEPLACEMENT GLOBULE BLANC*/
-
-
-						/*METHODE PAR POINT*/
-
-		#pragma region DEPLACEMENT PAR POINT
-
-						/*Pour le globule blanc la lecture de liste se fait dans le sens inverse car il prend le chemin inverse des ennemis*/
-
-						/*CHERCHE LE CHEMIN LE PLUS PROCHE DE LA CELLULE SI ELLE N'EN POSSEDE PAS*/
-						if (CurrentWhiteCell->whiteCell->isSearchingForPathToFollow == sfTrue)
-						{
-							/*JE CHECK LE POINT LE PLUS PROCHE DU GLOBULE QUAND IL EST POSEE*/
-							for (int i = 0; i < CurrentLevelAssets.iNbrEnnemyPath; i++)
+							if (CurrentWhiteCell->whiteCell->Hp <= 0)
 							{
-								/*CHECK LIST*/
-								CurrentEnnemyPathPoint = CurrentLevelAssets.TabListEnnemyPathPoint[i]->FirstElement;
-								while (CurrentEnnemyPathPoint != NULL)
-								{
-									/*calcule avec la magnitude du point le plus proche dans la liste*/
-									CurrentWhiteCell->whiteCell->vPosPathToTarget.x = CurrentEnnemyPathPoint->EnnemyPathPoint->vPos.x;
-									CurrentWhiteCell->whiteCell->vPosPathToTarget.y = CurrentEnnemyPathPoint->EnnemyPathPoint->vPos.y;
-									CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget.x = CurrentWhiteCell->whiteCell->vPosPathToTarget.x - CurrentWhiteCell->whiteCell->vPos.x;
-									CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget.y = CurrentWhiteCell->whiteCell->vPosPathToTarget.y - CurrentWhiteCell->whiteCell->vPos.y;
-									/*DETECTION DU POINT LE PLUS PROCHE*/
-									if (Magnitude(CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget) < 150)
-									{
-										/*le globule blanc suit le chemin correspondant*/
-										CurrentWhiteCell->whiteCell->iPosPathToTarget = CurrentEnnemyPathPoint->EnnemyPathPoint->Num;
-										CurrentWhiteCell->whiteCell->PathToFollow = i;
-										CurrentWhiteCell->whiteCell->isSearchingForPathToFollow = sfFalse;
-									}
-									CurrentEnnemyPathPoint = CurrentEnnemyPathPoint->NextElement;
-								}
-							}
-						}
-						else if (CurrentWhiteCell->whiteCell->isSearchingForPathToFollow == sfFalse)
-						{
-							/*JE CHECK LE POINT LE PLUS PROCHE DU GLOBULE QUAND IL EST POSEE*/
-							CurrentEnnemyPathPoint = CurrentLevelAssets.TabListEnnemyPathPoint[CurrentWhiteCell->whiteCell->PathToFollow]->FirstElement;
-							while (CurrentEnnemyPathPoint != NULL)
-							{
-								/*LE GLOBULE BLANC SE DIRIGE VERS LE POINT LE POINT QU'IL VISE*/
-								if (CurrentEnnemyPathPoint->EnnemyPathPoint->Num == CurrentWhiteCell->whiteCell->iPosPathToTarget)
-								{
-									CurrentWhiteCell->whiteCell->vPosPathToTarget.x = CurrentEnnemyPathPoint->EnnemyPathPoint->vPos.x;
-									CurrentWhiteCell->whiteCell->vPosPathToTarget.y = CurrentEnnemyPathPoint->EnnemyPathPoint->vPos.y;
-									CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget.x = CurrentWhiteCell->whiteCell->vPosPathToTarget.x - CurrentWhiteCell->whiteCell->vPos.x;
-									CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget.y = CurrentWhiteCell->whiteCell->vPosPathToTarget.y - CurrentWhiteCell->whiteCell->vPos.y;
-
-									CurrentWhiteCell->whiteCell->vPos.x += Normalize(CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget).x * WHITE_CELL_SPD_FACTOR;
-									CurrentWhiteCell->whiteCell->vPos.y += Normalize(CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget).y * WHITE_CELL_SPD_FACTOR;
-								}
-								/*si il y a magnitude avec le point je change de cible*/
-								if (Magnitude(CurrentWhiteCell->whiteCell->vDirectionPosPathToTarget) < 50)
-								{
-									if (CurrentEnnemyPathPoint->NextElement != NULL)
-									{
-										CurrentWhiteCell->whiteCell->iPosPathToTarget = CurrentEnnemyPathPoint->NextElement->EnnemyPathPoint->Num;
-									}
-									else
-									{
-										/*delete*/
-										CurrentWhiteCell->whiteCell->Hp = 0;
-									}
-								}
-								CurrentEnnemyPathPoint = CurrentEnnemyPathPoint->NextElement;
-							}
-						}
-
-		#pragma endregion DEPLACEMENT PAR POINT
-
-						/*METHODE COULEUR*/
-
-		#pragma region DEPLACMENT PAR COULEUR (TEST)
-						
-						///*BAS GAUCHE*/
-						//if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
-						//{
-						//	//printf_s("Bas Gauche\n");
-						//	CurrentWhiteCell->whiteCell->dirState = UP_RIGHT; // INVERSE
-						//	CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(150 + 3);
-						//	CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
-						//	CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
-						//	CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
-						//}
-						///*BAS DROITE*/
-						//else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 255)
-						//{
-						//	//printf_s("Bas Droite\n");
-						//	CurrentWhiteCell->whiteCell->dirState = UP_LEFT; // INVERSE
-						//	CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(30 - 3);
-						//	CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
-						//	CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
-						//	CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
-						//}
-						///*HAUT GAUCHE*/
-						//else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).r == 150
-						//	&& sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150)
-						//{
-						//	//printf_s("Haut Gauche\n");
-						//	CurrentWhiteCell->whiteCell->dirState = DOWN_RIGHT; // INVERSE
-						//	CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(210 - 3);
-						//	CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
-						//	CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
-						//	CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
-						//}
-						///*HAUT DROITE*/
-						//else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 150
-						//	&& sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 150)
-						//{
-						//	//printf_s("Haut Doite\n");
-						//	CurrentWhiteCell->whiteCell->dirState = DOWN_LEFT; // INVERSE
-						//	CurrentWhiteCell->whiteCell->vDir = GetDirectionFromAngleDegrees(330 + 3);
-						//	CurrentWhiteCell->whiteCell->vDir = normalizeVector(CurrentWhiteCell->whiteCell->vDir);
-						//	CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
-						//	CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
-						//}
-						//else if (sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).r == 255 && sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).g == 255
-						//	&& sfImage_getPixel(Image_MaskMapTest, CurrentWhiteCell->whiteCell->vPos.x, CurrentWhiteCell->whiteCell->vPos.y).b == 255)
-						//{
-						//	//printf_s("Random dir\n");
-						//}
-						//else
-						//{
-						//	CurrentWhiteCell->whiteCell->vPos.x += CurrentWhiteCell->whiteCell->vDir.x * WHITE_CELL_SPD_FACTOR;
-						//	CurrentWhiteCell->whiteCell->vPos.y += CurrentWhiteCell->whiteCell->vDir.y * WHITE_CELL_SPD_FACTOR;
-						//	//printf_s("Not In\n");
-						//}
-
-		#pragma endregion DEPLACMENT PAR COULEUR (TEST)
-
-						/*ANIMATION GLOBULE BLANC*/
-
-		#pragma region ANIMATION GLOBULE BLANC
-
-						CurrentWhiteCell->whiteCell->tCurrentAnim = (float)clock() / CLOCKS_PER_SEC;
-						CurrentWhiteCell->whiteCell->tSinceAnim = CurrentWhiteCell->whiteCell->tCurrentAnim - CurrentWhiteCell->whiteCell->tStartAnim;
-
-						if (CurrentWhiteCell->whiteCell->tSinceAnim > WHITE_CELL_ANIM_SPEED)
-						{
-							CurrentWhiteCell->whiteCell->tStartAnim = CurrentWhiteCell->whiteCell->tCurrentAnim;
-
-							if (CurrentWhiteCell->whiteCell->animFrame < WHITE_CELL_FRAMES - 1)
-							{
-								CurrentWhiteCell->whiteCell->animFrame++;
+								DeleteElementByIdWhiteCell(ListWhiteCell, CurrentWhiteCell->Id);
+								break;
 							}
 							else
-							{
-								CurrentWhiteCell->whiteCell->animFrame = 0;
-							}
-
+								CurrentWhiteCell = CurrentWhiteCell->NextElement;
 						}
 
-		#pragma endregion ANIMATION GLOBULE BLANC
+	#pragma endregion SUPPRESSION DES GLOBULES BLANCS AVEC LA VIE
 
-
-					}
-					else
-					{
-						CurrentTower = ListTower->FirstElement;
-						while (CurrentTower != NULL)
-						{
-							if (CurrentTower->Id == CurrentWhiteCell->whiteCell->iTowerId)
-							{
-								CurrentTower->Tower->iIsWhiteCellAlive = sfFalse;
-								CurrentTower->Tower->tStartSpawnWhiteCell = (float)clock() / CLOCKS_PER_SEC;
-								break;
-							}
-							CurrentTower = CurrentTower->NextElement;
-						}
-						DeleteElementByIdWhiteCell(ListWhiteCell, CurrentWhiteCell->Id);
-
-						break;
-					}
-
-
-
-					CurrentWhiteCell = CurrentWhiteCell->NextElement;
 				}
-
-				/*LECTURE DELETE DES GLOBULES BLANCS*/
-
-		#pragma region SUPPRESSION GLOBULE BLANCS AVEC LA VIE
-
-				CurrentWhiteCell = ListWhiteCell->FirstElement;
-				while (CurrentWhiteCell != NULL)
-				{
-					if (CurrentWhiteCell->whiteCell->Hp <= 0)
-					{
-						DeleteElementByIdWhiteCell(ListWhiteCell, CurrentWhiteCell->Id);
-						break;
-					}
-					else
-						CurrentWhiteCell = CurrentWhiteCell->NextElement;
-				}
-
-		#pragma endregion SUPPRESSION DES GLOBULES BLANCS AVEC LA VIE
-
 	#pragma endregion LECTURE TRAITEMENT GLOBULES BLANCS //SEB
 
 	#pragma region LECTURE AFFICHAGE DES GLOBULES BLANCS //SEB
@@ -3568,122 +3664,135 @@ int main()
 
 	#pragma region LECTURE CONTROLE COLISION TOURS //SEB
 
-				/*Lecture de liste tour pour le controle de colision champ de vision, et tir des tours*/
-
-
-				CurrentEnnemy = ListEnnemy->FirstElement;
-				while (CurrentEnnemy != NULL)
+				if (!isPaused)
 				{
-					CurrentTower = ListTower->FirstElement;
-					while (CurrentTower != NULL)
-					{
+						/*Lecture de liste tour pour le controle de colision champ de vision, et tir des tours*/
 
-						//printf_s("CurrentTower %d , bbL :%.2f, bbT :%.2f, bbW :%.2f, bbH :%.2f\n",CurrentTower->Id, CurrentTower->Tower->fieldBB.left, CurrentTower->Tower->fieldBB.top, CurrentTower->Tower->fieldBB.width, CurrentTower->Tower->fieldBB.height);
-						if (sfFloatRect_contains(&CurrentTower->Tower->fieldBB, CurrentEnnemy->Ennemy->vCurrentPosition.x, CurrentEnnemy->Ennemy->vCurrentPosition.y))
+
+						CurrentEnnemy = ListEnnemy->FirstElement;
+						while (CurrentEnnemy != NULL)
 						{
-							vPlayerPointToCheck.x = (vOrigin_fieldOfView.x) - (CurrentTower->Tower->vPos.x - CurrentEnnemy->Ennemy->vCurrentPosition.x);
-							vPlayerPointToCheck.y = (vOrigin_fieldOfView.y) - (CurrentTower->Tower->vPos.y - CurrentEnnemy->Ennemy->vCurrentPosition.y);
-							if (sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).r == 255 && sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).g == 0
-								&& sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).b == 0 && sfImage_getPixel(Img_fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).a == 255)
+							CurrentTower = ListTower->FirstElement;
+							while (CurrentTower != NULL)
 							{
-								switch (CurrentTower->Tower->TowerType)
+
+								//printf_s("CurrentTower %d , bbL :%.2f, bbT :%.2f, bbW :%.2f, bbH :%.2f\n",CurrentTower->Id, CurrentTower->Tower->fieldBB.left, CurrentTower->Tower->fieldBB.top, CurrentTower->Tower->fieldBB.width, CurrentTower->Tower->fieldBB.height);
+								if (sfFloatRect_contains(&CurrentTower->Tower->fieldBB, CurrentEnnemy->Ennemy->vCurrentPosition.x, CurrentEnnemy->Ennemy->vCurrentPosition.y))
 								{
-								case TYPE2:
-									switch (CurrentEnnemy->Ennemy->Type)
-									{
-									case CANCER:
-										if (CurrentTower->Id != 0)
-										{
-											//printf_s("Ralentissement cancer\n");
-										}
-										CurrentEnnemy->Ennemy->fSpeedMax = CANCER_SPEED * SLOWING_FACTOR;
-										break;
-									case CHOLESTEROL:
-										if (CurrentTower->Id != 0)
-										{
-											//printf_s("Ralentissement cholesterol\n");
-										}
-										CurrentEnnemy->Ennemy->fSpeedMax = CHOLESTEROL_SPEED * SLOWING_FACTOR;
-										break;
-									case CAILLOT:
-										if (CurrentTower->Id != 0)
-										{
-											//printf_s("Ralentissement caillot\n");
-										}
-										CurrentEnnemy->Ennemy->fSpeedMax = CAILLOT_SPEED * SLOWING_FACTOR;
-										break;
-									default:
-										break;
-									}
-									CurrentEnnemy->Ennemy->tCurrentDOT = (float)clock() / CLOCKS_PER_SEC;
-									CurrentEnnemy->Ennemy->tSinceDOT = CurrentEnnemy->Ennemy->tCurrentDOT - CurrentEnnemy->Ennemy->tStartDOT;
-									if (CurrentEnnemy->Ennemy->tSinceDOT > DOT_FREQUENCY)
-									{
-										CurrentEnnemy->Ennemy->tStartDOT = CurrentEnnemy->Ennemy->tCurrentDOT;
-										CurrentEnnemy->Ennemy->Hp -= TOWER2_DAMAGES;
-									}
 
-									break;
-								case TYPE1:
-									CurrentTower->Tower->tCurrentShoot = (float)clock() / CLOCKS_PER_SEC;
-									CurrentTower->Tower->tSinceShoot = CurrentTower->Tower->tCurrentShoot - CurrentTower->Tower->tStartShoot;
-									if (CurrentTower->Tower->tSinceShoot > 2 * CurrentTower->Tower->bulletSpeed)
+									vPlayerPointToCheck.x = (CurrentTower->Tower->ActualfieldOfWiewOrigin.x) - (CurrentTower->Tower->vPos.x - CurrentEnnemy->Ennemy->vCurrentPosition.x);
+									vPlayerPointToCheck.y = (CurrentTower->Tower->ActualfieldOfWiewOrigin.y) - (CurrentTower->Tower->vPos.y - CurrentEnnemy->Ennemy->vCurrentPosition.y);
+									if (sfImage_getPixel(CurrentTower->Tower->fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).r == 255 && sfImage_getPixel(CurrentTower->Tower->fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).g == 0
+										&& sfImage_getPixel(CurrentTower->Tower->fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).b == 0 && sfImage_getPixel(CurrentTower->Tower->fieldMask, vPlayerPointToCheck.x, vPlayerPointToCheck.y).a == 255)
 									{
-										//printf_s("Bullet !!!\n");
-										CurrentTower->Tower->tStartShoot = CurrentTower->Tower->tCurrentShoot;
-										NewTowerBullet = AddElementBeginListTowerBullet(ListTowerBullet);
-										NewTowerBullet->TowerBullet = malloc(sizeof(t_TowerBullet));
-										NewTowerBullet->TowerBullet->towerFromId = CurrentTower->Id;
-										NewTowerBullet->TowerBullet->pos.x = CurrentTower->Tower->vPos.x;
-										NewTowerBullet->TowerBullet->pos.y = CurrentTower->Tower->vPos.y - CurrentTower->Tower->boundingBox.height;
-										NewTowerBullet->TowerBullet->dir.x = CurrentEnnemy->Ennemy->vCurrentPosition.x - NewTowerBullet->TowerBullet->pos.x;
-										NewTowerBullet->TowerBullet->dir.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - NewTowerBullet->TowerBullet->pos.y;
-										NewTowerBullet->TowerBullet->dir = Normalize(NewTowerBullet->TowerBullet->dir);
-										NewTowerBullet->TowerBullet->sprite = Sp_bullet3;
-										NewTowerBullet->TowerBullet->bulletSpeed = 30;
+										switch (CurrentTower->Tower->TowerType)
+										{
+										case TYPE2:
+											switch (CurrentEnnemy->Ennemy->Type)
+											{
+											case CANCER:
+												if (CurrentTower->Id != 0)
+												{
+													//printf_s("Ralentissement cancer\n");
+												}
+												CurrentEnnemy->Ennemy->fSpeedMax = CANCER_SPEED * SLOWING_FACTOR;
+												break;
+											case CHOLESTEROL:
+												if (CurrentTower->Id != 0)
+												{
+													//printf_s("Ralentissement cholesterol\n");
+												}
+												CurrentEnnemy->Ennemy->fSpeedMax = CHOLESTEROL_SPEED * SLOWING_FACTOR;
+												break;
+												//case CAILLOT:
+												//	if (CurrentTower->Id != 0)
+												//	{
+												//		//printf_s("Ralentissement caillot\n");
+												//	}
+												//	CurrentEnnemy->Ennemy->fSpeedMax = CAILLOT_SPEED * SLOWING_FACTOR;
+												//	break;
+											default:
+												break;
+											}
+											CurrentEnnemy->Ennemy->tCurrentDOT = (float)clock() / CLOCKS_PER_SEC;
+											CurrentEnnemy->Ennemy->tSinceDOT = CurrentEnnemy->Ennemy->tCurrentDOT - CurrentEnnemy->Ennemy->tStartDOT;
+											if (CurrentEnnemy->Ennemy->tSinceDOT > DOT_FREQUENCY)
+											{
+												CurrentEnnemy->Ennemy->tStartDOT = CurrentEnnemy->Ennemy->tCurrentDOT;
+												CurrentEnnemy->Ennemy->Hp -= TOWER2_DAMAGES;
+											}
+											CurrentEnnemy->Ennemy->tStartLifeBarDisplay = (float)clock() / CLOCKS_PER_SEC;
+											CurrentEnnemy->Ennemy->isHit = sfTrue;
+											break;
+										case TYPE1:
+											CurrentTower->Tower->tCurrentShoot = (float)clock() / CLOCKS_PER_SEC;
+											CurrentTower->Tower->tSinceShoot = CurrentTower->Tower->tCurrentShoot - CurrentTower->Tower->tStartShoot;
+											if (CurrentTower->Tower->tSinceShoot > 2 * CurrentTower->Tower->bulletSpeed)
+											{
+												//printf_s("Bullet !!!\n");
+												CurrentTower->Tower->tStartShoot = CurrentTower->Tower->tCurrentShoot;
+												NewTowerBullet = AddElementBeginListTowerBullet(ListTowerBullet);
+												NewTowerBullet->TowerBullet = malloc(sizeof(t_TowerBullet));
+												NewTowerBullet->TowerBullet->towerFromId = CurrentTower->Id;
+												NewTowerBullet->TowerBullet->pos.x = CurrentTower->Tower->vPos.x;
+												NewTowerBullet->TowerBullet->pos.y = CurrentTower->Tower->vPos.y - CurrentTower->Tower->boundingBox.height;
+												NewTowerBullet->TowerBullet->dir.x = CurrentEnnemy->Ennemy->vCurrentPosition.x - NewTowerBullet->TowerBullet->pos.x;
+												NewTowerBullet->TowerBullet->dir.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - NewTowerBullet->TowerBullet->pos.y;
+												NewTowerBullet->TowerBullet->dir = Normalize(NewTowerBullet->TowerBullet->dir);
+												NewTowerBullet->TowerBullet->sprite = Sp_bullet3;
+												NewTowerBullet->TowerBullet->bulletSpeed = 30;
+												if (CurrentTower->Tower->TowerLevel == NORMAL)
+												{
+													NewTowerBullet->TowerBullet->powerUpBulletFactor = NORMAL_TOWER_BULLET_POWER;
+												}
+												else if (CurrentTower->Tower->TowerLevel == UPGRADED)
+												{
+													NewTowerBullet->TowerBullet->powerUpBulletFactor = UPGRADED_TOWER_BULLET_POWER;
+												}
+											}
+											break;
+										default:
+											break;
+										}
+										//sfSprite_setColor(CurrentTower->Tower->fieldSpr, sfRed);
 									}
-									break;
-								default:
-									break;
+									else
+									{
+										if (CurrentTower->Tower->TowerType == TYPE2)
+										{
+											//printf_s("OUT !!!!!\n");
+											switch (CurrentEnnemy->Ennemy->Type)
+											{
+											case CANCER:
+												CurrentEnnemy->Ennemy->fSpeedMax = CANCER_SPEED;
+												break;
+											case CHOLESTEROL:
+												CurrentEnnemy->Ennemy->fSpeedMax = CHOLESTEROL_SPEED;
+												break;
+												//case CAILLOT:
+												//	CurrentEnnemy->Ennemy->fSpeedMax = CAILLOT_SPEED;
+												//	break;
+											default:
+												break;
+											}
+										}
+									}
 								}
-								sfSprite_setColor(CurrentTower->Tower->fieldSpr, sfRed);
-							}
-							else
-							{
-								if (CurrentTower->Tower->TowerType == TYPE2)
+								else
 								{
-									//printf_s("OUT !!!!!\n");
-									switch (CurrentEnnemy->Ennemy->Type)
-									{
-									case CANCER:
-										CurrentEnnemy->Ennemy->fSpeedMax = CANCER_SPEED;
-										break;
-									case CHOLESTEROL:
-										CurrentEnnemy->Ennemy->fSpeedMax = CHOLESTEROL_SPEED;
-										break;
-									case CAILLOT:
-										CurrentEnnemy->Ennemy->fSpeedMax = CAILLOT_SPEED;
-										break;
-									default:
-										break;
-									}
+									//CurrentEnnemy->Ennemy->fSpeedFactor = 1.2;
+									//sfSprite_setColor(CurrentTower->Tower->fieldSpr, sfWhite);
 								}
+								CurrentTower = CurrentTower->NextElement;
 							}
-						}
-						else
-						{
-							//CurrentEnnemy->Ennemy->fSpeedFactor = 1.2;
-							sfSprite_setColor(CurrentTower->Tower->fieldSpr, sfWhite);
-						}
-						CurrentTower = CurrentTower->NextElement;
-					}
 
 
-					CurrentEnnemy = CurrentEnnemy->NextElement;
+							CurrentEnnemy = CurrentEnnemy->NextElement;
+						}
+
+
+
 				}
-
-
-
 	#pragma endregion LECTURE CONTROLE COLISION TOURS //SEB
 
 	#pragma region AFFICHAGE ENNEMY PATH POINT //GUILLAUME
@@ -3707,7 +3816,7 @@ int main()
 
 					CurrentEnnemyPathPoint = CurrentEnnemyPathPoint->NextElement;
 				}*/
-
+				
 	#pragma endregion AFFICHAGE ENNEMY PATH POINT //GUILLAUME
 
 	#pragma region AFFICHAGE ENNEMY //GUILLAUME
@@ -3726,7 +3835,7 @@ int main()
 					CurrentEnnemy->Ennemy->tCurrentLifeBarDisplay = (float)clock() / CLOCKS_PER_SEC;
 					CurrentEnnemy->Ennemy->tSinceLifeBarDisplay = CurrentEnnemy->Ennemy->tCurrentLifeBarDisplay - CurrentEnnemy->Ennemy->tStartLifeBarDisplay;
 
-					if (CurrentEnnemy->Ennemy->isHit && CurrentEnnemy->Ennemy->tSinceLifeBarDisplay < 2)
+					if (CurrentEnnemy->Ennemy->isHit && CurrentEnnemy->Ennemy->tSinceLifeBarDisplay < LIFEBAR_DISPLAY_DELAY)
 					{
 						CurrentEnnemy->Ennemy->vPositionRectangleShapeBack.x = CurrentEnnemy->Ennemy->vCurrentPosition.x;
 						CurrentEnnemy->Ennemy->vPositionRectangleShapeBack.y = CurrentEnnemy->Ennemy->vCurrentPosition.y - CurrentEnnemy->Ennemy->vOrigin.y;
@@ -3824,13 +3933,62 @@ int main()
 
 				while (CurrentTower != NULL)
 				{
+					#pragma region ANIM FLOTTEMENT //SEB
 
+					if (CurrentTower->Tower->iAnimDir == 0)
+					{
+						if (CurrentTower->Tower->vPos.y > CurrentTower->Tower->fPosMinY)
+						{
+							CurrentTower->Tower->vPos.y -= 0.5;
+						}
+						else
+						{
+							CurrentTower->Tower->iAnimDir = 1;
+						}
+					}
+					else if (CurrentTower->Tower->iAnimDir == 1)
+					{
+						if (CurrentTower->Tower->vPos.y < CurrentTower->Tower->fPosMaxY)
+						{
+							CurrentTower->Tower->vPos.y += 0.25;
+						}
+						else
+						{
+							CurrentTower->Tower->iAnimDir = 0;
+						}
+					}
+
+					if (CurrentTower->Tower->iAnimAngleDir == 0)
+					{
+						if (CurrentTower->Tower->angle > CurrentTower->Tower->fAngleMinY)
+						{
+							CurrentTower->Tower->angle -= 0.1;
+						}
+						else
+						{
+							CurrentTower->Tower->iAnimAngleDir = 1;
+						}
+					}
+					else if (CurrentTower->Tower->iAnimAngleDir == 1)
+					{
+						if (CurrentTower->Tower->angle < CurrentTower->Tower->fAngleMaxY)
+						{
+							CurrentTower->Tower->angle += 0.1;
+						}
+						else
+						{
+							CurrentTower->Tower->iAnimAngleDir = 0;
+						}
+					}
+
+					#pragma endregion ANIM FLOTTEMENT //SEB
+					sfSprite_setRotation(CurrentTower->Tower->sprite, CurrentTower->Tower->angle);
 					sfSprite_setPosition(CurrentTower->Tower->sprite, CurrentTower->Tower->vPos);
 					vMousePos = sfMouse_getPosition(window);
 					vMousePosToFloat.x = (float)vMousePos.x;
 					vMousePosToFloat.y = (float)vMousePos.y;
 
-					if (sfFloatRect_contains(&CurrentTower->Tower->boundingBox, vMousePosToFloat.x, vMousePosToFloat.y) && !isBuildedChoice)
+					if (sfFloatRect_contains(&CurrentTower->Tower->boundingBox, vMousePosToFloat.x, vMousePosToFloat.y) && !isBuildedChoice && !isPaused)
 					{
 						vMousePointToCheck.x = (sfSprite_getGlobalBounds(CurrentTower->Tower->sprite).width / 2) - (CurrentTower->Tower->vPos.x - vMousePosToFloat.x);
 						vMousePointToCheck.y = (sfSprite_getGlobalBounds(CurrentTower->Tower->sprite).height - 15) - (CurrentTower->Tower->vPos.y - vMousePosToFloat.y);
@@ -3857,6 +4015,32 @@ int main()
 					sfRenderWindow_drawSprite(window, CurrentTower->Tower->fieldSpr, NULL);
 					}*/
 					sfRenderWindow_drawSprite(window, CurrentTower->Tower->sprite, NULL);
+					/*Affichage barres de vies*/
+					CurrentTower->Tower->tCurrentLifeBarDisplay = (float)clock() / CLOCKS_PER_SEC;
+					CurrentTower->Tower->tSinceLifeBarDisplay = CurrentTower->Tower->tCurrentLifeBarDisplay - CurrentTower->Tower->tStartLifeBarDisplay;
+					if (CurrentTower->Tower->isHit && CurrentTower->Tower->tSinceLifeBarDisplay < LIFEBAR_DISPLAY_DELAY && !isBuildedOpened)
+					{
+						CurrentTower->Tower->vPositionRectangleShapeBack.x = CurrentTower->Tower->vPos.x;
+						CurrentTower->Tower->vPositionRectangleShapeBack.y = CurrentTower->Tower->vPos.y - CurrentTower->Tower->vOrigin.y;
+						sfRectangleShape_setPosition(CurrentTower->Tower->RectangleShapeBack, CurrentTower->Tower->vPositionRectangleShapeBack);
+						CurrentTower->Tower->vPositionRectangleShape.x = CurrentTower->Tower->vPositionRectangleShapeBack.x - CurrentTower->Tower->vOriginRectangleShapeBack.x;
+						CurrentTower->Tower->vPositionRectangleShape.y = CurrentTower->Tower->vPositionRectangleShapeBack.y - CurrentTower->Tower->vOriginRectangleShapeBack.y;
+						sfRectangleShape_setPosition(CurrentTower->Tower->RectangleShape, CurrentTower->Tower->vPositionRectangleShape);
+						CurrentTower->Tower->vSizeRectangleShape.x = (float)((float)CurrentTower->Tower->iHP / (float)CurrentTower->Tower->iHPMax) * LIFEBAR_TOWER_MAX_SIZE_X;
+						//printf_s("Current tower hp : %d, Current rect size x : %.2f\n", CurrentTower->Tower->iHP, CurrentTower->Tower->vSizeRectangleShape.x);
+						if (CurrentTower->Tower->vSizeRectangleShape.x <= 0)
+						{
+							CurrentTower->Tower->vSizeRectangleShape.x = 0;
+						}
+						sfRectangleShape_setSize(CurrentTower->Tower->RectangleShape, CurrentTower->Tower->vSizeRectangleShape);
+						sfRenderWindow_drawRectangleShape(window, CurrentTower->Tower->RectangleShapeBack, NULL);
+						sfRenderWindow_drawRectangleShape(window, CurrentTower->Tower->RectangleShape, NULL);
+					}
+					else if (CurrentTower->Tower->isHit && CurrentTower->Tower->tSinceLifeBarDisplay > LIFEBAR_DISPLAY_DELAY)
+					{
+						CurrentTower->Tower->isHit = sfFalse;
+					}
+
 					CurrentTower = CurrentTower->NextElement;
 
 				}
@@ -3917,7 +4101,7 @@ int main()
 
 				if (isInBuildChoice)
 				{
-					if (isOpened)
+					if (isOpened && !isPaused)
 					{
 						vMousePos = sfMouse_getPosition(window);
 						vMousePosToFloat.x = (float)vMousePos.x;
@@ -3927,14 +4111,14 @@ int main()
 						Rect_TowerSlotBtnBB.top = btn1->vPos.y - btn1->vOrigin.y;
 						Rect_TowerSlotBtnBB.width = btn1->vOrigin.x * 2;
 						Rect_TowerSlotBtnBB.height = btn1->vOrigin.y * 2;
-						if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y) && TOWER1_COST < iPlayerMoney)
+						if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y) )
 						{
 							sfSprite_setPosition(Sp_fieldOfView, ActualTowerSlot->TowerSlot->vPos);
 							sfRenderWindow_drawSprite(window, Sp_fieldOfView, NULL);
 
 							sfSprite_setColor(btn1->sprite, sfYellow);
 							btn1->isOver = sfTrue;
-							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed && TOWER1_COST <= iPlayerMoney)
 							{
 								isMousePressed = sfTrue;
 								iPlayerMoney -= TOWER1_COST;
@@ -3943,6 +4127,13 @@ int main()
 								ActualTowerSlot->TowerSlot->TowerBuildId = NewTower->Id;
 								NewTower->Tower->vPos.x = ActualTowerSlot->TowerSlot->vPos.x;
 								NewTower->Tower->vPos.y = ActualTowerSlot->TowerSlot->vPos.y;
+								NewTower->Tower->fPosMaxY = NewTower->Tower->vPos.y + TOWER_ANIM_DISTANCE;
+								NewTower->Tower->fPosMinY = NewTower->Tower->vPos.y - TOWER_ANIM_DISTANCE;
+								NewTower->Tower->iAnimDir = 0;
+								NewTower->Tower->angle = 0;
+								NewTower->Tower->fAngleMaxY = NewTower->Tower->angle + TOWER_ANIM_ANGLE;
+								NewTower->Tower->fAngleMinY = NewTower->Tower->angle - TOWER_ANIM_ANGLE;
+								NewTower->Tower->iAnimAngleDir = 0;
 								NewTower->Tower->TowerType = TYPE1;
 								NewTower->Tower->upgradeCost = TOWER1_UPGRADE_COST;
 								NewTower->Tower->cost = TOWER1_COST;
@@ -3955,18 +4146,48 @@ int main()
 								NewTower->Tower->tStartShoot = (float)clock() / CLOCKS_PER_SEC;
 								NewTower->Tower->tSinceShoot = 0;
 								NewTower->Tower->tCurrentShoot = 0;
-								NewTower->Tower->fieldSpr = createSprite("resources/textures/tower_field_of_view.png");
+								NewTower->Tower->fieldSpr = Sp_fieldOfView;
+								sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
 								NewTower->Tower->bulletSpeed = 0.5;
 								NewTower->Tower->iSlotId = ActualTowerSlot->Id;
 								NewTower->Tower->iHP = TOWER1_HP;
 								NewTower->Tower->iHPMax = TOWER1_HP;
 								//NewTower->Tower->iIsWhiteCellAlive = sfFalse;
+								#pragma region barre de vie
+								/*Barre de vie*/
+								/*rectangle de fond noir*/
+								NewTower->Tower->RectangleShapeBack = sfRectangleShape_create();
+								NewTower->Tower->vSizeRectangleShapeBack.x = LIFEBAR_TOWER_MAX_SIZE_X;
+								NewTower->Tower->vSizeRectangleShapeBack.y = LIFEBAR_TOWER_SIZE_Y;
+								sfRectangleShape_setSize(NewTower->Tower->RectangleShapeBack, NewTower->Tower->vSizeRectangleShapeBack);
+								NewTower->Tower->vOriginRectangleShapeBack.x = NewTower->Tower->vSizeRectangleShapeBack.x / 2;
+								NewTower->Tower->vOriginRectangleShapeBack.y = NewTower->Tower->vSizeRectangleShapeBack.y / 2;
+								sfRectangleShape_setOrigin(NewTower->Tower->RectangleShapeBack, NewTower->Tower->vOriginRectangleShapeBack);
+								sfRectangleShape_setFillColor(NewTower->Tower->RectangleShapeBack, Color_Black_transp);
+								sfRectangleShape_setOutlineThickness(NewTower->Tower->RectangleShapeBack, 2);
+								sfRectangleShape_setOutlineColor(NewTower->Tower->RectangleShapeBack, sfBlack);
+								/*rectangle de vie*/
+								NewTower->Tower->RectangleShape = sfRectangleShape_create();
+								NewTower->Tower->vSizeRectangleShape.x = LIFEBAR_TOWER_MAX_SIZE_X;
+								NewTower->Tower->vSizeRectangleShape.y = LIFEBAR_TOWER_SIZE_Y;
+								sfRectangleShape_setSize(NewTower->Tower->RectangleShape, NewTower->Tower->vSizeRectangleShape);
+								sfRectangleShape_setFillColor(NewTower->Tower->RectangleShape, sfRed);
+								/*timers et hit*/
+								NewTower->Tower->isHit = sfFalse;
+								NewTower->Tower->tCurrentLifeBarDisplay = 0;
+								NewTower->Tower->tStartLifeBarDisplay = 0;
+								NewTower->Tower->tSinceLifeBarDisplay = 0;
+
+								/*fin Barre de vie*/
+								#pragma endregion barre de vie
 								sfSprite_setOrigin(NewTower->Tower->fieldSpr, vOrigin_fieldOfView);
 								sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
 								NewTower->Tower->fieldBB = sfSprite_getGlobalBounds(NewTower->Tower->fieldSpr);
 								sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
 								sfSprite_setPosition(NewTower->Tower->sprite, NewTower->Tower->vPos);
 								NewTower->Tower->boundingBox = sfSprite_getGlobalBounds(NewTower->Tower->sprite);
+								NewTower->Tower->fieldMask = Img_fieldMask;
+								NewTower->Tower->vOrigin = vOrigin_tower1;
 								//NewTower->Tower->isOn = sfTrue;
 								isOpened = sfFalse;
 								isInBuildChoice = sfFalse;
@@ -3999,13 +4220,13 @@ int main()
 						Rect_TowerSlotBtnBB.top = btn2->vPos.y - btn2->vOrigin.y;
 						Rect_TowerSlotBtnBB.width = btn2->vOrigin.x * 2;
 						Rect_TowerSlotBtnBB.height = btn2->vOrigin.y * 2;
-						if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y) && TOWER2_COST < iPlayerMoney)
+						if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y) )
 						{
 							sfSprite_setPosition(Sp_fieldOfView, ActualTowerSlot->TowerSlot->vPos);
 							sfRenderWindow_drawSprite(window, Sp_fieldOfView, NULL);
 							sfSprite_setColor(btn2->sprite, sfYellow);
 							btn2->isOver = sfTrue;
-							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed && TOWER2_COST <= iPlayerMoney)
 							{
 								isMousePressed = sfTrue;
 								iPlayerMoney -= TOWER2_COST;
@@ -4014,10 +4235,18 @@ int main()
 								ActualTowerSlot->TowerSlot->TowerBuildId = NewTower->Id;
 								NewTower->Tower->vPos.x = ActualTowerSlot->TowerSlot->vPos.x;
 								NewTower->Tower->vPos.y = ActualTowerSlot->TowerSlot->vPos.y;
+								NewTower->Tower->fPosMaxY = NewTower->Tower->vPos.y + TOWER_ANIM_DISTANCE;
+								NewTower->Tower->fPosMinY = NewTower->Tower->vPos.y - TOWER_ANIM_DISTANCE;
+								NewTower->Tower->iAnimDir = 0;
+								NewTower->Tower->angle = 0;
+								NewTower->Tower->fAngleMaxY = NewTower->Tower->angle + TOWER_ANIM_ANGLE;
+								NewTower->Tower->fAngleMinY = NewTower->Tower->angle - TOWER_ANIM_ANGLE;
+								NewTower->Tower->iAnimAngleDir = 0;
 								NewTower->Tower->TowerType = TYPE2;
 								NewTower->Tower->upgradeCost = TOWER2_UPGRADE_COST;
 								NewTower->Tower->cost = TOWER2_COST;
 								NewTower->Tower->sprite = Sp_tower2;
+								NewTower->Tower->ActualfieldOfWiewOrigin = vOrigin_fieldOfView;
 								NewTower->Tower->TowerLevel = NORMAL;
 								NewTower->Tower->animRect.left = 0;
 								NewTower->Tower->animRect.top = NewTower->Tower->TowerLevel * TOWER2_HEIGHT;
@@ -4028,9 +4257,43 @@ int main()
 								//NewTower->Tower->tCurrentShoot = 0;
 								NewTower->Tower->iHP = TOWER2_HP;
 								NewTower->Tower->iHPMax = TOWER2_HP;
-								NewTower->Tower->iSlotId = ActualTowerSlot->Id;
-								NewTower->Tower->fieldSpr = createSprite("resources/textures/tower_field_of_view.png");
+								NewTower->Tower->fieldSpr = Sp_fieldOfView;
+								#pragma region barre de vie
+								/*Barre de vie*/
+								/*rectangle de fond noir*/
+								NewTower->Tower->RectangleShapeBack = sfRectangleShape_create();
+								NewTower->Tower->vSizeRectangleShapeBack.x = LIFEBAR_TOWER_MAX_SIZE_X;
+								NewTower->Tower->vSizeRectangleShapeBack.y = LIFEBAR_TOWER_SIZE_Y;
+								sfRectangleShape_setSize(NewTower->Tower->RectangleShapeBack, NewTower->Tower->vSizeRectangleShapeBack);
+								NewTower->Tower->vOriginRectangleShapeBack.x = NewTower->Tower->vSizeRectangleShapeBack.x / 2;
+								NewTower->Tower->vOriginRectangleShapeBack.y = NewTower->Tower->vSizeRectangleShapeBack.y / 2;
+								sfRectangleShape_setOrigin(NewTower->Tower->RectangleShapeBack, NewTower->Tower->vOriginRectangleShapeBack);
+								sfRectangleShape_setFillColor(NewTower->Tower->RectangleShapeBack, Color_Black_transp);
+								sfRectangleShape_setOutlineThickness(NewTower->Tower->RectangleShapeBack, 2);
+								sfRectangleShape_setOutlineColor(NewTower->Tower->RectangleShapeBack, sfBlack);
+								/*rectangle de vie*/
+								NewTower->Tower->RectangleShape = sfRectangleShape_create();
+								NewTower->Tower->vSizeRectangleShape.x = LIFEBAR_TOWER_MAX_SIZE_X;
+								NewTower->Tower->vSizeRectangleShape.y = LIFEBAR_TOWER_SIZE_Y;
+								sfRectangleShape_setSize(NewTower->Tower->RectangleShape, NewTower->Tower->vSizeRectangleShape);
+								sfRectangleShape_setFillColor(NewTower->Tower->RectangleShape, sfRed);
+								/*timers et hit*/
+								NewTower->Tower->isHit = sfFalse;
+								NewTower->Tower->tCurrentLifeBarDisplay = 0;
+								NewTower->Tower->tStartLifeBarDisplay = 0;
+								NewTower->Tower->tSinceLifeBarDisplay = 0;
+
+								/*fin Barre de vie*/
+								#pragma endregion barre de vie
 								sfSprite_setOrigin(NewTower->Tower->fieldSpr, vOrigin_fieldOfView);
+								sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
+								NewTower->Tower->fieldBB = sfSprite_getGlobalBounds(NewTower->Tower->fieldSpr);
+								sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
+								sfSprite_setPosition(NewTower->Tower->sprite, NewTower->Tower->vPos);
+								NewTower->Tower->boundingBox = sfSprite_getGlobalBounds(NewTower->Tower->sprite);
+								NewTower->Tower->fieldMask = Img_fieldMask;
+								NewTower->Tower->vOrigin = vOrigin_tower2;
+								NewTower->Tower->iSlotId = ActualTowerSlot->Id;
 								sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
 								NewTower->Tower->fieldBB = sfSprite_getGlobalBounds(NewTower->Tower->fieldSpr);
 								sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
@@ -4069,11 +4332,11 @@ int main()
 						Rect_TowerSlotBtnBB.top = btn3->vPos.y - btn3->vOrigin.y;
 						Rect_TowerSlotBtnBB.width = btn3->vOrigin.x * 2;
 						Rect_TowerSlotBtnBB.height = btn3->vOrigin.y * 2;
-						if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y) && TOWER3_COST < iPlayerMoney)
+						if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y) )
 						{
 							sfSprite_setColor(btn3->sprite, sfYellow);
 							btn3->isOver = sfTrue;
-							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed && TOWER3_COST <= iPlayerMoney)
 							{
 								isMousePressed = sfTrue;
 								iPlayerMoney -= TOWER3_COST;
@@ -4081,6 +4344,13 @@ int main()
 								NewTower->Tower = malloc(sizeof(t_Tower));
 								NewTower->Tower->vPos.x = ActualTowerSlot->TowerSlot->vPos.x;
 								NewTower->Tower->vPos.y = ActualTowerSlot->TowerSlot->vPos.y;
+								NewTower->Tower->fPosMaxY = NewTower->Tower->vPos.y + TOWER_ANIM_DISTANCE;
+								NewTower->Tower->fPosMinY = NewTower->Tower->vPos.y - TOWER_ANIM_DISTANCE;
+								NewTower->Tower->iAnimDir = 0;
+								NewTower->Tower->angle = 0;
+								NewTower->Tower->fAngleMaxY = NewTower->Tower->angle + TOWER_ANIM_ANGLE;
+								NewTower->Tower->fAngleMinY = NewTower->Tower->angle - TOWER_ANIM_ANGLE;
+								NewTower->Tower->iAnimAngleDir = 0;
 								NewTower->Tower->TowerType = TYPE3;
 								NewTower->Tower->upgradeCost = TOWER3_UPGRADE_COST;
 								NewTower->Tower->cost = TOWER3_COST;
@@ -4097,8 +4367,41 @@ int main()
 								NewTower->Tower->iIsWhiteCellAlive = sfFalse;
 								NewTower->Tower->iHP = TOWER3_HP;
 								NewTower->Tower->iHPMax = TOWER3_HP;
-								NewTower->Tower->fieldSpr = createSprite("resources/textures/tower_field_of_view.png");
-								sfSprite_setOrigin(NewTower->Tower->fieldSpr, vOrigin_fieldOfView);
+								#pragma region barre de vie
+								/*Barre de vie*/
+								/*rectangle de fond noir*/
+								NewTower->Tower->RectangleShapeBack = sfRectangleShape_create();
+								NewTower->Tower->vSizeRectangleShapeBack.x = LIFEBAR_TOWER_MAX_SIZE_X;
+								NewTower->Tower->vSizeRectangleShapeBack.y = LIFEBAR_TOWER_SIZE_Y;
+								sfRectangleShape_setSize(NewTower->Tower->RectangleShapeBack, NewTower->Tower->vSizeRectangleShapeBack);
+								NewTower->Tower->vOriginRectangleShapeBack.x = NewTower->Tower->vSizeRectangleShapeBack.x / 2;
+								NewTower->Tower->vOriginRectangleShapeBack.y = NewTower->Tower->vSizeRectangleShapeBack.y / 2;
+								sfRectangleShape_setOrigin(NewTower->Tower->RectangleShapeBack, NewTower->Tower->vOriginRectangleShapeBack);
+								sfRectangleShape_setFillColor(NewTower->Tower->RectangleShapeBack, Color_Black_transp);
+								sfRectangleShape_setOutlineThickness(NewTower->Tower->RectangleShapeBack, 2);
+								sfRectangleShape_setOutlineColor(NewTower->Tower->RectangleShapeBack, sfBlack);
+								/*rectangle de vie*/
+								NewTower->Tower->RectangleShape = sfRectangleShape_create();
+								NewTower->Tower->vSizeRectangleShape.x = LIFEBAR_TOWER_MAX_SIZE_X;
+								NewTower->Tower->vSizeRectangleShape.y = LIFEBAR_TOWER_SIZE_Y;
+								sfRectangleShape_setSize(NewTower->Tower->RectangleShape, NewTower->Tower->vSizeRectangleShape);
+								sfRectangleShape_setFillColor(NewTower->Tower->RectangleShape, sfRed);
+								/*timers et hit*/
+								NewTower->Tower->isHit = sfFalse;
+								NewTower->Tower->tCurrentLifeBarDisplay = 0;
+								NewTower->Tower->tStartLifeBarDisplay = 0;
+								NewTower->Tower->tSinceLifeBarDisplay = 0;
+
+								/*fin Barre de vie*/
+								#pragma endregion barre de vie
+								//sfSprite_setOrigin(NewTower->Tower->fieldSpr, vOrigin_fieldOfView);
+								//sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
+								//NewTower->Tower->fieldBB = sfSprite_getGlobalBounds(NewTower->Tower->fieldSpr);
+								sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
+								sfSprite_setPosition(NewTower->Tower->sprite, NewTower->Tower->vPos);
+								NewTower->Tower->boundingBox = sfSprite_getGlobalBounds(NewTower->Tower->sprite);
+								NewTower->Tower->fieldMask = Img_fieldMask;
+								NewTower->Tower->fieldSpr = Sp_fieldOfView;
 								sfSprite_setPosition(NewTower->Tower->fieldSpr, NewTower->Tower->vPos);
 								NewTower->Tower->fieldBB = sfSprite_getGlobalBounds(NewTower->Tower->fieldSpr);
 								sfSprite_setTextureRect(NewTower->Tower->sprite, NewTower->Tower->animRect);
@@ -4110,6 +4413,8 @@ int main()
 								NewTower->Tower->tCurrentSpawnWhiteCell = 0;
 								NewTower->Tower->tSinceSpawnWhiteCell = 0;
 								NewTower->Tower->isFirstBuild = sfTrue;
+								NewTower->Tower->tower3_cooldownFactor = TOWER3_COOLDOWN_FACTOR;
+								NewTower->Tower->vOrigin = vOrigin_tower3;
 								isOpened = sfFalse;
 								isInBuildChoice = sfFalse;
 								/*mettre en fonction*/
@@ -4160,20 +4465,113 @@ int main()
 					sfRenderWindow_drawSprite(window, btn2->sprite, NULL);
 					sfRenderWindow_drawSprite(window, btn3->sprite, NULL);
 
-					if (btn1->isOver)
+					if (!isPaused)
 					{
-						sfSprite_setPosition(Sp_Tower1_Panel, vMousePosToFloat);
-						sfRenderWindow_drawSprite(window, Sp_Tower1_Panel, NULL);
-					}
-					else if (btn2->isOver)
-					{
-						sfSprite_setPosition(Sp_Tower2_Panel, vMousePosToFloat);
-						sfRenderWindow_drawSprite(window, Sp_Tower2_Panel, NULL);
-					}
-					else if (btn3->isOver)
-					{
-						sfSprite_setPosition(Sp_Tower3_Panel, vMousePosToFloat);
-						sfRenderWindow_drawSprite(window, Sp_Tower3_Panel, NULL);
+						if (btn1->isOver)
+						{
+							sfSprite_setPosition(Sp_Tower_Panel, vMousePosToFloat);
+							sfRenderWindow_drawSprite(window, Sp_Tower_Panel, NULL);
+							/*Prix Tour*/
+							sfText_setCharacterSize(TextHudT, 30);
+							if (TOWER1_COST <= iPlayerMoney)
+							{
+								sfText_setFillColor(TextHudT, sfBlack);
+							}
+							else
+							{
+								sfText_setFillColor(TextHudT, sfRed);
+							}
+							sprintf_s(cTextHudT, 50, "%d", TOWER1_COST);
+							sfText_setString(TextHudT, cTextHudT);
+							vOriginTextHudT.x = sfText_getGlobalBounds(TextHudT).width / 2;
+							vOriginTextHudT.y = sfText_getGlobalBounds(TextHudT).height / 2;
+							sfText_setOrigin(TextHudT, vOriginTextHudT);
+							vPositionTextHudT.x = 110 + vMousePosToFloat.x;
+							vPositionTextHudT.y = 53 + vMousePosToFloat.y;
+							sfText_setPosition(TextHudT, vPositionTextHudT);
+							sfRenderWindow_drawText(window, TextHudT, NULL);
+							/*Nom tour*/
+							sfText_setCharacterSize(TextHudT, 20);
+							sfText_setFillColor(TextHudT, sfBlack);
+							sfText_setString(TextHudT, "Lymphocytes");
+							vOriginTextHudT.x = sfText_getGlobalBounds(TextHudT).width / 2;
+							vOriginTextHudT.y = sfText_getGlobalBounds(TextHudT).height / 2;
+							sfText_setOrigin(TextHudT, vOriginTextHudT);
+							vPositionTextHudT.x = 100 + vMousePosToFloat.x;
+							vPositionTextHudT.y = 23 + vMousePosToFloat.y;
+							sfText_setPosition(TextHudT, vPositionTextHudT);
+							sfRenderWindow_drawText(window, TextHudT, NULL);
+						}
+						else if (btn2->isOver)
+						{
+							sfSprite_setPosition(Sp_Tower_Panel, vMousePosToFloat);
+							sfRenderWindow_drawSprite(window, Sp_Tower_Panel, NULL);
+							/*Prix Tour*/
+							sfText_setCharacterSize(TextHudT, 30);
+							if (TOWER2_COST <= iPlayerMoney)
+							{
+								sfText_setFillColor(TextHudT, sfBlack);
+							}
+							else
+							{
+								sfText_setFillColor(TextHudT, sfRed);
+							}
+							sprintf_s(cTextHudT, 50, "%d", TOWER2_COST);
+							sfText_setString(TextHudT, cTextHudT);
+							vOriginTextHudT.x = sfText_getGlobalBounds(TextHudT).width / 2;
+							vOriginTextHudT.y = sfText_getGlobalBounds(TextHudT).height / 2;
+							sfText_setOrigin(TextHudT, vOriginTextHudT);
+							vPositionTextHudT.x = 110 + vMousePosToFloat.x;
+							vPositionTextHudT.y = 53 + vMousePosToFloat.y;
+							sfText_setPosition(TextHudT, vPositionTextHudT);
+							sfRenderWindow_drawText(window, TextHudT, NULL);
+							/*Nom tour*/
+							sfText_setCharacterSize(TextHudT, 20);
+							sfText_setFillColor(TextHudT, sfBlack);
+							sfText_setString(TextHudT, "Neutrophiles");
+							vOriginTextHudT.x = sfText_getGlobalBounds(TextHudT).width / 2;
+							vOriginTextHudT.y = sfText_getGlobalBounds(TextHudT).height / 2;
+							sfText_setOrigin(TextHudT, vOriginTextHudT);
+							vPositionTextHudT.x = 100 + vMousePosToFloat.x;
+							vPositionTextHudT.y = 23 + vMousePosToFloat.y;
+							sfText_setPosition(TextHudT, vPositionTextHudT);
+							sfRenderWindow_drawText(window, TextHudT, NULL);
+						}
+						else if (btn3->isOver)
+						{
+							sfSprite_setPosition(Sp_Tower_Panel, vMousePosToFloat);
+							sfRenderWindow_drawSprite(window, Sp_Tower_Panel, NULL);
+							/*Prix Tour*/
+							sfText_setCharacterSize(TextHudT, 30);
+							if (TOWER3_COST <= iPlayerMoney)
+							{
+								sfText_setFillColor(TextHudT, sfBlack);
+							}
+							else
+							{
+								sfText_setFillColor(TextHudT, sfRed);
+							}
+							sprintf_s(cTextHudT, 50, "%d", TOWER3_COST);
+							sfText_setString(TextHudT, cTextHudT);
+							vOriginTextHudT.x = sfText_getGlobalBounds(TextHudT).width / 2;
+							vOriginTextHudT.y = sfText_getGlobalBounds(TextHudT).height / 2;
+							sfText_setOrigin(TextHudT, vOriginTextHudT);
+							vPositionTextHudT.x = 110 + vMousePosToFloat.x;
+							vPositionTextHudT.y = 53 + vMousePosToFloat.y;
+							sfText_setPosition(TextHudT, vPositionTextHudT);
+							sfRenderWindow_drawText(window, TextHudT, NULL);
+							/*Nom tour*/
+							sfText_setCharacterSize(TextHudT, 20);
+							sfText_setFillColor(TextHudT, sfBlack);
+							sfText_setString(TextHudT, "Monocytes");
+							vOriginTextHudT.x = sfText_getGlobalBounds(TextHudT).width / 2;
+							vOriginTextHudT.y = sfText_getGlobalBounds(TextHudT).height / 2;
+							sfText_setOrigin(TextHudT, vOriginTextHudT);
+							vPositionTextHudT.x = 100 + vMousePosToFloat.x;
+							vPositionTextHudT.y = 23 + vMousePosToFloat.y;
+							sfText_setPosition(TextHudT, vPositionTextHudT);
+							sfRenderWindow_drawText(window, TextHudT, NULL);
+						}
 					}
 				}
 
@@ -4276,6 +4674,7 @@ int main()
 								DeleteEntityWithID(ListTower, ActualTower->Id);
 								//DeleteElementByIdTower(ListTower, ActualTower->Id);
 								//printf_s("in delete !!!!!\n");
+								ActualTower = NULL;
 							}
 							else if (!sfMouse_isButtonPressed(sfMouseLeft))
 							{
@@ -4296,12 +4695,17 @@ int main()
 						Rect_TowerSlotBtnBB.top = btnUpgrade->vPos.y - btnUpgrade->vOrigin.y;
 						Rect_TowerSlotBtnBB.width = btnUpgrade->vOrigin.x * 2;
 						Rect_TowerSlotBtnBB.height = btnUpgrade->vOrigin.y * 2;
-						if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y) && ActualTower->Tower->upgradeCost < iPlayerMoney)
+						if (sfFloatRect_contains(&Rect_TowerSlotBtnBB, vMousePosToFloat.x, vMousePosToFloat.y) )
 						{
+							if (ActualTower->Tower->TowerType == TYPE2)
+							{
+								ActualTower->Tower->fieldSpr = Sp_fieldOfView_up;
+							}
 							sfSprite_setColor(btnUpgrade->sprite, sfYellow);
 							btnUpgrade->isOver = sfTrue;
-							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+							if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed && ActualTower->Tower->TowerLevel == NORMAL && ActualTower->Tower->upgradeCost < iPlayerMoney)
 							{
+								
 								isMousePressed = sfTrue;
 								vBtnScale2.x = 0;
 								vBtnScale2.y = 0;
@@ -4312,7 +4716,17 @@ int main()
 								sfSprite_setColor(btnUpgrade->sprite, sfWhite);
 								ActualTower->Tower->TowerLevel = UPGRADED;
 								iPlayerMoney -= ActualTower->Tower->upgradeCost;
-
+								if (ActualTower->Tower->TowerType == TYPE2)
+								{
+									ActualTower->Tower->fieldSpr = Sp_fieldOfView_up;
+									ActualTower->Tower->fieldBB = sfSprite_getGlobalBounds(ActualTower->Tower->fieldSpr);
+									ActualTower->Tower->fieldMask = Img_fieldMask_up;
+									ActualTower->Tower->ActualfieldOfWiewOrigin = vOrigin_fieldOfView_up;
+								}
+								if (ActualTower->Tower->TowerType == TYPE3)
+								{
+									ActualTower->Tower->tower3_cooldownFactor = TOWER3_COOLDOWN_FACTOR_UP;
+								}
 							}
 							else if (!sfMouse_isButtonPressed(sfMouseLeft))
 							{
@@ -4321,6 +4735,15 @@ int main()
 						}
 						else
 						{
+							if (ActualTower != NULL)
+							{
+
+								if (ActualTower->Tower->TowerType == TYPE2 && ActualTower->Tower->TowerLevel == NORMAL)
+								{
+									ActualTower->Tower->fieldSpr = Sp_fieldOfView;
+									ActualTower->Tower->fieldMask = Img_fieldMask;
+								}
+							}
 							sfSprite_setColor(btnUpgrade->sprite, sfWhite);
 							btnUpgrade->isOver = sfFalse;
 						}
@@ -4340,14 +4763,141 @@ int main()
 						{
 							isMousePressed = sfFalse;
 						}
+						if (ActualTower != NULL)
+						{
+							/*Barre de vie*/
+							ActualTower->Tower->vPositionRectangleShapeBack.x = ActualTower->Tower->vPos.x;
+							ActualTower->Tower->vPositionRectangleShapeBack.y = btn2->vPos.y - 55;
+							sfRectangleShape_setPosition(ActualTower->Tower->RectangleShapeBack, ActualTower->Tower->vPositionRectangleShapeBack);
+							ActualTower->Tower->vPositionRectangleShape.x = ActualTower->Tower->vPositionRectangleShapeBack.x - ActualTower->Tower->vOriginRectangleShapeBack.x;
+							ActualTower->Tower->vPositionRectangleShape.y = ActualTower->Tower->vPositionRectangleShapeBack.y - ActualTower->Tower->vOriginRectangleShapeBack.y;
+							sfRectangleShape_setPosition(ActualTower->Tower->RectangleShape, ActualTower->Tower->vPositionRectangleShape);
+							ActualTower->Tower->vSizeRectangleShape.x = (float)((float)ActualTower->Tower->iHP / (float)ActualTower->Tower->iHPMax) * LIFEBAR_TOWER_MAX_SIZE_X;
+							if (ActualTower->Tower->vSizeRectangleShape.x <= 0)
+							{
+								ActualTower->Tower->vSizeRectangleShape.x = 0;
+							}
+							sfRectangleShape_setSize(ActualTower->Tower->RectangleShape, ActualTower->Tower->vSizeRectangleShape);
+							sfRenderWindow_drawRectangleShape(window, ActualTower->Tower->RectangleShapeBack, NULL);
+							sfRenderWindow_drawRectangleShape(window, ActualTower->Tower->RectangleShape, NULL);
+
+						}
 					}
+
+
+
 					sfRenderWindow_drawSprite(window, btnUpgrade->sprite, NULL);
 					sfRenderWindow_drawSprite(window, btnSell->sprite, NULL);
+
+
+					if (btnSell->isOver && isBuildedOpened)
+					{
+						sfSprite_setPosition(Sp_Tower_Panel, vMousePosToFloat);
+						sfRenderWindow_drawSprite(window, Sp_Tower_Panel, NULL);
+						/*Prix Tour*/
+						sfText_setCharacterSize(TextHudT, 30);
+						sfText_setFillColor(TextHudT, sfBlack);
+						if (ActualTower->Tower->TowerLevel == NORMAL)
+						{
+							sprintf_s(cTextHudT, 50, "%.f", (float)ActualTower->Tower->cost * RESELL_FACTOR);
+						}
+						else
+						{			
+							sprintf_s(cTextHudT, 50, "%.f", (float)(ActualTower->Tower->cost + ActualTower->Tower->upgradeCost) * RESELL_FACTOR);
+						}
+						sfText_setString(TextHudT, cTextHudT);
+						vOriginTextHudT.x = sfText_getGlobalBounds(TextHudT).width / 2;
+						vOriginTextHudT.y = sfText_getGlobalBounds(TextHudT).height / 2;
+						sfText_setOrigin(TextHudT, vOriginTextHudT);
+						vPositionTextHudT.x = 110 + vMousePosToFloat.x;
+						vPositionTextHudT.y = 53 + vMousePosToFloat.y;
+						sfText_setPosition(TextHudT, vPositionTextHudT);
+						sfRenderWindow_drawText(window, TextHudT, NULL);
+						/*Nom tour*/
+						sfText_setCharacterSize(TextHudT, 20);
+						sfText_setFillColor(TextHudT, sfBlack);
+						sfText_setString(TextHudT, "Vendre");
+						vOriginTextHudT.x = sfText_getGlobalBounds(TextHudT).width / 2;
+						vOriginTextHudT.y = sfText_getGlobalBounds(TextHudT).height / 2;
+						sfText_setOrigin(TextHudT, vOriginTextHudT);
+						vPositionTextHudT.x = 100 + vMousePosToFloat.x;
+						vPositionTextHudT.y = 23 + vMousePosToFloat.y;
+						sfText_setPosition(TextHudT, vPositionTextHudT);
+						sfRenderWindow_drawText(window, TextHudT, NULL);
+					}
+					else if (btnUpgrade->isOver  && isBuildedOpened)
+					{
+
+						/*Prix Tour*/
+						if (ActualTower->Tower->TowerLevel == NORMAL)
+						{
+							sfSprite_setPosition(Sp_Tower_Panel, vMousePosToFloat);
+							sfRenderWindow_drawSprite(window, Sp_Tower_Panel, NULL);
+							sfText_setCharacterSize(TextHudT, 30);
+							if (ActualTower->Tower->upgradeCost <= iPlayerMoney)
+							{
+								sfText_setFillColor(TextHudT, sfBlack);
+							}
+							else
+							{
+								sfText_setFillColor(TextHudT, sfRed);
+							}
+							sprintf_s(cTextHudT, 50, "%d", ActualTower->Tower->upgradeCost);
+							sfText_setString(TextHudT, cTextHudT);
+							vOriginTextHudT.x = sfText_getGlobalBounds(TextHudT).width / 2;
+							vOriginTextHudT.y = sfText_getGlobalBounds(TextHudT).height / 2;
+							sfText_setOrigin(TextHudT, vOriginTextHudT);
+							vPositionTextHudT.x = 110 + vMousePosToFloat.x;
+							vPositionTextHudT.y = 53 + vMousePosToFloat.y;
+							sfText_setPosition(TextHudT, vPositionTextHudT);
+							sfRenderWindow_drawText(window, TextHudT, NULL);
+							/*Nom tour*/
+							sfText_setCharacterSize(TextHudT, 20);
+							sfText_setFillColor(TextHudT, sfBlack);
+							switch (ActualTower->Tower->TowerType)
+							{
+								case TYPE1 :
+									sfText_setString(TextHudT, "+ degats");
+									break;
+								case TYPE2:
+									sfText_setString(TextHudT, "+ portee");
+									break;
+								case TYPE3:
+									sfText_setString(TextHudT, "+ cadence");
+									break;
+								default:
+									break;
+							}
+							vOriginTextHudT.x = sfText_getGlobalBounds(TextHudT).width / 2;
+							vOriginTextHudT.y = sfText_getGlobalBounds(TextHudT).height / 2;
+							sfText_setOrigin(TextHudT, vOriginTextHudT);
+							vPositionTextHudT.x = 100 + vMousePosToFloat.x;
+							vPositionTextHudT.y = 23 + vMousePosToFloat.y;
+							sfText_setPosition(TextHudT, vPositionTextHudT);
+							sfRenderWindow_drawText(window, TextHudT, NULL);
+						}
+						else
+						{
+							sfSprite_setPosition(Sp_Tower_PanelEmpty, vMousePosToFloat);
+							sfRenderWindow_drawSprite(window, Sp_Tower_PanelEmpty, NULL);
+							/*Nom tour*/
+							sfText_setCharacterSize(TextHudT, 40);
+							sfText_setFillColor(TextHudT, sfBlack);
+							sfText_setString(TextHudT, "MAX");
+							vOriginTextHudT.x = sfText_getGlobalBounds(TextHudT).width / 2;
+							vOriginTextHudT.y = sfText_getGlobalBounds(TextHudT).height / 2;
+							sfText_setOrigin(TextHudT, vOriginTextHudT);
+							vPositionTextHudT.x = 90 + vMousePosToFloat.x;
+							vPositionTextHudT.y = 39 + vMousePosToFloat.y;
+							sfText_setPosition(TextHudT, vPositionTextHudT);
+							sfRenderWindow_drawText(window, TextHudT, NULL);
+						}
+					}
 				}
 
 	#pragma endregion GESTION MENU UP / SELL //SEB
 
-#pragma region LECTURE TRAITEMENT TIRS //SEB
+	#pragma region LECTURE TRAITEMENT TIRS //SEB
 
 				CurrentTowerBullet = ListTowerBullet->FirstElement;
 				asBreak = sfFalse;
@@ -4369,10 +4919,10 @@ int main()
 						CurrentEnnemy->Ennemy->boundingBox.width = CurrentEnnemy->Ennemy->vOrigin.x * 2;
 						CurrentEnnemy->Ennemy->boundingBox.height = CurrentEnnemy->Ennemy->vOrigin.y * 2;
 
-
+						
 						if (sfFloatRect_intersects(&CurrentEnnemy->Ennemy->boundingBox, &CurrentTowerBullet->TowerBullet->boundingBox, NULL))
 						{
-							CurrentEnnemy->Ennemy->Hp -= TOWER1_DAMAGES;
+							CurrentEnnemy->Ennemy->Hp -= TOWER1_DAMAGES * CurrentTowerBullet->TowerBullet->powerUpBulletFactor;
 							CurrentEnnemy->Ennemy->isHit = sfTrue;
 							CurrentEnnemy->Ennemy->tStartLifeBarDisplay = (float)clock() / CLOCKS_PER_SEC;
 							CurrentEnnemy->Ennemy->tCurrentLifeBarDisplay = 0;
@@ -4548,6 +5098,20 @@ int main()
 					}
 					if (sfFloatRect_contains(&inGameMenu.pauseButtonBB, vMousePos.x, vMousePos.y))
 					{
+						if (sfMouse_isButtonPressed(sfMouseLeft) && !isMousePressed)
+						{
+							isMousePressed = sfTrue;
+							if (!isPaused)
+							{
+								isPaused = sfTrue;
+								tStartPause = (float)clock() / CLOCKS_PER_SEC;
+							}
+							else
+							{
+								tPauseOffset += tSincePause;
+								isPaused = sfFalse;
+							}
+						}
 						inGameMenu.isOverPause = sfTrue;
 						sfSprite_setColor(inGameMenu.pauseButton, sfYellow);
 					}
@@ -4595,6 +5159,22 @@ int main()
 				if (iCurrentWave > iWaveMax)
 				{
 					GameState = VICTORY;
+					unlockedLevels++;
+					if (unlockedLevels > 2)
+					{
+						unlockedLevels = 2;
+					}
+					FILE* saveFile;
+					char* savePath = malloc(100);
+					sprintf_s(savePath, 100, "resources/datas/saves/save_slot%d.txt", selectedSaveSlot);
+					fopen_s(&saveFile, savePath, "w+");
+					if (saveFile == NULL)
+					{
+						printf_s("erreur de sauvegarde, le fichier n'a pas pu etre ouvert en ecriture");
+					}
+					fprintf_s(saveFile, "unlockedLevels=%d", unlockedLevels);
+					fclose(saveFile);
+					tPauseOffset = 0;
 				}
 
 				/*conditions de victoire*/
@@ -4633,7 +5213,132 @@ int main()
 
 	#pragma endregion TRI LIST ENNEMIS //SEB
 
+	#pragma region GESTION OFFSET TIMER PAUSE //SEB
+
+					if (isPaused)
+					{
+						tCurrentPause = (float)clock() / CLOCKS_PER_SEC;
+						tSincePause = tCurrentPause - tStartPause;
+					}
+
+
+	#pragma endregion GESTION OFFSET TIMER PAUSE //SEB
+
+#pragma region TUTORIEL //SEB
+
+					if (unlockedLevels == 0 && !isPaused && tutorialPhase != TUT_END)
+					{
+						fopen_s(&dialFile, "resources/datas/dial.txt", "r");
+						isPaused = sfTrue;
+						isReading = sfTrue;
+					}
+					else if (unlockedLevels == 0 && isPaused)
+					{
+						tCurrentDial = (float)clock() / CLOCKS_PER_SEC;
+						tSinceDial = tCurrentDial - tStartDial;
+						if (tSinceDial > dialSpeed && isReading)
+						{
+							tStartDial = tCurrentDial;
+							dialTextStr[dialTextStrIndex] = fgetc(dialFile);
+							if (dialTextStr[dialTextStrIndex] == '|')
+							{
+
+								printf_s("IN read\n");
+								dialSpeed = DIAL_SPEED;
+								dialTextStr[dialTextStrIndex] = '\0';
+								isReading = 0;
+							}
+							else if (dialTextStr[dialTextStrIndex] == '&')
+							{
+								dialTextStr[dialTextStrIndex] = '\0';
+								tutorialPhase++;
+							}
+							else if (dialTextStr[dialTextStrIndex] == EOF)
+							{
+								isPaused = sfFalse;
+								fclose(dialFile);
+								dialTextStr[dialTextStrIndex] = '\0';
+								isReading = 0;
+							}
+							else
+							{
+								if (dialTextStr[dialTextStrIndex] != ' ')
+								{
+									//sfSound_play(textSound);
+									//setFxVolumeFromStatus(&isFxOn, textSound);
+								}
+								dialTextStr[dialTextStrIndex + 1] = '\0';
+								dialTextStrIndex++;
+
+							}
+						}
+						switch (tutorialPhase)
+						{
+						case TUT_MONSTER1 : 
+							break;
+						case TUT_MONSTER2:
+							break;
+						case TUT_MONSTER3:
+							break;
+						case TUT_SOCLES:
+							CurrentTowerSlot = ListTowerSlot->FirstElement;
+							while (CurrentTowerSlot != NULL)
+							{
+								vPos_tutorialRect.x = CurrentTowerSlot->TowerSlot->vPos.x - vOrigin_TowerSlot.x;
+								vPos_tutorialRect.y = CurrentTowerSlot->TowerSlot->vPos.y - vOrigin_TowerSlot.y;
+								sfRectangleShape_setPosition(tutorialRect, vPos_tutorialRect);
+								vSize_tutorialRect.x = vOrigin_TowerSlot.x * 2;
+								vSize_tutorialRect.y = vOrigin_TowerSlot.y * 2;
+								sfRectangleShape_setSize(tutorialRect, vSize_tutorialRect);
+								sfRenderWindow_drawRectangleShape(window, tutorialRect, NULL);
+								CurrentTowerSlot = CurrentTowerSlot->NextElement;
+							}
+							break;
+						case TUT_HUD_GLOBULES:
+							vPos_tutorialRect.x = HUD_MONEY_POSX;
+							vPos_tutorialRect.y = HUD_MONEY_POSY;
+							sfRectangleShape_setPosition(tutorialRect, vPos_tutorialRect);
+							vSize_tutorialRect.x = HUD_MONEY_SIZEX;
+							vSize_tutorialRect.y = HUD_MONEY_SIZEY;
+							sfRectangleShape_setSize(tutorialRect, vSize_tutorialRect);
+							sfRenderWindow_drawRectangleShape(window, tutorialRect, NULL);
+							break;
+						case TUT_TOWER1:
+							break;
+						case TUT_TOWER2:
+							break;
+						case TUT_TOWER3:
+							break;
+						case TUT_END:
+							isPaused = sfFalse;
+							fclose(dialFile);
+							break;
+						default:
+							break;
+						}
+						if (sfMouse_isButtonPressed(sfMouseLeft) && !isReading && !isMousePressed )
+						{
+							isMousePressed = sfTrue;
+							isReading = sfTrue;
+							dialTextStrIndex = 0;
+						}
+						else if (sfMouse_isButtonPressed(sfMouseLeft) && isReading  && !isMousePressed )
+						{
+							isMousePressed = sfTrue;
+							dialSpeed = DIAL_SPEED / 1000;
+						}
+						else if (!sfMouse_isButtonPressed(sfMouseLeft))
+						{
+							isMousePressed = sfFalse;
+						}
+						sfRenderWindow_drawSprite(window, pierrotDial, NULL);
+						sfText_setString(dial, dialTextStr);
+						sfRenderWindow_drawText(window, dial, NULL);
+					}
+
+#pragma endregion TUTORIEL //SEB
 			break;
+
 #pragma endregion CASE GAME
 
 #pragma region CASE VICTORY

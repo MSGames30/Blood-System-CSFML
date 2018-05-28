@@ -51,6 +51,10 @@
 
 #define MAX_LIST_ENNEMY_PATH_POINT 2
 
+#define LIFEBAR_DISPLAY_DELAY 2
+
+#define DIAL_SPEED 0.1f
+
 #pragma region ENNEMY
 
 #pragma region ENNEMY BULLET
@@ -63,7 +67,7 @@
 #pragma region BARRE DE VIE ENNEMI
 
 #define LIFEBAR_MAX_SIZE_X 60
-#define LIFEBAR_SIZE_Y 6
+#define LIFEBAR_SIZE_Y 1
 
 #pragma endregion BARRE DE VIE ENNEMI
 
@@ -152,6 +156,7 @@
 
 #define ENNEMY_DIST_FROM_TARGET_TO_DELETE 100
 
+
 #pragma endregion ENNEMY
 
 #pragma region ENNEMY PATH POINT
@@ -168,14 +173,14 @@
 #define WHITE_CELL_ANIM_SPEED 0.03
 #define WHITE_CELL_FIELD_OF_VIEW_RADIUS 350
 #define WHITE_CELL_AREA_DAMAGE_RADIUS 150
-#define WHITE_CELL_CREATE_COOLDOWN 2
+#define WHITE_CELL_CREATE_COOLDOWN 4.0f
 
 #pragma endregion WHITE_CELLS
 
 #pragma region TOWERS
 
-#define TOWER1_DAMAGES 0.5
-#define TOWER2_DAMAGES 0.2
+#define TOWER1_DAMAGES 0.5f
+#define TOWER2_DAMAGES 0.2f
 #define TOWER3_DAMAGES 5
 
 #define TOWER1_HP 100
@@ -205,6 +210,22 @@
 
 #define SLOWING_FACTOR 0.5f
 
+#define NORMAL_TOWER_BULLET_POWER 1
+#define UPGRADED_TOWER_BULLET_POWER 1.5f
+
+#define TOWER3_COOLDOWN_FACTOR 1
+#define TOWER3_COOLDOWN_FACTOR_UP 0.7f
+
+#define TOWER_ANIM_DISTANCE 10
+#define TOWER_ANIM_ANGLE 5
+
+#pragma region BARRE DE VIE TOWER
+
+#define LIFEBAR_TOWER_MAX_SIZE_X 80
+#define LIFEBAR_TOWER_SIZE_Y 4
+
+#pragma endregion BARRE DE VIE TOWER
+
 #pragma endregion TOWERS
 
 #pragma region BUTTONS
@@ -223,6 +244,15 @@
 #define LABEL_MASK_HEIGHT 640
 
 #pragma endregion MENU
+
+#pragma region TUTO RECT //SEB
+
+#define HUD_MONEY_POSX 1630
+#define HUD_MONEY_POSY 55
+#define HUD_MONEY_SIZEX 246
+#define HUD_MONEY_SIZEY 97
+
+#pragma endregion TUTO RECT //SEB
 
 #pragma endregion Defines
 
@@ -342,6 +372,22 @@ enum e_introState
 	IS_ACADEMY_MOVING,
 	IS_LOGO_GROWING,
 	IS_LOGO_BEATING,
+};
+
+typedef enum e_tutorialPhase t_tutorialPhase;
+
+enum e_tutorialPhase
+{
+	TUT_INTRO = -1,
+	TUT_MONSTER1,
+	TUT_MONSTER2,
+	TUT_MONSTER3,
+	TUT_SOCLES = 4,
+	TUT_HUD_GLOBULES,
+	TUT_TOWER1 = 7,
+	TUT_TOWER2,
+	TUT_TOWER3,
+	TUT_END,
 };
 
 #pragma endregion enum
@@ -646,6 +692,7 @@ struct s_Tower
 {
 	sfSprite* sprite;
 	sfSprite* fieldSpr;
+	sfImage* fieldMask;
 	sfVector2f vPos;
 	sfVector2f vOrigin;
 	t_TowerType TowerType;
@@ -683,6 +730,25 @@ struct s_Tower
 
 	int cost;
 	int upgradeCost;
+
+	float tower3_cooldownFactor;
+
+	sfBool isHit;
+	float tStartLifeBarDisplay;
+	float tCurrentLifeBarDisplay;
+	float tSinceLifeBarDisplay;
+
+	float fPosMaxY;
+	float fPosMinY;
+	int iAnimDir;
+
+	float angle;
+	float fAngleMaxY;
+	float fAngleMinY;
+	int iAnimAngleDir;
+
+	sfVector2f ActualfieldOfWiewOrigin;
+
 };
 
 typedef struct s_TowerElement t_TowerElement;
@@ -734,6 +800,7 @@ struct s_TowerBullet
 	float angle;
 	float bulletSpeed;
 	int towerFromId;
+	float powerUpBulletFactor;
 };
 
 typedef struct s_TowerBulletElement t_TowerBulletElement;
